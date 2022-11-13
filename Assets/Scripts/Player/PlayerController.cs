@@ -20,7 +20,7 @@ namespace Player
         public LayerMask interactionLayer;
         [SerializeField] private Transform interactionSensor;
 
-        [HideInInspector] public short horizontalDirection;
+        [HideInInspector] public int horizontalDirection;
         [HideInInspector] public bool interacting;
 
         #region Dependencies
@@ -60,14 +60,17 @@ namespace Player
             _stateMachine = new StateMachine(idleState);
         }
 
+        private void Start()
+        {
+            horizontalDirection = 1;
+        }
+
         private void Update()
         {
             var currentState = (PlayerState)_stateMachine.CurrentState;
 
             currentState.HandleInput();
             currentState.Update();
-            
-            Debug.DrawRay(transform.position, Vector3.right * 5, CanInteract ? Color.green : Color.red);
         }
 
         
@@ -90,7 +93,8 @@ namespace Player
 
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.blue;
+            Gizmos.color = Application.isPlaying && CanInteract ? Color.green : Color.blue;
+
             Gizmos.DrawWireCube(interactionSensor.position, interactionSensorSize);
         }
     }

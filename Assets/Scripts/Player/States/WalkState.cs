@@ -10,6 +10,11 @@ namespace Player
         
         public WalkState(PlayerController player) : base(player) { }
 
+        public override void Start()
+        {
+            _smoothDirection = _direction = player.moveAction.ReadValue<float>();
+        }
+
         public override void HandleInput()
         {
             _direction = player.moveAction.ReadValue<float>();
