@@ -14,7 +14,7 @@ namespace Player
         {
             _direction = player.moveAction.ReadValue<float>();
 
-            if (_smoothDirection == 0f)
+            if (Mathf.Abs(_smoothDirection) <= 0.05f)
                 player.ChangeState(player.idleState);
         }
 

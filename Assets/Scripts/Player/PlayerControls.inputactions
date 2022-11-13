@@ -1,5 +1,5 @@
 {
-    "name": "PllayerControls",
+    "name": "PlayerControls",
     "maps": [
         {
             "name": "Ground",
@@ -106,6 +106,28 @@
                     "name": "",
                     "id": "d2f2c262-2b35-43bb-9fe3-3e5d6da0a98d",
                     "path": "<Gamepad>/leftStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bb11f848-780e-4e5b-9738-136b8cf11a83",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "64bc18c3-510a-49c1-a77a-24494764b045",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

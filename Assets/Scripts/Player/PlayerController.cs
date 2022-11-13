@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Player
 {
-    [RequireComponent(typeof(Rigidbody2D), typeof(PlayerInput))]
+    [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Settings")]
@@ -12,22 +12,30 @@ namespace Player
         public float smoothTime;
         [SerializeField] private Vector2 interactionSensorSize;
 
+        [Header("Gizmos")]
+        [SerializeField] private Vector2 textPos;
+        [SerializeField] private int fontSize;
+        
         [Header("Physics")]
         public LayerMask interactionLayer;
         [SerializeField] private Transform interactionSensor;
 
-        [HideInInspector] public new Rigidbody2D rigidbody;
+        [HideInInspector] public short horizontalDirection;
+        [HideInInspector] public bool interacting;
 
-        private PlayerInput _playerInput;
+        #region Dependencies
+
+        [HideInInspector] public new Rigidbody2D rigidbody;
+        [SerializeField] private PlayerInput playerInput;
         [HideInInspector] public InputAction moveAction;
         [HideInInspector] public InputAction interactAction;
 
-        [HideInInspector] public short horizontalDirection;
+        #endregion
 
         public bool CanInteract => Physics2D.OverlapBox(
             interactionSensor.position,
             interactionSensorSize,
-            interactionSensor.rotation.z, 
+            0f, 
             interactionLayer 
         );
 
@@ -39,20 +47,13 @@ namespace Player
         public void ChangeState(PlayerState state) => _stateMachine.ChangeState(state);
         
         #endregion
-        
-        public bool Interacting
-        {
-            set => idleState.interacting = value;
-            get => idleState.interacting;
-        }
-        
+
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
-
-            _playerInput = GetComponent<PlayerInput>();
-            moveAction = _playerInput.actions["Move"];
-            interactAction = _playerInput.actions["Interact"];
+            
+            moveAction = playerInput.actions["Move"];
+            interactAction = playerInput.actions["Interact"];
 
             idleState = new IdleState(this);
             walkState = new WalkState(this);
@@ -62,14 +63,30 @@ namespace Player
         private void Update()
         {
             var currentState = (PlayerState)_stateMachine.CurrentState;
+
             currentState.HandleInput();
             currentState.Update();
+            
+            Debug.DrawRay(transform.position, Vector3.right * 5, CanInteract ? Color.green : Color.red);
         }
 
         
         private void FixedUpdate() => _stateMachine.CurrentState.FixedUpdate();
         
         private void LateUpdate() => _stateMachine.CurrentState.LateUpdate();
+
+        private void OnGUI()
+        {
+            GUI.Label(
+                new Rect(textPos, Vector2.one),
+                _stateMachine.CurrentState.ToString(),
+                new GUIStyle
+                {
+                    fontSize = fontSize, 
+                    normal = { textColor = Color.white }
+                }
+            );
+        }
 
         private void OnDrawGizmos()
         {

@@ -1,19 +1,23 @@
-﻿namespace Player
+﻿using UnityEngine;
+
+namespace Player
 {
     public class IdleState : PlayerState
     {
-        public bool interacting;
-        
         public IdleState(PlayerController player) : base(player) { }
+        
+        public override void Start()
+        {
+            player.interacting = false;
+            player.rigidbody.velocity = Vector2.zero;
+        }
 
         public override void HandleInput()
         {
-            if (interacting) return;
-
-            if (player.CanInteract)
+            if (player.interacting) return;
+            if (player.interactAction.WasPressedThisFrame() && player.CanInteract)
             {
-                if (player.interactAction.WasPressedThisFrame())
-                    interacting = true;
+                player.interacting = true;
                 return;
             }
             
