@@ -14,13 +14,6 @@ namespace Player
 
         public override void HandleInput()
         {
-            if (player.interacting) return;
-            if (player.interactAction.WasPressedThisFrame() && player.CanInteract)
-            {
-                player.interacting = true;
-                return;
-            }
-            
             if (player.moveAction.ReadValue<float>() != 0f)
                 player.ChangeState(player.walkState);
         }
