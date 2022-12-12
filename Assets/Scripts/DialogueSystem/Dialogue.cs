@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -8,8 +7,22 @@ namespace DialogueSystem
 {
     public class Dialogue : MonoBehaviour
     {
+        public abstract class Lines
+        {
+            public string[] lines;
+            public override string ToString()
+            {
+                var s = string.Empty;
+                foreach (var line in lines)
+                {
+                    s += line;
+                }
+
+                return s;
+            }
+        }
         public TMP_Text textComponent;
-        public string[] lines;
+        public Lines lines;
         public float textSpeed;
 
         private int _index;
@@ -24,14 +37,14 @@ namespace DialogueSystem
         {
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
-                if (textComponent.text == lines[_index])
+                if (textComponent.text == lines.lines[_index])
                 {
                     NextLine();
                 }
                 else
                 {
                     StopAllCoroutines();
-                    textComponent.text = lines[_index];
+                    textComponent.text = lines.lines[_index];
                 }
             }
         }
@@ -44,7 +57,7 @@ namespace DialogueSystem
 
         private IEnumerator TypeLine()
         {
-            foreach (var c in lines[_index].ToCharArray())
+            foreach (var c in lines.lines[_index].ToCharArray())
             {
                 textComponent.text += c;
                 if (c == ' ')
@@ -55,7 +68,7 @@ namespace DialogueSystem
 
         private void NextLine()
         {
-            if (_index < lines.Length - 1)
+            if (_index < lines.lines.Length - 1)
             {
                 _index++;
                 textComponent.text = string.Empty;

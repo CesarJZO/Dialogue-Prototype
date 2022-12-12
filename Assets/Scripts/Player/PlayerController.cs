@@ -1,4 +1,5 @@
-﻿using StatePattern;
+﻿using System;
+using StatePattern;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +8,8 @@ namespace Player
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour
     {
+        public static PlayerController Instance { get; private set; }
+
         [Header("Settings")]
         public float walkSpeed;
         public float smoothTime;
@@ -32,7 +35,7 @@ namespace Player
 
         #endregion
 
-        public bool CanInteract => Physics2D.OverlapBox(
+        public Collider2D CanInteract => Physics2D.OverlapBox(
             interactionSensor.position,
             interactionSensorSize,
             0f, 
@@ -50,6 +53,7 @@ namespace Player
 
         private void Awake()
         {
+            Instance = this;
             rigidbody = GetComponent<Rigidbody2D>();
             
             moveAction = playerInput.actions["Move"];
