@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Interactable;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,12 +20,13 @@ namespace Player
 
         private void InteractActionOnStarted(InputAction.CallbackContext obj)
         {
-            var colliders = Array.Empty<Collider2D>();
-            Physics2D.OverlapCircleNonAlloc(transform.position, interactRange, colliders, layerMask);
+            var colliders = Physics2D.OverlapCircleAll(transform.position, interactRange, layerMask);
             var closest = GetClosestNpc(colliders);
-            
-            if (closest.TryGetComponent(out IInteractable npcInteractable))
-                npcInteractable.Interact();
+
+            if (!closest) return;
+
+            if (closest.TryGetComponent(out IInteractable interactable))
+                interactable.Interact();
         }
 
         private Collider2D GetClosestNpc(IEnumerable<Collider2D> colliders)
