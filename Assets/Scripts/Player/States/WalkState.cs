@@ -12,12 +12,12 @@ namespace Player
 
         public override void Start()
         {
-            _smoothDirection = _direction = player.moveAction.ReadValue<float>();
+            _smoothDirection = _direction = player.playerInputControls.moveAction.ReadValue<float>();
         }
 
         public override void HandleInput()
         {
-            _direction = player.moveAction.ReadValue<float>();
+            _direction = player.playerInputControls.moveAction.ReadValue<float>();
 
             if (Mathf.Abs(_smoothDirection) <= 0.05f)
                 player.ChangeState(player.idleState);

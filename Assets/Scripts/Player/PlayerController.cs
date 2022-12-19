@@ -1,6 +1,6 @@
 ﻿using StatePattern;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -10,15 +10,10 @@ namespace Player
         [Header("Settings")]
         public float walkSpeed;
         public float smoothTime;
-        [SerializeField] private Vector2 interactionSensorSize;
 
         [Header("Gizmos")]
         [SerializeField] private Vector2 textPos;
         [SerializeField] private int fontSize;
-        
-        [Header("Physics")]
-        public LayerMask interactionLayer;
-        [SerializeField] private Transform interactionSensor;
 
         [HideInInspector] public int horizontalDirection;
         [HideInInspector] public bool interacting;
@@ -26,18 +21,9 @@ namespace Player
         #region Dependencies
 
         [HideInInspector] public new Rigidbody2D rigidbody;
-        [SerializeField] private PlayerInput playerInput;
-        [HideInInspector] public InputAction moveAction;
-        [HideInInspector] public InputAction interactAction;
+        [FormerlySerializedAs("playerInputManager")] [FormerlySerializedAs("playerInput")] [FormerlySerializedAs("inputManager")] public PlayerInputControls playerInputControls;
 
         #endregion
-
-        public bool CanInteract => Physics2D.OverlapBox(
-            interactionSensor.position,
-            interactionSensorSize,
-            0f, 
-            interactionLayer 
-        );
 
         #region State Machine
 
@@ -51,10 +37,6 @@ namespace Player
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
-            
-            moveAction = playerInput.actions["Move"];
-            interactAction = playerInput.actions["Interact"];
-
             idleState = new IdleState(this);
             walkState = new WalkState(this);
             _stateMachine = new StateMachine(idleState);
@@ -89,13 +71,6 @@ namespace Player
                     normal = { textColor = Color.white }
                 }
             );
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Application.isPlaying && CanInteract ? Color.green : Color.blue;
-
-            Gizmos.DrawWireCube(interactionSensor.position, interactionSensorSize);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Player
 
         public override void HandleInput()
         {
-            if (player.moveAction.ReadValue<float>() != 0f)
+            if (player.playerInputControls.moveAction.ReadValue<float>() != 0f)
                 player.ChangeState(player.walkState);
         }
 
