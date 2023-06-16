@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -10,8 +8,6 @@ namespace CesarJZO.DialogueSystem
     [CreateAssetMenu(fileName = "New Dialogue", menuName = "Dialogue", order = 0)]
     public class Dialogue : ScriptableObject, ISerializationCallbackReceiver
     {
-        public event Action Validated;
-
         [SerializeField] private List<DialogueNode> nodes;
         public DialogueNode RootNode => nodes[0];
 
@@ -41,10 +37,5 @@ namespace CesarJZO.DialogueSystem
         }
 
         public void OnAfterDeserialize() { }
-
-        private void OnValidate()
-        {
-            Validated?.Invoke();
-        }
     }
 }
