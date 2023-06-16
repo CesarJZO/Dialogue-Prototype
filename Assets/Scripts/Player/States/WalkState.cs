@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Player
+namespace CesarJZO.Player
 {
     public class WalkState : PlayerState
     {

@@ -1,4 +1,4 @@
-﻿namespace StatePattern
+﻿namespace CesarJZO.StatePattern
 {
     public class StateMachine
     {

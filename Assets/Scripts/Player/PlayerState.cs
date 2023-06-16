@@ -1,6 +1,6 @@
-﻿using StatePattern;
+﻿using CesarJZO.StatePattern;
 
-namespace Player
+namespace CesarJZO.Player
 {
     public class PlayerState : State
     {
