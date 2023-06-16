@@ -17,6 +17,7 @@ namespace CesarJZO.DialogueSystem.Editor
         private Vector2 _scrollPosition;
 
         private GUIStyle _nodeStyle;
+        private GUIStyle _responseNodeStyle;
 
         /// <summary>
         ///     Opens the Dialogue Editor window.
@@ -67,7 +68,7 @@ namespace CesarJZO.DialogueSystem.Editor
         }
 
         /// <summary>
-        ///
+        ///     Draws a node in the Dialogue Editor window.
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
@@ -77,18 +78,52 @@ namespace CesarJZO.DialogueSystem.Editor
 
             GUILayout.BeginArea(node.rect, _nodeStyle);
 
-            node.Conversant = EditorGUILayout.TextField(node.Conversant);
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label("Speaker");
+            node.Conversant = EditorGUILayout.TextField(node.Conversant, GUILayout.Width(150f));
+            GUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
 
             node.Text = EditorGUILayout.TextArea(node.Text);
-
             EditorGUILayout.Space();
 
             if (GUILayout.Button("Add"))
                 _creatingNode = node;
 
             GUILayout.EndArea();
+        }
+
+        /// <summary>
+        ///     Draws the connections between nodes in the Dialogue Editor window.
+        /// </summary>
+        private void DrawConnections(DialogueNode node)
+        {
+            Vector3 startPosition = node.rect.center + Vector2.right * node.rect.width / 2f;
+
+            foreach (DialogueNode childNode in node.Children)
+            {
+                var endPosition = new Vector3
+                {
+                    x = childNode.rect.xMin,
+                    y = childNode.rect.center.y
+                };
+
+                Vector3 controlOffset = endPosition - startPosition;
+                controlOffset.y = 0f;
+                controlOffset.x *= 0.8f;
+
+                Handles.DrawBezier(
+                    startPosition,
+                    endPosition,
+                    startPosition + controlOffset,
+                    endPosition - controlOffset,
+                    Color.white,
+                    null,
+                    4f
+                );
+            }
         }
 
         #endregion
@@ -105,6 +140,8 @@ namespace CesarJZO.DialogueSystem.Editor
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
+            foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
+                DrawConnections(node);
             foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
                 DrawNode(node);
 
@@ -128,6 +165,13 @@ namespace CesarJZO.DialogueSystem.Editor
             _nodeStyle = new GUIStyle
             {
                 normal = { background = EditorGUIUtility.Load("node0") as Texture2D },
+                padding = new RectOffset(20, 20, 20, 20),
+                border = new RectOffset(12, 12, 12, 12)
+            };
+
+            _responseNodeStyle = new GUIStyle
+            {
+                normal = { background = EditorGUIUtility.Load("node1") as Texture2D },
                 padding = new RectOffset(20, 20, 20, 20),
                 border = new RectOffset(12, 12, 12, 12)
             };
