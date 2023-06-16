@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6865179090999564513
+--- !u!114 &-5483607659521640312
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10,26 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: ac39c8ba-dba3-4a2c-bb71-b8b0fe7495b7
+  m_Name: a77c16ed-32fa-4296-8edd-17a9fcfd1069
   m_EditorClassIdentifier: 
-  conversant: 
-  text: 
-  children: []
---- !u!114 &-5050309994847516200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: a4e6961d-a284-4726-90e2-57b49f028b9b
-  m_EditorClassIdentifier: 
-  conversant: 
-  text: 
-  children: []
+  conversant: Knight
+  text: What'up, baby boo, how you feel?
+  children:
+  - {fileID: 1134744213493918123}
+  rect:
+    serializedVersion: 2
+    x: 42
+    y: 169
+    width: 200
+    height: 118
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43,12 +35,9 @@ MonoBehaviour:
   m_Name: New Dialogue
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: 1944476107959770635}
-  - {fileID: 5732916822830912044}
-  - {fileID: 3482153168088931680}
-  - {fileID: -6865179090999564513}
-  - {fileID: -5050309994847516200}
---- !u!114 &1944476107959770635
+  - {fileID: -5483607659521640312}
+  - {fileID: 1134744213493918123}
+--- !u!114 &1134744213493918123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -58,42 +47,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: e60c19ce-619f-44ce-95f8-ccab3b199656
+  m_Name: cb6d09e0-2da3-4ad4-b551-aaae0e1fc9cf
   m_EditorClassIdentifier: 
-  conversant: 
-  text: 
-  children:
-  - {fileID: 5732916822830912044}
---- !u!114 &3482153168088931680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: b53bafe9-21d1-47f9-8cd2-3c6b5dfa779b
-  m_EditorClassIdentifier: 
-  conversant: 
-  text: 
-  children:
-  - {fileID: -5050309994847516200}
---- !u!114 &5732916822830912044
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: a1eb1c85-5b08-490a-be2c-3bdb72a228f9
-  m_EditorClassIdentifier: 
-  conversant: 
-  text: 
-  children:
-  - {fileID: 3482153168088931680}
-  - {fileID: -6865179090999564513}
+  conversant: Fluff
+  text: ...
+  children: []
+  rect:
+    serializedVersion: 2
+    x: 298
+    y: 71
+    width: 200
+    height: 118

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -9,10 +10,17 @@ namespace CesarJZO.DialogueSystem.Editor
     {
         private static Dialogue _selectedDialogueAsset;
 
-        [NonSerialized] private static DialogueNode _creatingNode;
+        [NonSerialized] private DialogueNode _draggingNode;
+        [NonSerialized] private Vector2 _draggingNodeOffset;
+        [NonSerialized] private DialogueNode _creatingNode;
 
         private Vector2 _scrollPosition;
 
+        private GUIStyle _nodeStyle;
+
+        /// <summary>
+        ///     Opens the Dialogue Editor window.
+        /// </summary>
         [MenuItem("Window/Dialogue Editor")]
         private static void ShowWindow()
         {
@@ -35,10 +43,52 @@ namespace CesarJZO.DialogueSystem.Editor
 
         #region Dialogue GUI
 
+        private void ProcessEvents()
+        {
+            Event current = Event.current;
+            if (current.type is EventType.MouseDown && !_draggingNode && current.button is 0)
+            {
+                _draggingNode = _selectedDialogueAsset.Nodes.FirstOrDefault(node =>
+                    node.rect.Contains(current.mousePosition));
+                if (_draggingNode)
+                {
+                    _draggingNodeOffset = current.mousePosition - _draggingNode.rect.position;
+                }
+            }
+            else if (current.type is EventType.MouseDrag && _draggingNode)
+            {
+                _draggingNode.rect.position = current.mousePosition - _draggingNodeOffset;
+                GUI.changed = true;
+            }
+            else if (current.type is EventType.MouseUp && current.button is 0)
+            {
+                _draggingNode = null;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         private void DrawNode(DialogueNode node)
         {
-            if (GUILayout.Button($"Add to node {node.name}"))
+            float rectHeight = EditorStyles.textArea.CalcHeight(new GUIContent(node.Text), position.width) + 100f;
+
+            node.rect.height = rectHeight;
+
+            GUILayout.BeginArea(node.rect, _nodeStyle);
+
+            node.Conversant = EditorGUILayout.TextField(node.Conversant);
+
+            EditorGUILayout.Space();
+
+            node.Text = EditorGUILayout.TextArea(node.Text);
+
+            EditorGUILayout.Space();
+
+            if (GUILayout.Button("Add"))
                 _creatingNode = node;
+
+            GUILayout.EndArea();
         }
 
         #endregion
@@ -51,14 +101,19 @@ namespace CesarJZO.DialogueSystem.Editor
                 return;
             }
 
-            // Add a scroll view
+            ProcessEvents();
+
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
-            foreach (DialogueNode node in _selectedDialogueAsset)
-            {
+            foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
                 DrawNode(node);
-            }
 
+            EditorGUILayout.EndScrollView();
+            HandleNodeModifiers();
+        }
+
+        private void HandleNodeModifiers()
+        {
             if (_creatingNode)
             {
                 _selectedDialogueAsset.CreateNode(_creatingNode);
@@ -69,6 +124,13 @@ namespace CesarJZO.DialogueSystem.Editor
         private void OnEnable()
         {
             Selection.selectionChanged += OnSelectionChanged;
+
+            _nodeStyle = new GUIStyle
+            {
+                normal = { background = EditorGUIUtility.Load("node0") as Texture2D },
+                padding = new RectOffset(20, 20, 20, 20),
+                border = new RectOffset(12, 12, 12, 12)
+            };
         }
 
         private void OnDisable()

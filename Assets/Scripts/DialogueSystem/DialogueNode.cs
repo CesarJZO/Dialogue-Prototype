@@ -10,6 +10,20 @@ namespace CesarJZO.DialogueSystem
         [SerializeField, TextArea] private string text;
         [SerializeField] private List<DialogueNode> children;
 
+        public Rect rect = new(0f, 0f, 200f, 120f);
+
+        public string Conversant
+        {
+            get => conversant;
+            set => conversant = value;
+        }
+
+        public string Text
+        {
+            get => text;
+            set => text = value;
+        }
+
         private void Awake()
         {
             name = Guid.NewGuid().ToString();
