@@ -13,12 +13,10 @@ namespace CesarJZO.DialogueSystem
 
         public IEnumerable<DialogueNode> Nodes => nodes.AsReadOnly();
 
-        public void CreateNode(DialogueNode parent)
+        public void CreateSimpleNode(DialogueNode parent)
         {
-            var newNode = CreateInstance<DialogueNode>();
-            newNode.Parent = parent;
+            var newNode = CreateInstance<SimpleNode>();
             newNode.rect.position = parent.rect.position + Vector2.right * 250f;
-            parent.AddChild(newNode);
             nodes.Add(newNode);
         }
 

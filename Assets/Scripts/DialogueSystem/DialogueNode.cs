@@ -1,27 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
-    public class DialogueNode : ScriptableObject
+    public abstract class DialogueNode : ScriptableObject
     {
-        [SerializeField] private string conversant;
+        [SerializeField] private Speaker speaker;
         [SerializeField, TextArea] private string text;
-        [SerializeField] private DialogueNode parent;
-        [SerializeField] private List<DialogueNode> children;
-        [SerializeField] private bool childrenAreResponses;
         [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
 
-        public IEnumerable<DialogueNode> Children => children.AsReadOnly();
+        public abstract DialogueNode Child { get; }
 
-        public string Conversant
-        {
-            get => conversant;
-#if UNITY_EDITOR
-            set => conversant = value;
-#endif
-        }
+        public Speaker Speaker => speaker;
 
         public string Text
         {
@@ -31,31 +21,9 @@ namespace CesarJZO.DialogueSystem
 #endif
         }
 
-        public DialogueNode Parent
-        {
-            get => parent;
-#if UNITY_EDITOR
-            set => parent = value;
-#endif
-        }
-
-        public bool ChildrenAreResponses
-        {
-            get => childrenAreResponses;
-#if UNITY_EDITOR
-            set => childrenAreResponses = value;
-#endif
-        }
-
-#if UNITY_EDITOR
-
-        private void Awake()
+        protected void Initialize()
         {
             name = Guid.NewGuid().ToString();
-            children = new List<DialogueNode>();
         }
-
-        public void AddChild(DialogueNode child) => children.Add(child);
-#endif
     }
 }

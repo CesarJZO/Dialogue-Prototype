@@ -73,17 +73,12 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
-            float rectHeight = EditorStyles.textArea.CalcHeight(new GUIContent(node.Text), position.width) +
-                               (IsResponse() ? 100f : 128f);
-
-            node.rect.height = rectHeight;
-
-            GUILayout.BeginArea(node.rect, IsResponse() ? _responseNodeStyle : _nodeStyle);
+            // node.rect.height = rectHeight;
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Speaker");
 
-            node.Conversant = EditorGUILayout.TextField(node.Conversant, GUILayout.Width(150f));
+            // node.Conversant = EditorGUILayout.TextField(node.Conversant, GUILayout.Width(150f));
             GUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
@@ -91,21 +86,11 @@ namespace CesarJZO.DialogueSystem.Editor
             node.Text = EditorGUILayout.TextArea(node.Text);
             EditorGUILayout.Space();
 
-            if (!IsResponse())
-            {
-                node.ChildrenAreResponses = EditorGUILayout.Toggle(
-                    $"Children are{(node.ChildrenAreResponses ? " " : " not ")}responses",
-                    node.ChildrenAreResponses
-                );
-                EditorGUILayout.Space();
-            }
-
             if (GUILayout.Button("Add"))
                 _creatingNode = node;
 
             GUILayout.EndArea();
 
-            bool IsResponse() => node.Parent && node.Parent.ChildrenAreResponses;
         }
 
         /// <summary>
@@ -115,28 +100,28 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             Vector3 startPosition = node.rect.center + Vector2.right * node.rect.width / 2f;
 
-            foreach (DialogueNode childNode in node.Children)
-            {
-                var endPosition = new Vector3
-                {
-                    x = childNode.rect.xMin,
-                    y = childNode.rect.center.y
-                };
-
-                Vector3 controlOffset = endPosition - startPosition;
-                controlOffset.y = 0f;
-                controlOffset.x *= 0.8f;
-
-                Handles.DrawBezier(
-                    startPosition,
-                    endPosition,
-                    startPosition + controlOffset,
-                    endPosition - controlOffset,
-                    Color.white,
-                    null,
-                    4f
-                );
-            }
+            // foreach (DialogueNode childNode in node.Children)
+            // {
+            //     var endPosition = new Vector3
+            //     {
+            //         x = childNode.rect.xMin,
+            //         y = childNode.rect.center.y
+            //     };
+            //
+            //     Vector3 controlOffset = endPosition - startPosition;
+            //     controlOffset.y = 0f;
+            //     controlOffset.x *= 0.8f;
+            //
+            //     Handles.DrawBezier(
+            //         startPosition,
+            //         endPosition,
+            //         startPosition + controlOffset,
+            //         endPosition - controlOffset,
+            //         Color.white,
+            //         null,
+            //         4f
+            //     );
+            // }
         }
 
         #endregion
@@ -166,7 +151,7 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             if (_creatingNode)
             {
-                _selectedDialogueAsset.CreateNode(_creatingNode);
+                // _selectedDialogueAsset.CreateNode(_creatingNode);
                 _creatingNode = null;
             }
         }
