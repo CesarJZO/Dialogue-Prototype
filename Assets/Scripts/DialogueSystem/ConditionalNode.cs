@@ -2,6 +2,7 @@
 
 namespace CesarJZO.DialogueSystem
 {
+    [CreateAssetMenu(fileName = "New Conditional Node", menuName = "Dialogue/Conditional Node", order = 3)]
     public class ConditionalNode : DialogueNode
     {
         [SerializeField] private bool condition;
@@ -13,11 +14,6 @@ namespace CesarJZO.DialogueSystem
         private void Awake()
         {
             Initialize();
-        }
-
-        public void SetCondition(bool value)
-        {
-            condition = value;
         }
 
         public void SetTrueChild(DialogueNode node)

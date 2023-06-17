@@ -2,7 +2,7 @@
 
 namespace CesarJZO.DialogueSystem
 {
-    [CreateAssetMenu(fileName = "New Speaker", menuName = "Dialogue/Speaker", order = 0)]
+    [CreateAssetMenu(fileName = "New Speaker", menuName = "Dialogue/Speaker", order = 4)]
     public class Speaker : ScriptableObject
     {
         [field: SerializeField] public Sprite NeutralSprite { get; private set; }

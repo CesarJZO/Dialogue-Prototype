@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
+    [CreateAssetMenu(fileName = "New Response Node", menuName = "Dialogue/Response Node", order = 2)]
     public class ResponseNode : DialogueNode
     {
         [SerializeField] private List<Response> responses;
