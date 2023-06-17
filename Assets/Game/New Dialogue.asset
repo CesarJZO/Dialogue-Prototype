@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6233971436842433004
+--- !u!114 &-9158617725887585732
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10,60 +10,42 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: 1a7d1fa9-59b8-49e3-81dd-3dd4c37bb90a
+  m_Name: daa35308-f558-46b8-967b-6bda2e373980
   m_EditorClassIdentifier: 
   conversant: 
   text: 
+  parent: {fileID: 0}
+  children:
+  - {fileID: 2515356339668225471}
+  - {fileID: 7696901035675180590}
+  childrenAreResponses: 1
+  rect:
+    serializedVersion: 2
+    x: 35
+    y: 169
+    width: 256
+    height: 118
+--- !u!114 &-4515732742956147512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
+  m_Name: e962da0a-2e40-409b-8742-b54eeeed4572
+  m_EditorClassIdentifier: 
+  conversant: 
+  text: 
+  parent: {fileID: 2515356339668225471}
   children: []
+  childrenAreResponses: 0
   rect:
     serializedVersion: 2
-    x: 748
-    y: 255
-    width: 200
-    height: 118
---- !u!114 &-6116496114505995175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: 871229f2-53a2-4997-aa54-325405c7461f
-  m_EditorClassIdentifier: 
-  conversant: 
-  text: 
-  children:
-  - {fileID: -6233971436842433004}
-  rect:
-    serializedVersion: 2
-    x: 452
-    y: 324
-    width: 200
-    height: 118
---- !u!114 &-5483607659521640312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: a77c16ed-32fa-4296-8edd-17a9fcfd1069
-  m_EditorClassIdentifier: 
-  conversant: Knight
-  text: What'up, baby boo, how you feel?
-  children:
-  - {fileID: 1134744213493918123}
-  - {fileID: -6116496114505995175}
-  rect:
-    serializedVersion: 2
-    x: 117
-    y: 207
+    x: 679
+    y: 46
     width: 256
     height: 118
 --- !u!114 &11400000
@@ -79,11 +61,11 @@ MonoBehaviour:
   m_Name: New Dialogue
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -5483607659521640312}
-  - {fileID: 1134744213493918123}
-  - {fileID: -6116496114505995175}
-  - {fileID: -6233971436842433004}
---- !u!114 &1134744213493918123
+  - {fileID: -9158617725887585732}
+  - {fileID: 2515356339668225471}
+  - {fileID: 7696901035675180590}
+  - {fileID: -4515732742956147512}
+--- !u!114 &2515356339668225471
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -93,14 +75,40 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
-  m_Name: cb6d09e0-2da3-4ad4-b551-aaae0e1fc9cf
+  m_Name: 355fcb3f-222a-42c2-a5d9-3ce0bd10d3d0
   m_EditorClassIdentifier: 
-  conversant: Fluff
-  text: ...
-  children: []
+  conversant: 
+  text: 
+  parent: {fileID: -9158617725887585732}
+  children:
+  - {fileID: -4515732742956147512}
+  childrenAreResponses: 0
   rect:
     serializedVersion: 2
-    x: 459
-    y: 85
+    x: 369
+    y: 56
+    width: 256
+    height: 118
+--- !u!114 &7696901035675180590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d464ed5f3b54684ae37d5bafff2c9d4, type: 3}
+  m_Name: c95f17e0-52b5-4ec5-a568-de9019b4ada0
+  m_EditorClassIdentifier: 
+  conversant: 
+  text: 
+  parent: {fileID: -9158617725887585732}
+  children: []
+  childrenAreResponses: 0
+  rect:
+    serializedVersion: 2
+    x: 367
+    y: 247
     width: 256
     height: 118

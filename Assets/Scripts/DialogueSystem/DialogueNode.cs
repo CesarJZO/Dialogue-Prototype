@@ -8,8 +8,9 @@ namespace CesarJZO.DialogueSystem
     {
         [SerializeField] private string conversant;
         [SerializeField, TextArea] private string text;
+        [SerializeField] private DialogueNode parent;
         [SerializeField] private List<DialogueNode> children;
-
+        [SerializeField] private bool childrenAreResponses;
         [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
 
         public IEnumerable<DialogueNode> Children => children.AsReadOnly();
@@ -30,7 +31,24 @@ namespace CesarJZO.DialogueSystem
 #endif
         }
 
+        public DialogueNode Parent
+        {
+            get => parent;
 #if UNITY_EDITOR
+            set => parent = value;
+#endif
+        }
+
+        public bool ChildrenAreResponses
+        {
+            get => childrenAreResponses;
+#if UNITY_EDITOR
+            set => childrenAreResponses = value;
+#endif
+        }
+
+#if UNITY_EDITOR
+
         private void Awake()
         {
             name = Guid.NewGuid().ToString();

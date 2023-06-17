@@ -16,6 +16,7 @@ namespace CesarJZO.DialogueSystem
         public void CreateNode(DialogueNode parent)
         {
             var newNode = CreateInstance<DialogueNode>();
+            newNode.Parent = parent;
             newNode.rect.position = parent.rect.position + Vector2.right * 250f;
             parent.AddChild(newNode);
             nodes.Add(newNode);

@@ -54,6 +54,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 if (_draggingNode)
                 {
                     _draggingNodeOffset = current.mousePosition - _draggingNode.rect.position;
+                    // Selection.activeObject = _draggingNode;
                 }
             }
             else if (current.type is EventType.MouseDrag && _draggingNode)
@@ -72,15 +73,16 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
-            float rectHeight = EditorStyles.textArea.CalcHeight(new GUIContent(node.Text), position.width) + 100f;
+            float rectHeight = EditorStyles.textArea.CalcHeight(new GUIContent(node.Text), position.width) +
+                               (IsResponse() ? 100f : 128f);
 
             node.rect.height = rectHeight;
 
-            GUILayout.BeginArea(node.rect, _nodeStyle);
+            GUILayout.BeginArea(node.rect, IsResponse() ? _responseNodeStyle : _nodeStyle);
 
             GUILayout.BeginHorizontal();
-
             GUILayout.Label("Speaker");
+
             node.Conversant = EditorGUILayout.TextField(node.Conversant, GUILayout.Width(150f));
             GUILayout.EndHorizontal();
 
@@ -89,10 +91,21 @@ namespace CesarJZO.DialogueSystem.Editor
             node.Text = EditorGUILayout.TextArea(node.Text);
             EditorGUILayout.Space();
 
+            if (!IsResponse())
+            {
+                node.ChildrenAreResponses = EditorGUILayout.Toggle(
+                    $"Children are{(node.ChildrenAreResponses ? " " : " not ")}responses",
+                    node.ChildrenAreResponses
+                );
+                EditorGUILayout.Space();
+            }
+
             if (GUILayout.Button("Add"))
                 _creatingNode = node;
 
             GUILayout.EndArea();
+
+            bool IsResponse() => node.Parent && node.Parent.ChildrenAreResponses;
         }
 
         /// <summary>
