@@ -18,7 +18,7 @@ namespace CesarJZO.DialogueSystem
 
         public override DialogueNode Child => responses[selectedResponseIndex]?.child;
 
-        public IEnumerable<string> Responses => responses.ConvertAll(response => response.text);
+        public IEnumerable<Response> Responses => responses;
 
         private void Awake()
         {

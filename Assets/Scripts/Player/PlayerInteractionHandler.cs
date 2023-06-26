@@ -11,7 +11,8 @@ namespace CesarJZO.Player
         [SerializeField] private LayerMask interactableLayerMask;
 
         private Collider2D _currentInteractable;
-        public Collider2D HasInteractable => Physics2D.OverlapBox(
+
+        private Collider2D OverlappingInteractable => Physics2D.OverlapBox(
             point: interactionSensor.position,
             size: interactionSensor.lossyScale,
             angle: interactionSensor.rotation.z,
@@ -25,16 +26,16 @@ namespace CesarJZO.Player
 
         private void OnInteractPerformed()
         {
-            if (!HasInteractable) return;
+            if (!_currentInteractable) return;
 
-            if (HasInteractable.TryGetComponent(out IInteractable interactable))
+            if (_currentInteractable.TryGetComponent(out IInteractable interactable))
                 interactable.Interact();
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
         private void Update()
         {
-            Collider2D interactable = HasInteractable;
+            Collider2D interactable = OverlappingInteractable;
             if (interactable == _currentInteractable) return;
 
             _currentInteractable = interactable;

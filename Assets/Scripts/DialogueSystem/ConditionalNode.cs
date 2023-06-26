@@ -2,19 +2,10 @@
 
 namespace CesarJZO.DialogueSystem
 {
-    [CreateAssetMenu(fileName = "New Conditional Node", menuName = "Dialogue/Conditional Node", order = 3)]
-    public class ConditionalNode : DialogueNode
+    public abstract class ConditionalNode : DialogueNode
     {
-        [SerializeField] private bool condition;
-        [SerializeField] private DialogueNode trueChild;
-        [SerializeField] private DialogueNode falseChild;
-
-        public override DialogueNode Child => condition ? trueChild : falseChild;
-
-        private void Awake()
-        {
-            Initialize();
-        }
+        [SerializeField] protected DialogueNode trueChild;
+        [SerializeField] protected DialogueNode falseChild;
 
         public void SetTrueChild(DialogueNode node)
         {
