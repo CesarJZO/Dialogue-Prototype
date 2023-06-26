@@ -8,22 +8,20 @@ namespace CesarJZO.DialogueSystem
     public class ResponseNode : DialogueNode
     {
         [SerializeField] private List<Response> responses;
-        [SerializeField] private int selectedResponseIndex;
+        [SerializeField] private float timeLimit;
 
-        public int ResponseIndex
+        public float TimeLimit => timeLimit;
+
+        private Response _currentResponse;
+        public Response CurrentResponse
         {
-            get => selectedResponseIndex;
-            set => selectedResponseIndex = value;
+            set => _currentResponse = value;
+            get => _currentResponse;
         }
 
-        public override DialogueNode Child => responses[selectedResponseIndex]?.child;
+        public override DialogueNode Child => _currentResponse.child;
 
         public IEnumerable<Response> Responses => responses;
-
-        private void Awake()
-        {
-            Initialize();
-        }
 
         public int AddResponse()
         {

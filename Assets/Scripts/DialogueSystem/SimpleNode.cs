@@ -9,11 +9,6 @@ namespace CesarJZO.DialogueSystem
 
         public override DialogueNode Child => child;
 
-        private void Awake()
-        {
-            Initialize();
-        }
-
         public void SetChild(DialogueNode node)
         {
             child = node;

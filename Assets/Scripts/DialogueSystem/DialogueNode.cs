@@ -20,10 +20,5 @@ namespace CesarJZO.DialogueSystem
             set => text = value;
 #endif
         }
-
-        protected void Initialize()
-        {
-            name = Guid.NewGuid().ToString();
-        }
     }
 }

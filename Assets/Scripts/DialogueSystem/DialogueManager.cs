@@ -1,17 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
     public class DialogueManager : MonoBehaviour
     {
+        public event Action ConversationStarted;
+        public event Action ConversationEnded;
+
         public event Action ConversationUpdated;
         public static DialogueManager Instance { get; private set; }
 
+        public bool HasDialogue => _currentDialogue;
+
         public Speaker CurrentSpeaker => _currentNode.Speaker;
         public string CurrentText => _currentNode.Text;
+
+        public DialogueNode CurrentNode => _currentNode;
+        public DialogueNode NextNode
+        {
+            get
+            {
+                if (_currentNode.Child is ConditionalNode conditionalNode)
+                    return conditionalNode.Child;
+                return _currentNode.Child;
+            }
+        }
 
         private Dialogue _currentDialogue;
         private DialogueNode _currentNode;
@@ -29,6 +43,7 @@ namespace CesarJZO.DialogueSystem
         {
             _currentDialogue = dialogue;
             _currentNode = _currentDialogue.RootNode;
+            ConversationStarted?.Invoke();
             ConversationUpdated?.Invoke();
         }
 
@@ -40,51 +55,21 @@ namespace CesarJZO.DialogueSystem
             _currentDialogue = null;
             _currentNode = null;
             ConversationUpdated?.Invoke();
-        }
-
-        public Type GetNextType()
-        {
-            DialogueNode child = _currentNode.Child;
-
-            if (child)
-            {
-                return child switch
-                {
-                    ResponseNode => typeof(ResponseNode),
-                    ConditionalNode => typeof(ConditionalNode),
-                    _ => typeof(SimpleNode)
-                };
-            }
-
-            return null;
+            ConversationEnded?.Invoke();
         }
 
         public void Next()
         {
-            if (!_currentNode.Child) return;
-
-            _currentNode = _currentNode.Child is SimpleNode
-                ? _currentNode.Child
-                : _currentNode.Child.Child;
-
-            ConversationUpdated?.Invoke();
-        }
-
-        /// <summary>
-        ///     If the current node is a response node, returns the responses.
-        /// </summary>
-        /// <param name="responses">Set the responses if the current node is a response node.</param>
-        /// <returns>Whether the current node is a response node and if it was possible to set the responses.</returns>
-        public bool TryGetResponses(out IEnumerable<Response> responses)
-        {
-            if (_currentNode is ResponseNode responseNode)
+            if (!_currentNode.Child)
             {
-                responses = responseNode.Responses;
-                return true;
+                ConversationUpdated?.Invoke();
+                ConversationEnded?.Invoke();
+                return;
             }
 
-            responses = Enumerable.Empty<Response>();
-            return false;
+            _currentNode = _currentNode.Child;
+
+            ConversationUpdated?.Invoke();
         }
     }
 }
