@@ -11,6 +11,8 @@ namespace CesarJZO.UI
         [SerializeField] private TextMeshProUGUI speakerName;
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button nextButton;
+        [SerializeField] private Button quitButton;
+
 
         [Header("Response Panel")]
         [Tooltip("The panel that contains the responses.")]
@@ -39,9 +41,10 @@ namespace CesarJZO.UI
             _dialogueManager.ConversationUpdated += UpdateUI;
 
             if (PlayerInput.Instance)
-                PlayerInput.Instance.NextPerformed += _dialogueManager.Next;
+                PlayerInput.Instance.NextPerformed += PerformNextOrExit;
 
             nextButton.onClick.AddListener(_dialogueManager.Next);
+            quitButton.onClick.AddListener(_dialogueManager.Quit);
 
             UpdateUI();
         }
@@ -53,14 +56,18 @@ namespace CesarJZO.UI
             if (!_dialogueManager.HasDialogue)
                 return;
 
-            speakerName.text = _dialogueManager.CurrentSpeaker.DisplayName;
+            speakerName.text = _dialogueManager.CurrentSpeaker
+                ? _dialogueManager.CurrentSpeaker.DisplayName
+                : "Speaker not set";
             text.text = _dialogueManager.CurrentText;
 
             DialogueNode currentNode = _dialogueManager.CurrentNode;
 
+            nextButton.gameObject.SetActive(_dialogueManager.NextNode);
+            quitButton.gameObject.SetActive(!_dialogueManager.NextNode);
+
             if (currentNode is ResponseNode responseNode)
                 BuildResponses(responseNode);
-
         }
 
         private void BuildResponses(ResponseNode responseNode)
@@ -80,6 +87,14 @@ namespace CesarJZO.UI
                     _dialogueManager.Next();
                 });
             }
+        }
+
+        private void PerformNextOrExit()
+        {
+            if (_dialogueManager.NextNode)
+                _dialogueManager.Next();
+            else
+                _dialogueManager.Quit();
         }
     }
 }

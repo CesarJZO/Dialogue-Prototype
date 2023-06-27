@@ -34,40 +34,35 @@ namespace CesarJZO.Input
             var gameManager = GameManager.Instance;
 
             if (gameManager)
-            {
                 gameManager.StateUpdated += OnGameStateUpdated;
-            }
 
-            _playerInputActions.Ground.Interact.performed += OnInteractPerformed;
-
-            _playerInputActions.UI.Next.performed += OnNextPerformed;
-
-            _playerInputActions.Ground.Enable();
+            EnableGround();
         }
 
         private void OnGameStateUpdated(GameManager.State state)
         {
-            _playerInputActions.Ground.Disable();
-            _playerInputActions.UI.Disable();
+            DisableAll();
 
             switch (state)
             {
                 case GameManager.State.Playing:
-                    _playerInputActions.Ground.Enable();
+                    EnableGround();
                     break;
                 case GameManager.State.Dialogue:
-                    _playerInputActions.UI.Enable();
+                    EnableUI();
                     break;
             }
         }
 
         private void OnDisable()
         {
-            _playerInputActions.Ground.Interact.performed -= OnInteractPerformed;
+            var gameManager = GameManager.Instance;
 
-            _playerInputActions.UI.Next.performed -= OnNextPerformed;
+            if (gameManager)
+                gameManager.StateUpdated -= OnGameStateUpdated;
 
-            _playerInputActions.Ground.Disable();
+            DisableGround();
+            DisableUI();
         }
 
         private void OnInteractPerformed(InputAction.CallbackContext context)
@@ -78,6 +73,36 @@ namespace CesarJZO.Input
         private void OnNextPerformed(InputAction.CallbackContext context)
         {
             NextPerformed?.Invoke();
+        }
+
+        private void EnableGround()
+        {
+            _playerInputActions.Ground.Interact.performed += OnInteractPerformed;
+            _playerInputActions.Ground.Enable();
+        }
+
+        private void EnableUI()
+        {
+            _playerInputActions.UI.Next.performed += OnNextPerformed;
+            _playerInputActions.UI.Enable();
+        }
+
+        private void DisableGround()
+        {
+            _playerInputActions.Ground.Interact.performed -= OnInteractPerformed;
+            _playerInputActions.Ground.Disable();
+        }
+
+        private void DisableUI()
+        {
+            _playerInputActions.UI.Next.performed -= OnNextPerformed;
+            _playerInputActions.UI.Disable();
+        }
+
+        private void DisableAll()
+        {
+            DisableGround();
+            DisableUI();
         }
     }
 }
