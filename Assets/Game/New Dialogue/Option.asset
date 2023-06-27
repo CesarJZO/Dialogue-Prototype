@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
-  m_Name: HitThisNode
+  m_Name: Option
   m_EditorClassIdentifier: 
-  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
-  text: Hit This
+  speaker: {fileID: 11400000, guid: dd710aa66b19c4340b8060d01ac6e66b, type: 2}
+  text: I am the only one.
   rect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 256
     height: 120
-  child: {fileID: 11400000, guid: b2c36c7cda4d7494f92d6f1d5f9fe938, type: 2}
+  child: {fileID: 0}

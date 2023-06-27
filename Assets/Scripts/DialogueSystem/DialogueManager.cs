@@ -14,7 +14,10 @@ namespace CesarJZO.DialogueSystem
         public bool HasDialogue => _currentDialogue;
 
         public Speaker CurrentSpeaker => _currentNode.Speaker;
+
         public string CurrentText => _currentNode.Text;
+
+        public bool Choosing => _currentNode is ResponseNode;
 
         public DialogueNode CurrentNode => _currentNode;
         public DialogueNode NextNode

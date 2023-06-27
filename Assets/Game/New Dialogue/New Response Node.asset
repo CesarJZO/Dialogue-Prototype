@@ -9,15 +9,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
-  m_Name: HitThisNode
+  m_Script: {fileID: 11500000, guid: 31d992f4c98448a4b8a609d541be5500, type: 3}
+  m_Name: New Response Node
   m_EditorClassIdentifier: 
   speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
-  text: Hit This
+  text: What do you want from me!
   rect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 256
     height: 120
-  child: {fileID: 11400000, guid: b2c36c7cda4d7494f92d6f1d5f9fe938, type: 2}
+  responses:
+  - text: I am unique
+    child: {fileID: 11400000, guid: bbf077aded923254f8c12bc2f16dde1c, type: 2}
+  - text: This
+    child: {fileID: 11400000, guid: 856599bafa3c49940b61181d39ca872c, type: 2}
+  - text: That
+    child: {fileID: 11400000, guid: 856599bafa3c49940b61181d39ca872c, type: 2}
+  timeLimit: 2

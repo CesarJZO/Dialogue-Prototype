@@ -15,8 +15,6 @@ namespace CesarJZO.UI
 
 
         [Header("Response Panel")]
-        [Tooltip("The panel that contains the responses.")]
-        [SerializeField] private GameObject responsePanel;
         [Tooltip("The root that contains the response prefabs")]
         [SerializeField] private Transform responseRoot;
         [Tooltip("The prefab for the response buttons.")]
@@ -43,8 +41,8 @@ namespace CesarJZO.UI
             if (PlayerInput.Instance)
                 PlayerInput.Instance.NextPerformed += PerformNextOrExit;
 
-            nextButton.onClick.AddListener(_dialogueManager.Next);
-            quitButton.onClick.AddListener(_dialogueManager.Quit);
+            nextButton.onClick.AddListener(PerformNextOrExit);
+            quitButton.onClick.AddListener(PerformNextOrExit);
 
             UpdateUI();
         }
@@ -61,13 +59,13 @@ namespace CesarJZO.UI
                 : "Speaker not set";
             text.text = _dialogueManager.CurrentText;
 
-            DialogueNode currentNode = _dialogueManager.CurrentNode;
 
-            nextButton.gameObject.SetActive(_dialogueManager.NextNode);
-            quitButton.gameObject.SetActive(!_dialogueManager.NextNode);
-
-            if (currentNode is ResponseNode responseNode)
+            if (_dialogueManager.CurrentNode is ResponseNode responseNode)
                 BuildResponses(responseNode);
+            responseRoot.gameObject.SetActive(_dialogueManager.Choosing);
+
+            nextButton.gameObject.SetActive(_dialogueManager.NextNode && !_dialogueManager.Choosing);
+            quitButton.gameObject.SetActive(!_dialogueManager.NextNode && !_dialogueManager.Choosing);
         }
 
         private void BuildResponses(ResponseNode responseNode)
@@ -91,6 +89,9 @@ namespace CesarJZO.UI
 
         private void PerformNextOrExit()
         {
+            if (_dialogueManager.Choosing)
+                return;
+
             if (_dialogueManager.NextNode)
                 _dialogueManager.Next();
             else
