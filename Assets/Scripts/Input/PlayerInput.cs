@@ -31,12 +31,15 @@ namespace CesarJZO.Input
 
         private void OnEnable()
         {
+            EnableGround();
+        }
+
+        private void Start()
+        {
             var gameManager = GameManager.Instance;
 
             if (gameManager)
                 gameManager.StateUpdated += OnGameStateUpdated;
-
-            EnableGround();
         }
 
         private void OnGameStateUpdated(GameManager.State state)

@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CesarJZO.DialogueSystem;
+﻿using CesarJZO.DialogueSystem;
 using CesarJZO.Input;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace CesarJZO.UI
@@ -12,6 +9,8 @@ namespace CesarJZO.UI
     public class DialogueUI : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI speakerName;
+        [SerializeField] private Image speakerImage;
+
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button nextButton;
         [SerializeField] private Button quitButton;
@@ -59,6 +58,9 @@ namespace CesarJZO.UI
             speakerName.text = _dialogueManager.CurrentSpeaker
                 ? _dialogueManager.CurrentSpeaker.DisplayName
                 : "Speaker not set";
+
+            speakerImage.sprite = _dialogueManager.CurrentSpeaker.NeutralSprite;
+
             text.text = _dialogueManager.CurrentText;
 
             if (_dialogueManager.CurrentNode is ResponseNode responseNode)

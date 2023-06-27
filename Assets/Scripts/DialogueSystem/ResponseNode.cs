@@ -8,10 +8,11 @@ namespace CesarJZO.DialogueSystem
     public class ResponseNode : DialogueNode
     {
         [SerializeField] private List<Response> responses;
-        [SerializeField] private float timeLimit;
+        [SerializeField, Min(0f)] private float timeLimit;
         public float TimeLimit => timeLimit;
 
         private Response _currentResponse;
+
         public Response CurrentResponse
         {
             set => _currentResponse = value;
@@ -20,7 +21,7 @@ namespace CesarJZO.DialogueSystem
 
         public override DialogueNode Child => _currentResponse.child;
 
-        public IEnumerable<Response> Responses => responses.AsReadOnly();
+        public IEnumerable<Response> Responses => responses;
 
         public int AddResponse()
         {
