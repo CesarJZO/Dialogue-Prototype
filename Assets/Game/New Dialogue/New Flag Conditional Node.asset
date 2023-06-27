@@ -1,0 +1,28 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0ba8f58213142a6be83e0cc8d2b98b0, type: 3}
+  m_Name: New Flag Conditional Node
+  m_EditorClassIdentifier:
+  speaker: {fileID: 0}
+  text:
+  rect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 256
+    height: 120
+  trueChild: {fileID: 11400000, guid: 0176e3f13f73c3b4993b5c3b87c147df, type: 2}
+  falseChild: {fileID: 11400000, guid: efa883e74d60cb445b3c16bf6a80bed1, type: 2}
+  flag:
+    name: Smoked
+    value: 1
+  flags: {fileID: 11400000, guid: f2134e103f18bf54bb080c0101b1096d, type: 2}
