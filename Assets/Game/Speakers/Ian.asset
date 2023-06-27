@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5091751108904ca2a78ce984774046b8, type: 3}
   m_Name: Ian
   m_EditorClassIdentifier: 
-  displayName: Madarame
-  neutralSprite: {fileID: 0}
+  displayName: Ian
+  neutralSprite: {fileID: 1970727154, guid: 4035f3558d72bb4469f47c9c677d89cd, type: 3}

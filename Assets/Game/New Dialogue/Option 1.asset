@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
   m_Name: Option 1
   m_EditorClassIdentifier: 
-  speaker: {fileID: 11400000, guid: dd710aa66b19c4340b8060d01ac6e66b, type: 2}
+  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
   text: It's all the same, don't you see?
+  emotion: 0
+  side: 1
   rect:
     serializedVersion: 2
     x: 0

@@ -22,6 +22,13 @@ namespace CesarJZO.DialogueSystem
         public Speaker CurrentSpeaker => _currentNode.Speaker;
 
         /// <summary>
+        ///     The side of the dialogue UI where the current speaker should be displayed.
+        /// </summary>
+        public DialogueNode.Side CurrentSide => _currentNode.PortraitSide;
+
+        public Emotion CurrentEmotion => _currentNode.Emotion;
+
+        /// <summary>
         ///     The text of the current node.
         /// </summary>
         public string CurrentText => _currentNode.Text;

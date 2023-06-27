@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d992f4c98448a4b8a609d541be5500, type: 3}
   m_Name: New Response Node
   m_EditorClassIdentifier: 
-  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
+  speaker: {fileID: 11400000, guid: dd710aa66b19c4340b8060d01ac6e66b, type: 2}
   text: What do you want from me!
+  emotion: 0
+  side: 0
   rect:
     serializedVersion: 2
     x: 0

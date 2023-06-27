@@ -8,12 +8,15 @@ namespace CesarJZO.UI
 {
     public class DialogueUI : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI speakerName;
-        [SerializeField] private Image speakerImage;
-
+        [Header("General")]
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button nextButton;
         [SerializeField] private Button quitButton;
+
+        [Header("Speaker")]
+        [SerializeField] private TextMeshProUGUI speakerName;
+        [SerializeField] private Image leftSpeakerImage;
+        [SerializeField] private Image rightSpeakerImage;
 
         [Header("Response Panel")]
         [Tooltip("The root that contains the response prefabs")]
@@ -21,9 +24,9 @@ namespace CesarJZO.UI
         [Tooltip("The prefab for the response buttons.")]
         [SerializeField] private Button responsePrefab;
 
-        [Header("Item Conditional Panel")]
+        [Header("Inventory Panel")]
         [Tooltip("The panel that contains the inventory UI.")]
-        [SerializeField] private GameObject itemConditionalPanel;
+        [SerializeField] private GameObject inventoryPanel;
 
         private DialogueManager _dialogueManager;
 
@@ -42,8 +45,8 @@ namespace CesarJZO.UI
             if (PlayerInput.Instance)
                 PlayerInput.Instance.NextPerformed += TryPerformNextOrExit;
 
-            nextButton.onClick.AddListener(TryPerformNextOrExit);
-            quitButton.onClick.AddListener(TryPerformNextOrExit);
+            nextButton.onClick.AddListener(TryPerformNext);
+            quitButton.onClick.AddListener(TryPerformQuit);
 
             UpdateUI();
         }
@@ -59,7 +62,11 @@ namespace CesarJZO.UI
                 ? _dialogueManager.CurrentSpeaker.DisplayName
                 : "Speaker not set";
 
-            speakerImage.sprite = _dialogueManager.CurrentSpeaker.NeutralSprite;
+            UpdatePortraitImage(
+                side: _dialogueManager.CurrentSide,
+                speaker: _dialogueManager.CurrentSpeaker,
+                emotion: _dialogueManager.CurrentEmotion
+            );
 
             text.text = _dialogueManager.CurrentText;
 
@@ -96,13 +103,44 @@ namespace CesarJZO.UI
         /// </summary>
         private void TryPerformNextOrExit()
         {
+            if (_dialogueManager.NextNode)
+                TryPerformNext();
+            else
+                TryPerformQuit();
+        }
+
+        private void TryPerformNext()
+        {
             if (_dialogueManager.Choosing)
                 return;
+            _dialogueManager.Next();
+        }
 
-            if (_dialogueManager.NextNode)
-                _dialogueManager.Next();
-            else
-                _dialogueManager.Quit();
+        private void TryPerformQuit()
+        {
+            if (_dialogueManager.Choosing)
+                return;
+            _dialogueManager.Quit();
+        }
+
+        /// <summary>
+        ///     Updates the portrait image for the given side and speaker.
+        /// </summary>
+        /// <param name="side">The side of the dialogue UI where the speaker should be displayed.</param>
+        /// <param name="speaker">The speaker to display.</param>
+        /// <param name="emotion">The emotion to select the sprite for.</param>
+        private void UpdatePortraitImage(Speaker speaker, DialogueNode.Side side, Emotion emotion = Emotion.Neutral)
+        {
+            if (!speaker) return;
+
+            Image portraitImage = side is DialogueNode.Side.Left ? leftSpeakerImage : rightSpeakerImage;
+
+            if (!portraitImage) return;
+
+            portraitImage.sprite = emotion switch
+            {
+                _ => speaker.NeutralSprite
+            };
         }
     }
 }
