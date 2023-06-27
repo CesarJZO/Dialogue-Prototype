@@ -1,7 +1,10 @@
-﻿using CesarJZO.DialogueSystem;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CesarJZO.DialogueSystem;
 using CesarJZO.Input;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace CesarJZO.UI
@@ -12,7 +15,6 @@ namespace CesarJZO.UI
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button nextButton;
         [SerializeField] private Button quitButton;
-
 
         [Header("Response Panel")]
         [Tooltip("The root that contains the response prefabs")]
@@ -39,10 +41,10 @@ namespace CesarJZO.UI
             _dialogueManager.ConversationUpdated += UpdateUI;
 
             if (PlayerInput.Instance)
-                PlayerInput.Instance.NextPerformed += PerformNextOrExit;
+                PlayerInput.Instance.NextPerformed += TryPerformNextOrExit;
 
-            nextButton.onClick.AddListener(PerformNextOrExit);
-            quitButton.onClick.AddListener(PerformNextOrExit);
+            nextButton.onClick.AddListener(TryPerformNextOrExit);
+            quitButton.onClick.AddListener(TryPerformNextOrExit);
 
             UpdateUI();
         }
@@ -58,7 +60,6 @@ namespace CesarJZO.UI
                 ? _dialogueManager.CurrentSpeaker.DisplayName
                 : "Speaker not set";
             text.text = _dialogueManager.CurrentText;
-
 
             if (_dialogueManager.CurrentNode is ResponseNode responseNode)
                 BuildResponses(responseNode);
@@ -87,7 +88,11 @@ namespace CesarJZO.UI
             }
         }
 
-        private void PerformNextOrExit()
+        /// <summary>
+        ///     If the player is choosing, then the next button will be disabled. Otherwise,
+        ///     it will perform Next() if there is a next node, or Quit() if there is not.
+        /// </summary>
+        private void TryPerformNextOrExit()
         {
             if (_dialogueManager.Choosing)
                 return;

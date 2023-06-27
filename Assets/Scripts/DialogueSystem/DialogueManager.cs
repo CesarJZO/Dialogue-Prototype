@@ -7,19 +7,40 @@ namespace CesarJZO.DialogueSystem
     {
         public event Action ConversationStarted;
         public event Action ConversationEnded;
-
         public event Action ConversationUpdated;
+
         public static DialogueManager Instance { get; private set; }
 
+        /// <summary>
+        ///     Whether there is a dialogue currently in progress.
+        /// </summary>
         public bool HasDialogue => _currentDialogue;
 
+        /// <summary>
+        ///     The speaker of the current node.
+        /// </summary>
         public Speaker CurrentSpeaker => _currentNode.Speaker;
 
+        /// <summary>
+        ///     The text of the current node.
+        /// </summary>
         public string CurrentText => _currentNode.Text;
 
+        /// <summary>
+        ///     Whether the current node is a <see cref="ResponseNode"/>.
+        /// </summary>
         public bool Choosing => _currentNode is ResponseNode;
 
+        /// <summary>
+        ///     The current node.
+        /// </summary>
         public DialogueNode CurrentNode => _currentNode;
+
+        /// <summary>
+        ///     The child node of the current node. If the current node is
+        ///     a <see cref="ConditionalNode"/>, returns the child of the
+        ///     <see cref="ConditionalNode.Child"/>.
+        /// </summary>
         public DialogueNode NextNode
         {
             get
@@ -61,6 +82,10 @@ namespace CesarJZO.DialogueSystem
             ConversationEnded?.Invoke();
         }
 
+        /// <summary>
+        ///     Sets the current node to the next node and invokes <see cref="ConversationUpdated"/>.
+        ///     However, it is necessary to
+        /// </summary>
         public void Next()
         {
             if (!_currentNode.Child)
