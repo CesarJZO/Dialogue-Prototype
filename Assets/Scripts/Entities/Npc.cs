@@ -1,7 +1,6 @@
-﻿using CesarJZO;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Entities
+namespace CesarJZO.Entities
 {
     public class Npc : MonoBehaviour, IInteractable
     {
