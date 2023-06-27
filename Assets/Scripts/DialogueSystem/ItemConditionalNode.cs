@@ -1,4 +1,5 @@
-﻿using CesarJZO.InventorySystem;
+﻿using System;
+using CesarJZO.InventorySystem;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
@@ -7,8 +8,16 @@ namespace CesarJZO.DialogueSystem
     public class ItemConditionalNode : ConditionalNode
     {
         [SerializeField] private Item hasItem;
-        [SerializeField] private Inventory inventory;
 
-        public override DialogueNode Child => inventory.HasItem(hasItem) ? trueChild : falseChild;
+        private Item _comparableItem;
+
+        public Item Item => hasItem;
+
+        public void SetItem(Item item)
+        {
+            _comparableItem = item;
+        }
+
+        public override DialogueNode Child => hasItem == _comparableItem ? trueChild : falseChild;
     }
 }

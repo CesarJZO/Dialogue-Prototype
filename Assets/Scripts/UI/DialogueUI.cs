@@ -1,5 +1,6 @@
 ﻿using CesarJZO.DialogueSystem;
 using CesarJZO.Input;
+using CesarJZO.InventorySystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,8 +75,24 @@ namespace CesarJZO.UI
                 BuildResponses(responseNode);
             responseRoot.gameObject.SetActive(_dialogueManager.Choosing);
 
+            if (_dialogueManager.CurrentNode is ItemConditionalNode)
+            {
+                inventoryPanel.SetActive(true);
+            }
+
             nextButton.gameObject.SetActive(_dialogueManager.NextNode && !_dialogueManager.Choosing);
             quitButton.gameObject.SetActive(!_dialogueManager.NextNode && !_dialogueManager.Choosing);
+        }
+
+        public void CheckItem(Item item)
+        {
+            if (_dialogueManager.CurrentNode is not ItemConditionalNode itemConditionalNode)
+                return;
+
+            itemConditionalNode.SetItem(item);
+            inventoryPanel.SetActive(false);
+
+            _dialogueManager.Next();
         }
 
         private void BuildResponses(ResponseNode responseNode)
