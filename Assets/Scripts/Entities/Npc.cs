@@ -11,6 +11,7 @@ namespace Entities
         public void Interact()
         {
             if (!dialogue) return;
+            if (!DialogueManager.Instance) return;
             DialogueManager.Instance.StartDialogue(dialogue);
         }
     }

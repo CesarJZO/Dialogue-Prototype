@@ -48,7 +48,7 @@ namespace CesarJZO.DialogueSystem
         ///     a <see cref="ConditionalNode"/>, returns the child of the
         ///     <see cref="ConditionalNode.Child"/>.
         /// </summary>
-        public DialogueNode NextNode
+        public bool HasNextNode
         {
             get
             {

@@ -12,7 +12,6 @@ namespace CesarJZO.UI
         [Header("General")]
         [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private Button nextButton;
-        [SerializeField] private Button quitButton;
 
         [Header("Speaker")]
         [SerializeField] private TextMeshProUGUI speakerName;
@@ -31,8 +30,13 @@ namespace CesarJZO.UI
 
         private DialogueManager _dialogueManager;
 
+        private bool _textWarningShown;
+        private bool _responseWarningShown;
+
         private void Start()
         {
+            HideComponents();
+
             _dialogueManager = DialogueManager.Instance;
 
             if (!_dialogueManager)
@@ -46,13 +50,12 @@ namespace CesarJZO.UI
             InventoryUI.ItemSelected += OnItemSelected;
 
             if (PlayerInput.Instance)
-                PlayerInput.Instance.NextPerformed += TryPerformNextOrExit;
+                PlayerInput.Instance.NextPerformed += TryPerformNextOrQuit;
 
-            nextButton.onClick.AddListener(TryPerformNext);
-            quitButton.onClick.AddListener(TryPerformQuit);
-
-            leftSpeakerImage.gameObject.SetActive(false);
-            rightSpeakerImage.gameObject.SetActive(false);
+            if (nextButton)
+                nextButton.onClick.AddListener(TryPerformNextOrQuit);
+            else
+                Debug.Log("<b>Next Button</b> is not set. DialogueUI will try to use <b>PlayerInput</b> instead.", this);
 
             UpdateUI();
         }
@@ -64,27 +67,12 @@ namespace CesarJZO.UI
             if (!_dialogueManager.HasDialogue)
                 return;
 
-            speakerName.text = _dialogueManager.CurrentSpeaker
-                ? _dialogueManager.CurrentSpeaker.DisplayName
-                : "Speaker not set";
-
-            UpdatePortraitImage(
-                side: _dialogueManager.CurrentSide,
-                speaker: _dialogueManager.CurrentSpeaker,
-                emotion: _dialogueManager.CurrentEmotion
-            );
-
-            text.text = _dialogueManager.CurrentText;
-
-            if (_dialogueManager.CurrentNode is ResponseNode responseNode)
-                BuildResponses(responseNode);
-            responseRoot.gameObject.SetActive(_dialogueManager.CurrentNode is ResponseNode);
-
-            if (_dialogueManager.CurrentNode is ItemConditionalNode)
-                inventoryPanel.Open();
-
-            nextButton.gameObject.SetActive(_dialogueManager.NextNode && !_dialogueManager.Prompting);
-            quitButton.gameObject.SetActive(!_dialogueManager.NextNode && !_dialogueManager.Prompting);
+            UpdateSpeakerText();
+            UpdateText();
+            UpdatePortraitImage();
+            UpdateResponseUI();
+            UpdateItemConditionalUI();
+            UpdateNextButton();
         }
 
         /// <summary>
@@ -106,17 +94,85 @@ namespace CesarJZO.UI
             _dialogueManager.Next();
         }
 
+        /// <summary>
+        ///     Updates the speaker text on UI.
+        /// </summary>
+        private void UpdateSpeakerText()
+        {
+            if (speakerName)
+                speakerName.text = _dialogueManager.CurrentSpeaker
+                    ? _dialogueManager.CurrentSpeaker.DisplayName
+                    : "Speaker not set";
+        }
+
+        /// <summary>
+        ///     Updates the dialogue text on UI. Throws a warning if no text is selected.
+        /// </summary>
+        private void UpdateText()
+        {
+            if (text)
+            {
+                text.text = _dialogueManager.CurrentText;
+            }
+            else if (!_textWarningShown)
+            {
+                Debug.LogWarning("No text ui selected for the dialogue UI.", this);
+                _textWarningShown = true;
+            }
+        }
+
+        /// <summary>
+        ///     If current node is a <see cref="ResponseNode"/>, then build the response
+        ///     buttons inside the response root.
+        /// </summary>
+        private void UpdateResponseUI()
+        {
+            if (!_dialogueManager) return;
+
+            DialogueNode currentNode = _dialogueManager.CurrentNode;
+
+            if (currentNode is ResponseNode responseNode)
+                BuildResponses(responseNode);
+
+            if (responseRoot)
+            {
+                responseRoot.gameObject.SetActive(currentNode is ResponseNode);
+            }
+            else if (currentNode is ResponseNode && !_responseWarningShown)
+            {
+                Debug.LogWarning("No response root selected for the dialogue UI.", this);
+                _responseWarningShown = true;
+            }
+        }
+
+        /// <summary>
+        ///     Put response buttons in the response root.
+        /// </summary>
+        /// <param name="responseNode"></param>
         private void BuildResponses(ResponseNode responseNode)
         {
+            if (!responseRoot) return;
             foreach (Transform item in responseRoot)
             {
                 Destroy(item.gameObject);
             }
 
+            if (!responsePrefab)
+            {
+                Debug.Log("No response prefab selected for the dialogue UI.", this);
+                return;
+            }
+
             foreach (Response response in responseNode.Responses)
             {
                 Button responseButton = Instantiate(responsePrefab, responseRoot);
-                responseButton.GetComponentInChildren<TextMeshProUGUI>().text = response.text;
+                var buttonText = responseButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (!buttonText)
+                {
+                    Debug.LogWarning("No text component found on the response button.", this);
+                    return;
+                }
+                buttonText.text = response.text;
                 responseButton.onClick.AddListener(() =>
                 {
                     responseNode.CurrentResponse = response;
@@ -126,50 +182,77 @@ namespace CesarJZO.UI
         }
 
         /// <summary>
-        ///     If the player is choosing, then the next button will be disabled. Otherwise,
-        ///     it will perform Next() if there is a next node, or Quit() if there is not.
-        /// </summary>
-        private void TryPerformNextOrExit()
-        {
-            if (_dialogueManager.NextNode)
-                TryPerformNext();
-            else
-                TryPerformQuit();
-        }
-
-        private void TryPerformNext()
-        {
-            if (_dialogueManager.Prompting)
-                return;
-            _dialogueManager.Next();
-        }
-
-        private void TryPerformQuit()
-        {
-            if (_dialogueManager.Prompting)
-                return;
-            _dialogueManager.Quit();
-        }
-
-        /// <summary>
         ///     Updates the portrait image for the given side and speaker.
         /// </summary>
-        /// <param name="side">The side of the dialogue UI where the speaker should be displayed.</param>
-        /// <param name="speaker">The speaker to display.</param>
-        /// <param name="emotion">The emotion to select the sprite for.</param>
-        private void UpdatePortraitImage(Speaker speaker, DialogueNode.Side side, Emotion emotion)
+        private void UpdatePortraitImage()
         {
+            Speaker speaker = _dialogueManager.CurrentSpeaker;
             if (!speaker) return;
 
-            Image portraitImage = side is DialogueNode.Side.Left ? leftSpeakerImage : rightSpeakerImage;
+            Image portraitImage = _dialogueManager.CurrentSide is DialogueNode.Side.Left
+                ? leftSpeakerImage
+                : rightSpeakerImage;
             if (!portraitImage) return;
 
             portraitImage.gameObject.SetActive(true);
 
-            portraitImage.sprite = emotion switch
+            portraitImage.sprite = _dialogueManager.CurrentEmotion switch
             {
                 _ => speaker.NeutralSprite
             };
+        }
+
+        /// <summary>
+        ///     Opens the inventory panel if the current node is an <see cref="ItemConditionalNode"/>.
+        /// </summary>
+        private void UpdateItemConditionalUI()
+        {
+            if (_dialogueManager.CurrentNode is not ItemConditionalNode) return;
+
+            if (inventoryPanel)
+                inventoryPanel.Open();
+            else
+                Debug.LogWarning("No inventory panel selected for the dialogue UI.", this);
+        }
+
+        /// <summary>
+        ///     Updates the next button to display "Next" if there is another node, or "Quit" if there is not.
+        ///     Also, hides the next button if the player is choosing a response.
+        /// </summary>
+        private void UpdateNextButton()
+        {
+            if (!nextButton) return;
+            var buttonText = nextButton.GetComponentInChildren<TextMeshProUGUI>();
+            if (buttonText)
+                buttonText.text = _dialogueManager.HasNextNode ? "Next" : "Quit";
+            nextButton.gameObject.SetActive(!_dialogueManager.Prompting);
+        }
+
+        /// <summary>
+        ///     If the player is choosing, then the next button will be disabled. Otherwise,
+        ///     it will perform Next() if there is a next node, or Quit() if there is not.
+        /// </summary>
+        private void TryPerformNextOrQuit()
+        {
+            if (_dialogueManager.Prompting)
+                return;
+            if (_dialogueManager.HasNextNode)
+                _dialogueManager.Next();
+            else
+                _dialogueManager.Quit();
+        }
+
+        /// <summary>
+        ///     Hides basic components of the UI, such as the speaker images and the dialogue UI itself.
+        /// </summary>
+        private void HideComponents()
+        {
+            if (leftSpeakerImage)
+                leftSpeakerImage.gameObject.SetActive(false);
+            if (rightSpeakerImage)
+                rightSpeakerImage.gameObject.SetActive(false);
+
+            gameObject.SetActive(false);
         }
     }
 }
