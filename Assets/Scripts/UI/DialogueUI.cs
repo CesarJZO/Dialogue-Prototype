@@ -45,6 +45,7 @@ namespace CesarJZO.UI
                 return;
             }
 
+            _dialogueManager.ConversationStarted += ResetUI;
             _dialogueManager.ConversationUpdated += UpdateUI;
 
             InventoryUI.ItemSelected += OnItemSelected;
@@ -58,6 +59,13 @@ namespace CesarJZO.UI
                 Debug.Log("<b>Next Button</b> is not set. DialogueUI will try to use <b>PlayerInput</b> instead.", this);
 
             UpdateUI();
+        }
+
+        private void ResetUI()
+        {
+            HideComponents();
+            leftSpeakerImage.sprite = null;
+            rightSpeakerImage.sprite = null;
         }
 
         private void UpdateUI()

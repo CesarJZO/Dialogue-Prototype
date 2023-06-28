@@ -9,6 +9,11 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private GameFlag flag;
         [SerializeField] private GameFlags flags;
 
-        public override DialogueNode Child => flags.CheckFlag(flag) ? trueChild : falseChild;
+        public override DialogueNode Child => Evaluate() ? trueChild : falseChild;
+
+        public override bool Evaluate()
+        {
+            return flags.CheckFlag(flag);
+        }
     }
 }

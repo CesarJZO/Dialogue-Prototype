@@ -7,6 +7,8 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] protected DialogueNode trueChild;
         [SerializeField] protected DialogueNode falseChild;
 
+        public abstract bool Evaluate();
+
         public void SetTrueChild(DialogueNode node)
         {
             trueChild = node;

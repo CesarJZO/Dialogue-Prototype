@@ -5,6 +5,8 @@ namespace CesarJZO.DialogueSystem
 {
     public class DialogueManager : MonoBehaviour
     {
+        public event Action<bool> ConditionalNodeEvaluated;
+
         public event Action ConversationStarted;
         public event Action ConversationEnded;
         public event Action ConversationUpdated;
@@ -101,6 +103,9 @@ namespace CesarJZO.DialogueSystem
                 ConversationEnded?.Invoke();
                 return;
             }
+
+            if (_currentNode is ConditionalNode itemConditionalNode)
+                ConditionalNodeEvaluated?.Invoke(itemConditionalNode.Evaluate());
 
             _currentNode = _currentNode.Child;
 
