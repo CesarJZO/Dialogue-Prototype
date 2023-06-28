@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using CesarJZO;
-using CesarJZO.DialogueSystem;
 using UnityEngine;
 
-namespace Entities
+namespace CesarJZO.DialogueSystem
 {
-    public class Npc : MonoBehaviour, IInteractable
+    public class DialogueNpc : MonoBehaviour, IInteractable
     {
         [SerializeField] private Dialogue[] dialogues;
+        [SerializeField] private Dialogue currentDialogue;
 
         private Queue<Dialogue> _dialogueQueue;
-
-        private Dialogue _currentDialogue;
 
         private DialogueManager _dialogueManager;
 
@@ -29,7 +26,7 @@ namespace Entities
 
             try
             {
-                _currentDialogue = _dialogueQueue.Dequeue();
+                currentDialogue = _dialogueQueue.Dequeue();
             }
             catch (InvalidOperationException)
             {
@@ -42,16 +39,16 @@ namespace Entities
             if (!value) return;
 
             if (_dialogueQueue.TryDequeue(out Dialogue dialogue))
-                _currentDialogue = dialogue;
+                currentDialogue = dialogue;
         }
 
         public void Interact()
         {
-            if (!_currentDialogue) return;
+            if (!currentDialogue) return;
 
             if (!_dialogueManager) return;
 
-            _dialogueManager.StartDialogue(_currentDialogue);
+            _dialogueManager.StartDialogue(currentDialogue);
         }
     }
 }

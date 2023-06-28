@@ -5,6 +5,9 @@ namespace CesarJZO.DialogueSystem
 {
     public class DialogueManager : MonoBehaviour
     {
+        /// <summary>
+        ///     Called when a <see cref="ConditionalNode"/> is evaluated on <see cref="Next"/>
+        /// </summary>
         public event Action<bool> ConditionalNodeEvaluated;
 
         public event Action ConversationStarted;
@@ -81,7 +84,7 @@ namespace CesarJZO.DialogueSystem
         }
 
         /// <summary>
-        ///     Finishes the current conversation and invokes <see cref="ConversationUpdated"/>.
+        ///     Finishes the current conversation and invokes <see cref="ConversationUpdated"/> and <see cref="ConversationEnded"/>.
         /// </summary>
         public void Quit()
         {
@@ -93,14 +96,13 @@ namespace CesarJZO.DialogueSystem
 
         /// <summary>
         ///     Sets the current node to the next node and invokes <see cref="ConversationUpdated"/>.
-        ///     However, it is necessary to
+        ///     Also, calls <see cref="Quit"/> if there is no next node.
         /// </summary>
         public void Next()
         {
             if (!_currentNode.Child)
             {
-                ConversationUpdated?.Invoke();
-                ConversationEnded?.Invoke();
+                Quit();
                 return;
             }
 
