@@ -34,9 +34,9 @@ namespace CesarJZO.DialogueSystem
         public string CurrentText => _currentNode.Text;
 
         /// <summary>
-        ///     Whether the current node is a <see cref="ResponseNode"/>.
+        ///     Whether the current node is a <see cref="ResponseNode"/> or an <see cref="ItemConditionalNode"/>.
         /// </summary>
-        public bool Choosing => _currentNode is ResponseNode;
+        public bool Prompting => _currentNode is ResponseNode or ItemConditionalNode;
 
         /// <summary>
         ///     The current node.

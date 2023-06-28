@@ -73,15 +73,15 @@ namespace CesarJZO.UI
 
             if (_dialogueManager.CurrentNode is ResponseNode responseNode)
                 BuildResponses(responseNode);
-            responseRoot.gameObject.SetActive(_dialogueManager.Choosing);
+            responseRoot.gameObject.SetActive(_dialogueManager.CurrentNode is ResponseNode);
 
             if (_dialogueManager.CurrentNode is ItemConditionalNode)
             {
                 inventoryPanel.SetActive(true);
             }
 
-            nextButton.gameObject.SetActive(_dialogueManager.NextNode && !_dialogueManager.Choosing);
-            quitButton.gameObject.SetActive(!_dialogueManager.NextNode && !_dialogueManager.Choosing);
+            nextButton.gameObject.SetActive(_dialogueManager.NextNode && !_dialogueManager.Prompting);
+            quitButton.gameObject.SetActive(!_dialogueManager.NextNode && !_dialogueManager.Prompting);
         }
 
         public void CheckItem(Item item)
@@ -128,14 +128,14 @@ namespace CesarJZO.UI
 
         private void TryPerformNext()
         {
-            if (_dialogueManager.Choosing)
+            if (_dialogueManager.Prompting)
                 return;
             _dialogueManager.Next();
         }
 
         private void TryPerformQuit()
         {
-            if (_dialogueManager.Choosing)
+            if (_dialogueManager.Prompting)
                 return;
             _dialogueManager.Quit();
         }

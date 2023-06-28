@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: New Response Node
   m_EditorClassIdentifier: 
   speaker: {fileID: 11400000, guid: dd710aa66b19c4340b8060d01ac6e66b, type: 2}
-  text: What do you want from me!
+  text: So you have it.
   emotion: 0
   side: 0
   rect:
@@ -23,7 +23,7 @@ MonoBehaviour:
     width: 256
     height: 120
   responses:
-  - text: I am unique
+  - text: Leave
     child: {fileID: 11400000, guid: bbf077aded923254f8c12bc2f16dde1c, type: 2}
   - text: This
     child: {fileID: 11400000, guid: 856599bafa3c49940b61181d39ca872c, type: 2}

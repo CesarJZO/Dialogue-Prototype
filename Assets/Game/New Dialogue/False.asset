@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: False
   m_EditorClassIdentifier: 
   speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
-  text: False
+  text: So why did you came then.
   emotion: 0
   side: 1
   rect:

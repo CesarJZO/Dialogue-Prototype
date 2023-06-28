@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Option
   m_EditorClassIdentifier: 
   speaker: {fileID: 11400000, guid: dd710aa66b19c4340b8060d01ac6e66b, type: 2}
-  text: I am the only one.
+  text: Ok.
+  emotion: 0
+  side: 0
   rect:
     serializedVersion: 2
     x: 0
