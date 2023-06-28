@@ -27,7 +27,7 @@ namespace CesarJZO.UI
 
         [Header("Inventory Panel")]
         [Tooltip("The panel that contains the inventory UI.")]
-        [SerializeField] private GameObject inventoryPanel;
+        [SerializeField] private InventoryUI inventoryPanel;
 
         private DialogueManager _dialogueManager;
 
@@ -37,17 +37,22 @@ namespace CesarJZO.UI
 
             if (!_dialogueManager)
             {
-                Debug.LogWarning("No <b>DialogueManager</b> found in scene.", this);
+                Debug.LogWarning("No <b>DialogueManager</b> instance found.", this);
                 return;
             }
 
             _dialogueManager.ConversationUpdated += UpdateUI;
+
+            InventoryUI.ItemSelected += OnItemSelected;
 
             if (PlayerInput.Instance)
                 PlayerInput.Instance.NextPerformed += TryPerformNextOrExit;
 
             nextButton.onClick.AddListener(TryPerformNext);
             quitButton.onClick.AddListener(TryPerformQuit);
+
+            leftSpeakerImage.gameObject.SetActive(false);
+            rightSpeakerImage.gameObject.SetActive(false);
 
             UpdateUI();
         }
@@ -76,21 +81,27 @@ namespace CesarJZO.UI
             responseRoot.gameObject.SetActive(_dialogueManager.CurrentNode is ResponseNode);
 
             if (_dialogueManager.CurrentNode is ItemConditionalNode)
-            {
-                inventoryPanel.SetActive(true);
-            }
+                inventoryPanel.Open();
 
             nextButton.gameObject.SetActive(_dialogueManager.NextNode && !_dialogueManager.Prompting);
             quitButton.gameObject.SetActive(!_dialogueManager.NextNode && !_dialogueManager.Prompting);
         }
 
-        public void CheckItem(Item item)
+        /// <summary>
+        ///     Sets the item to the current Node if the current node is an <see cref="ItemConditionalNode"/>.
+        ///     And then proceeds to the next node closing the inventory panel.
+        /// </summary>
+        /// <param name="item">The item to be set for validation.</param>
+        private void OnItemSelected(Item item)
         {
+            if (!_dialogueManager)
+                return;
+            if (!_dialogueManager.HasDialogue)
+                return;
             if (_dialogueManager.CurrentNode is not ItemConditionalNode itemConditionalNode)
                 return;
 
             itemConditionalNode.SetItem(item);
-            inventoryPanel.SetActive(false);
 
             _dialogueManager.Next();
         }
@@ -146,13 +157,14 @@ namespace CesarJZO.UI
         /// <param name="side">The side of the dialogue UI where the speaker should be displayed.</param>
         /// <param name="speaker">The speaker to display.</param>
         /// <param name="emotion">The emotion to select the sprite for.</param>
-        private void UpdatePortraitImage(Speaker speaker, DialogueNode.Side side, Emotion emotion = Emotion.Neutral)
+        private void UpdatePortraitImage(Speaker speaker, DialogueNode.Side side, Emotion emotion)
         {
             if (!speaker) return;
 
             Image portraitImage = side is DialogueNode.Side.Left ? leftSpeakerImage : rightSpeakerImage;
-
             if (!portraitImage) return;
+
+            portraitImage.gameObject.SetActive(true);
 
             portraitImage.sprite = emotion switch
             {

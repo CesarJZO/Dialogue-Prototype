@@ -1037,9 +1037,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1017428128}
-        m_TargetAssemblyTypeName: CesarJZO.UI.DialogueUI, Assembly-CSharp
-        m_MethodName: CheckItem
+      - m_Target: {fileID: 711889793}
+        m_TargetAssemblyTypeName: CesarJZO.UI.InventoryUI, Assembly-CSharp
+        m_MethodName: SelectItem
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 11400000, guid: aa4ccbc0463ec374da5c1c22f114a5b8, type: 2}
@@ -2464,7 +2464,7 @@ MonoBehaviour:
   rightSpeakerImage: {fileID: 691950168}
   responseRoot: {fileID: 440096200}
   responsePrefab: {fileID: 7484399370106171697, guid: cbe90800f3d2d74418a781963ce704a0, type: 3}
-  inventoryPanel: {fileID: 711889789}
+  inventoryPanel: {fileID: 711889793}
 --- !u!114 &1017428129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3269,7 +3269,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 1024
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -3748,9 +3748,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1017428128}
-        m_TargetAssemblyTypeName: CesarJZO.UI.DialogueUI, Assembly-CSharp
-        m_MethodName: CheckItem
+      - m_Target: {fileID: 711889793}
+        m_TargetAssemblyTypeName: CesarJZO.UI.InventoryUI, Assembly-CSharp
+        m_MethodName: SelectItem
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 11400000, guid: 43cd36b4fdbdeeb4a876ba0ce277bf57, type: 2}
