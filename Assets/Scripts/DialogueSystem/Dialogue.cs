@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
@@ -11,8 +9,6 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private List<DialogueNode> nodes;
         public DialogueNode RootNode => nodes[0];
 
-        public IEnumerable<DialogueNode> Nodes => nodes.AsReadOnly();
-
-
+        public IEnumerable<DialogueNode> Nodes => nodes;
     }
 }

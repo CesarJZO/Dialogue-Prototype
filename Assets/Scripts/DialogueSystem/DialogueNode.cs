@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
@@ -15,6 +14,8 @@ namespace CesarJZO.DialogueSystem
         [SerializeField, TextArea] private string text;
         [SerializeField] private Emotion emotion;
         [SerializeField] private Side side;
+        [SerializeField] private string flag;
+
         [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
 
         public abstract DialogueNode Child { get; }
@@ -24,6 +25,8 @@ namespace CesarJZO.DialogueSystem
         public Emotion Emotion => emotion;
 
         public Side PortraitSide => side;
+
+        public string Flag => flag;
 
         public string Text
         {

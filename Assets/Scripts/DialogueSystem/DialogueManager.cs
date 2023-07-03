@@ -6,9 +6,9 @@ namespace CesarJZO.DialogueSystem
     public class DialogueManager : MonoBehaviour
     {
         /// <summary>
-        ///     Called when a <see cref="ConditionalNode"/> is evaluated on <see cref="Next"/>
+        ///     Invoked when <see cref="Next"/> is called, sending the previous node.
         /// </summary>
-        public event Action<bool> ConditionalNodeEvaluated;
+        public event Action<DialogueNode> NodeChanged;
 
         public event Action ConversationStarted;
         public event Action ConversationEnded;
@@ -50,18 +50,10 @@ namespace CesarJZO.DialogueSystem
 
         /// <summary>
         ///     The child node of the current node. If the current node is
-        ///     a <see cref="ConditionalNode"/>, returns the child of the
-        ///     <see cref="ConditionalNode.Child"/>.
+        ///     a <see cref="ItemConditionalNode"/>, returns the child of the
+        ///     <see cref="ItemConditionalNode.Child"/>.
         /// </summary>
-        public bool HasNextNode
-        {
-            get
-            {
-                if (_currentNode.Child is ConditionalNode conditionalNode)
-                    return conditionalNode.Child;
-                return _currentNode.Child;
-            }
-        }
+        public bool HasNextNode => _currentNode.Child;
 
         private Dialogue _currentDialogue;
         private DialogueNode _currentNode;
@@ -100,16 +92,14 @@ namespace CesarJZO.DialogueSystem
         /// </summary>
         public void Next()
         {
-            if (!_currentNode.Child)
-            {
-                Quit();
-                return;
-            }
+            if (!HasNextNode)
+                throw new DialogueNoNextNodeException("There is no next node.");
 
-            if (_currentNode is ConditionalNode itemConditionalNode)
-                ConditionalNodeEvaluated?.Invoke(itemConditionalNode.Evaluate());
+            DialogueNode parent = _currentNode;
 
             _currentNode = _currentNode.Child;
+
+            NodeChanged?.Invoke(parent);
 
             ConversationUpdated?.Invoke();
         }
