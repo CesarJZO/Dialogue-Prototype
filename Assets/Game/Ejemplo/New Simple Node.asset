@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
-  m_Name: RootNode
+  m_Name: New Simple Node
   m_EditorClassIdentifier: 
   speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
-  text: Yo, what'up baby boo, how you feel?
+  text: Hola, peer in
   emotion: 0
-  side: 1
-  flag: r
+  side: 0
+  flag: 
   rect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 256
     height: 120
-  child: {fileID: 11400000, guid: 5ebb4c195df2b5d4cbbcb458c1914e61, type: 2}
+  child: {fileID: 0}

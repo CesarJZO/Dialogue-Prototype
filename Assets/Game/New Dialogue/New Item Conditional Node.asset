@@ -9,19 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea08e6d866a547349bb48a51936eeb08, type: 3}
+  m_Script: {fileID: 11500000, guid: d136be498be44f908b05b4df900b0e14, type: 3}
   m_Name: New Item Conditional Node
   m_EditorClassIdentifier: 
   speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
-  text: Hey, do you have that?
+  text: Do you have that?
   emotion: 0
   side: 1
+  flag: 
   rect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 256
     height: 120
-  trueChild: {fileID: 11400000, guid: b2c36c7cda4d7494f92d6f1d5f9fe938, type: 2}
-  falseChild: {fileID: 11400000, guid: 6365806350061cb4e8bb7cfbe80147ef, type: 2}
   hasItem: {fileID: 11400000, guid: 43cd36b4fdbdeeb4a876ba0ce277bf57, type: 2}
+  trueChild: {fileID: 11400000, guid: 8faa98c15a0087740ad1f10068f69441, type: 2}
+  falseChild: {fileID: 11400000, guid: 6365806350061cb4e8bb7cfbe80147ef, type: 2}

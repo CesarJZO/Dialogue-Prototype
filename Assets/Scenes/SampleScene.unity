@@ -283,6 +283,7 @@ GameObject:
   - component: {fileID: 268358227}
   - component: {fileID: 268358230}
   - component: {fileID: 268358231}
+  - component: {fileID: 268358232}
   m_Layer: 11
   m_Name: NPC
   m_TagString: Untagged
@@ -416,9 +417,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cbff83654ad48c2881145abd12465c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  usedByCondition: 1
+  flagOnStart: 
+  dequeueOnEnd: 0
   dialogues:
   - {fileID: 11400000, guid: 93d73561325232244997087f9a50e1b2, type: 2}
   - {fileID: 11400000, guid: 3f377d787bf56504f8a0f8f08e80a558, type: 2}
+  currentDialogue: {fileID: 0}
+  onNodeChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &268358232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268358226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a4c589306c748e2891dd1ac86debac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  action: 1
+  condition: 1
+  flag: capitana muertta
+  dialogueToReplace: {fileID: 11400000, guid: 206a55106c0f29a4b89c68f66b88fb6d, type: 2}
 --- !u!1 &330557367
 GameObject:
   m_ObjectHideFlags: 0

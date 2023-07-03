@@ -16,6 +16,7 @@ MonoBehaviour:
   text: Hit This
   emotion: 0
   side: 1
+  flag: 
   rect:
     serializedVersion: 2
     x: 0
