@@ -1,20 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
     public abstract class DialogueNode : ScriptableObject
     {
-        public enum Side
-        {
-            Left,
-            Right
-        }
-
         [SerializeField] private Speaker speaker;
         [SerializeField, TextArea] private string text;
         [SerializeField] private Emotion emotion;
-        [SerializeField] private Side side;
+        [SerializeField] private PortraitSide portraitSide;
+
         [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
 
         public abstract DialogueNode Child { get; }
@@ -23,7 +17,7 @@ namespace CesarJZO.DialogueSystem
 
         public Emotion Emotion => emotion;
 
-        public Side PortraitSide => side;
+        public PortraitSide PortraitSide => portraitSide;
 
         public string Text
         {

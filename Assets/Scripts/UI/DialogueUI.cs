@@ -197,7 +197,7 @@ namespace CesarJZO.UI
             Speaker speaker = _dialogueManager.CurrentSpeaker;
             if (!speaker) return;
 
-            Image portraitImage = _dialogueManager.CurrentSide is DialogueNode.Side.Left
+            Image portraitImage = _dialogueManager.CurrentSide is PortraitSide.Left
                 ? leftSpeakerImage
                 : rightSpeakerImage;
             if (!portraitImage) return;

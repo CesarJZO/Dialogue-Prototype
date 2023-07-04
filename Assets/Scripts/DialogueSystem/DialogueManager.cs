@@ -6,7 +6,7 @@ namespace CesarJZO.DialogueSystem
     public class DialogueManager : MonoBehaviour
     {
         /// <summary>
-        ///     Called when a <see cref="ConditionalNode"/> is evaluated on <see cref="Next"/>
+        ///     Called when a <see cref="ItemConditionalNode"/> is evaluated on <see cref="Next"/>
         /// </summary>
         public event Action<bool> ConditionalNodeEvaluated;
 
@@ -29,7 +29,7 @@ namespace CesarJZO.DialogueSystem
         /// <summary>
         ///     The side of the dialogue UI where the current speaker should be displayed.
         /// </summary>
-        public DialogueNode.Side CurrentSide => _currentNode.PortraitSide;
+        public PortraitSide CurrentSide => _currentNode.PortraitSide;
 
         public Emotion CurrentEmotion => _currentNode.Emotion;
 
@@ -49,19 +49,9 @@ namespace CesarJZO.DialogueSystem
         public DialogueNode CurrentNode => _currentNode;
 
         /// <summary>
-        ///     The child node of the current node. If the current node is
-        ///     a <see cref="ConditionalNode"/>, returns the child of the
-        ///     <see cref="ConditionalNode.Child"/>.
+        ///     The child node of the current node.
         /// </summary>
-        public bool HasNextNode
-        {
-            get
-            {
-                if (_currentNode.Child is ConditionalNode conditionalNode)
-                    return conditionalNode.Child;
-                return _currentNode.Child;
-            }
-        }
+        public bool HasNextNode => _currentNode.Child;
 
         private Dialogue _currentDialogue;
         private DialogueNode _currentNode;
@@ -106,7 +96,7 @@ namespace CesarJZO.DialogueSystem
                 return;
             }
 
-            if (_currentNode is ConditionalNode itemConditionalNode)
+            if (_currentNode is ItemConditionalNode itemConditionalNode)
                 ConditionalNodeEvaluated?.Invoke(itemConditionalNode.Evaluate());
 
             _currentNode = _currentNode.Child;
