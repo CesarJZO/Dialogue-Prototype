@@ -35,8 +35,6 @@ namespace CesarJZO.DialogueSystem
 #endif
         }
 
-        public abstract bool IsChild(DialogueNode node);
-
-        public abstract void RemoveChild(DialogueNode node);
+        public abstract bool TryRemoveChild(DialogueNode node);
     }
 }

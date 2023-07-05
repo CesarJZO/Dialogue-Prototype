@@ -86,12 +86,8 @@ namespace CesarJZO.DialogueSystem
         {
             nodes.Remove(node);
             foreach (DialogueNode n in nodes)
-            {
-                if (n.IsChild(node))
-                {
-                    n.RemoveChild(node);
-                }
-            }
+                n.TryRemoveChild(node);
+
             RemoveInstanceFromAssetDatabase(node);
         }
 

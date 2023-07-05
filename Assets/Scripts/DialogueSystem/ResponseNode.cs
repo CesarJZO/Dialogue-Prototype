@@ -21,15 +21,14 @@ namespace CesarJZO.DialogueSystem
         }
 
         public override DialogueNode Child => _currentResponse?.child;
-
-        public override bool IsChild(DialogueNode node)
+        public override bool TryRemoveChild(DialogueNode node)
         {
-            return responses.Any(response => response.child == node);
-        }
+            Response response = responses.FirstOrDefault(r => r.child == node);
 
-        public override void RemoveChild(DialogueNode node)
-        {
-            responses.RemoveAll(response => response.child == node);
+            if (response is null) return false;
+
+            responses.Remove(response);
+            return true;
         }
 
         public void UnlinkChild(int index)

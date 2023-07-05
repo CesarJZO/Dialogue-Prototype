@@ -15,17 +15,19 @@ namespace CesarJZO.DialogueSystem
         public Item Item => hasItem;
 
         public override DialogueNode Child => Evaluate() ? trueChild : falseChild;
-        public override bool IsChild(DialogueNode node)
+        public override bool TryRemoveChild(DialogueNode node)
         {
-            return node == trueChild || node == falseChild;
-        }
-
-        public override void RemoveChild(DialogueNode node)
-        {
-            if (node == trueChild)
+            if (trueChild == node)
+            {
                 trueChild = null;
-            else if (node == falseChild)
+                return true;
+            }
+            if (falseChild == node)
+            {
                 falseChild = null;
+                return true;
+            }
+            return false;
         }
 
         public void SetChild(DialogueNode node, bool which)

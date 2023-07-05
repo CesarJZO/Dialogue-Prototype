@@ -8,14 +8,12 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private DialogueNode child;
 
         public override DialogueNode Child => child;
-        public override bool IsChild(DialogueNode node)
+        public override bool TryRemoveChild(DialogueNode node)
         {
-            return node == child;
-        }
+            if (child != node) return false;
 
-        public override void RemoveChild(DialogueNode node)
-        {
             child = null;
+            return true;
         }
 
         public DialogueNode GetChild()
