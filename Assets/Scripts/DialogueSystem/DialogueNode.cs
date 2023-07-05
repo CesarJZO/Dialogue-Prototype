@@ -16,7 +16,8 @@ namespace CesarJZO.DialogueSystem
             _ => NodeType.SimpleNode
         };
 
-        [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
+        // [HideInInspector]
+        public Rect rect = new(0f, 0f, 256f, 120f);
 
         public abstract DialogueNode Child { get; }
 
@@ -33,5 +34,9 @@ namespace CesarJZO.DialogueSystem
             set => text = value;
 #endif
         }
+
+        public abstract bool IsChild(DialogueNode node);
+
+        public abstract void RemoveChild(DialogueNode node);
     }
 }

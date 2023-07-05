@@ -11,7 +11,8 @@ namespace CesarJZO.DialogueSystem.Editor
         private static Dialogue _selectedDialogueAsset;
 
         [NonSerialized] private DialogueNode _draggingNode;
-        [NonSerialized] private DialogueNode _creatingNode;
+        [NonSerialized] private NodeContext _creatingNode;
+        [NonSerialized] private NodeContext _linkingNode;
         [NonSerialized] private Vector2 _draggingNodeOffset;
         [NonSerialized] private Vector2 _scrollPosition;
 
@@ -56,6 +57,17 @@ namespace CesarJZO.DialogueSystem.Editor
                 );
                 if (_draggingNode)
                 {
+                    if (_linkingNode is not null)
+                    {
+                        if (_linkingNode.parentNode is SimpleNode simpleNode)
+                            simpleNode.SetChild(_draggingNode);
+                        else if (_linkingNode.parentNode is ResponseNode responseNode)
+                            responseNode.SetChild(_draggingNode, _linkingNode.indexIfResponse);
+                        else if (_linkingNode.parentNode is ItemConditionalNode itemConditionalNode)
+                            itemConditionalNode.SetChild(_draggingNode, _linkingNode.valueIfConditional);
+                        // EditorUtility.SetDirty(_selectedDialogueAsset);
+                        _linkingNode = null;
+                    }
                     _draggingNodeOffset = e.mousePosition - _draggingNode.rect.position;
                     Selection.activeObject = _draggingNode;
                 }
@@ -89,6 +101,11 @@ namespace CesarJZO.DialogueSystem.Editor
             else if (e.type is EventType.MouseUp && e.button is 0)
             {
                 _draggingNode = null;
+            }
+
+            if (e.type is EventType.KeyUp && e.keyCode is KeyCode.Escape && _linkingNode is not null)
+            {
+                _linkingNode = null;
             }
         }
 
@@ -145,38 +162,74 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void AddSimpleNodeMenuItems(SimpleNode simpleNode, ref GenericMenu menu)
         {
-            if (!simpleNode.HasChild)
+            if (!simpleNode.Child)
             {
-                menu.AddItem(
-                    content: new GUIContent("Add Node/Add Simple Node"),
-                    on: false,
-                    func: () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
+                menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
+                    () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
                 );
-                menu.AddItem(
-                    content: new GUIContent("Add Node/Add Conditional Node"),
-                    on: false,
-                    func: () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
+                menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
+                    () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
                 );
-                menu.AddItem(
-                    content: new GUIContent("Add Node/Add Response Node"),
-                    on: false,
-                    func: () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
+                menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
+                    () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
                 );
-
+                menu.AddItem(new GUIContent("Link Node"), false,
+                    () => _linkingNode = new NodeContext(simpleNode)
+                );
             }
             else
             {
-                menu.AddItem(
-                    content: new GUIContent("Remove Child"),
-                    on: false,
-                    func: simpleNode.RemoveChild
+                menu.AddItem(new GUIContent("Unlink Child"), false, simpleNode.UnlinkChild);
+            }
+        }
+
+        private void AddConditionalNodeMenuItems(ItemConditionalNode conditionalNode, ref GenericMenu menu, bool which)
+        {
+            if (!conditionalNode.GetChild(which))
+            {
+                menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
+                    () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.SimpleNode, which)
+                );
+
+                menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
+                    () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ResponseNode, which)
+                );
+                menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
+                    () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ConditionalNode, which)
+                );
+                menu.AddItem(new GUIContent("Link node"), false,
+                    () => _linkingNode = new NodeContext(conditionalNode) { valueIfConditional = which }
+                );
+            }
+            else
+            {
+                menu.AddItem(new GUIContent("Unlink Child"), false,
+                    () => conditionalNode.UnlinkChild(which)
                 );
             }
         }
 
         private void DrawConditionalNode(ItemConditionalNode conditionalNode)
         {
+            const float buttonWidth = 48f;
+            DrawGUIElements(true);
+            DrawGUIElements(false);
 
+            void DrawGUIElements(bool which)
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label($"Child If {which}:");
+                    string label = conditionalNode.GetChild(which) ? "Unlink" : "Add";
+                    if (GUILayout.Button(label, GUILayout.Width(buttonWidth)))
+                    {
+                        var menu = new GenericMenu();
+                        AddConditionalNodeMenuItems(conditionalNode, ref menu, which);
+                        menu.ShowAsContext();
+                    }
+                }
+                GUILayout.EndHorizontal();
+            }
         }
 
         private void DrawResponseNode(ResponseNode responseNode)
@@ -190,6 +243,21 @@ namespace CesarJZO.DialogueSystem.Editor
         private void DrawConnections(DialogueNode node)
         {
             Vector3 startPosition = node.rect.center + Vector2.right * node.rect.width / 2f;
+
+            if (_linkingNode is not null && _linkingNode.parentNode == node)
+            {
+                Handles.DrawBezier(
+                    startPosition,
+                    Event.current.mousePosition,
+                    startPosition + Vector3.right * 50f,
+                    Event.current.mousePosition - Vector2.right * 50f,
+                    Color.white,
+                    null,
+                    4f
+                );
+                GUI.changed = true;
+                return;
+            }
 
             DialogueNode childNode = node.Child;
 
@@ -250,9 +318,10 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void HandleNodeModifiers()
         {
-            if (_creatingNode)
+            if (_creatingNode?.parentNode)
             {
-                _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode, _creatingNode.rect.position + Vector2.right * 300f);
+                _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode,
+                    _creatingNode.parentNode.rect.position + Vector2.right * 300f);
                 _creatingNode = null;
             }
         }
@@ -319,6 +388,28 @@ namespace CesarJZO.DialogueSystem.Editor
             GUILayout.EndHorizontal();
             GUILayout.FlexibleSpace();
             GUILayout.EndArea();
+        }
+
+        private float GetHeightForNode(NodeType nodeType)
+        {
+            return nodeType switch
+            {
+                NodeType.ResponseNode => 100f,
+                NodeType.ConditionalNode => 138f,
+                _ => 92f
+            };
+        }
+    }
+
+    public class NodeContext
+    {
+        public readonly DialogueNode parentNode;
+        public bool valueIfConditional;
+        public int indexIfResponse;
+
+        public NodeContext(DialogueNode parentNode)
+        {
+            this.parentNode = parentNode;
         }
     }
 }

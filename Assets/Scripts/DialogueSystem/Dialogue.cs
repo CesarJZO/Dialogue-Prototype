@@ -73,10 +73,7 @@ namespace CesarJZO.DialogueSystem
         public void AddChildToConditionalNode(ItemConditionalNode parent, NodeType childType, bool condition)
         {
             DialogueNode childNode = CreateNode(parent, childType);
-            if (condition)
-                parent.SetTrueChild(childNode);
-            else
-                parent.SetFalseChild(childNode);
+            parent.SetChild(childNode, condition);
         }
 
         public void AddChildToResponseNode(ResponseNode parent, NodeType childType, int index)
@@ -88,6 +85,13 @@ namespace CesarJZO.DialogueSystem
         public void RemoveNode(DialogueNode node)
         {
             nodes.Remove(node);
+            foreach (DialogueNode n in nodes)
+            {
+                if (n.IsChild(node))
+                {
+                    n.RemoveChild(node);
+                }
+            }
             RemoveInstanceFromAssetDatabase(node);
         }
 

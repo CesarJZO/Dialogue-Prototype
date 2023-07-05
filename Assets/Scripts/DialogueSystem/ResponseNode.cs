@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
@@ -21,12 +22,28 @@ namespace CesarJZO.DialogueSystem
 
         public override DialogueNode Child => _currentResponse?.child;
 
+        public override bool IsChild(DialogueNode node)
+        {
+            return responses.Any(response => response.child == node);
+        }
+
+        public override void RemoveChild(DialogueNode node)
+        {
+            responses.RemoveAll(response => response.child == node);
+        }
+
         public IEnumerable<Response> Responses => responses;
 
         public int AddResponse()
         {
             responses.Add(new Response());
             return responses.Count - 1;
+        }
+
+        public int RemoveResponse()
+        {
+            responses.RemoveAt(responses.Count - 1);
+            return responses.Count;
         }
 
         public void SetText(string text, int index)
