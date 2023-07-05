@@ -185,33 +185,24 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void AddConditionalNodeMenuItems(ItemConditionalNode conditionalNode, ref GenericMenu menu, bool which)
         {
-            if (!conditionalNode.GetChild(which))
-            {
-                menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                    () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.SimpleNode, which)
-                );
+            menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
+                () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.SimpleNode, which)
+            );
 
-                menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                    () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ResponseNode, which)
-                );
-                menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                    () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ConditionalNode, which)
-                );
-                menu.AddItem(new GUIContent("Link node"), false,
-                    () => _linkingNode = new NodeContext(conditionalNode) { valueIfConditional = which }
-                );
-            }
-            else
-            {
-                menu.AddItem(new GUIContent("Unlink Child"), false,
-                    () => conditionalNode.UnlinkChild(which)
-                );
-            }
+            menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
+                () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ResponseNode, which)
+            );
+            menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
+                () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ConditionalNode, which)
+            );
+            menu.AddItem(new GUIContent("Link node"), false,
+                () => _linkingNode = new NodeContext(conditionalNode) { valueIfConditional = which }
+            );
         }
 
         private void DrawConditionalNode(ItemConditionalNode conditionalNode)
         {
-            const float buttonWidth = 48f;
+            const float buttonWidth = 64;
             DrawGUIElements(true);
             DrawGUIElements(false);
 
@@ -220,12 +211,19 @@ namespace CesarJZO.DialogueSystem.Editor
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Label($"Child If {which}:");
-                    string label = conditionalNode.GetChild(which) ? "Unlink" : "Add";
-                    if (GUILayout.Button(label, GUILayout.Width(buttonWidth)))
+                    bool hasChild = conditionalNode.GetChild(which);
+                    if (GUILayout.Button(hasChild ? "Unlink" : "Add", GUILayout.Width(buttonWidth)))
                     {
-                        var menu = new GenericMenu();
-                        AddConditionalNodeMenuItems(conditionalNode, ref menu, which);
-                        menu.ShowAsContext();
+                        if (!hasChild)
+                        {
+                            var menu = new GenericMenu();
+                            AddConditionalNodeMenuItems(conditionalNode, ref menu, which);
+                            menu.ShowAsContext();
+                        }
+                        else
+                        {
+                            conditionalNode.UnlinkChild(which);
+                        }
                     }
                 }
                 GUILayout.EndHorizontal();

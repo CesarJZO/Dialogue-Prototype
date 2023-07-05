@@ -22,9 +22,9 @@ MonoBehaviour:
     y: 358
     width: 256
     height: 138
+  hasItem: {fileID: 0}
   trueChild: {fileID: 0}
   falseChild: {fileID: 0}
-  hasItem: {fileID: 0}
 --- !u!114 &-3573339308397126257
 MonoBehaviour:
   m_ObjectHideFlags: 0
