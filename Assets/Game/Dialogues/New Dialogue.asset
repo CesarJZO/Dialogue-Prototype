@@ -18,12 +18,12 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 154
-    y: 358
+    x: 38
+    y: 334
     width: 256
     height: 138
   hasItem: {fileID: 0}
-  trueChild: {fileID: 0}
+  trueChild: {fileID: 139203951845275653}
   falseChild: {fileID: 0}
 --- !u!114 &-3573339308397126257
 MonoBehaviour:
@@ -43,10 +43,10 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 326
-    y: 134
+    x: 475
+    y: 85
     width: 256
-    height: 120
+    height: 92
   child: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
@@ -62,9 +62,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - {fileID: 930310017903971043}
-  - {fileID: -3573339308397126257}
   - {fileID: -4479801432843760434}
+  - {fileID: -3573339308397126257}
   - {fileID: 139203951845275653}
+  - {fileID: 1575747695823287547}
 --- !u!114 &139203951845275653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,11 +84,17 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 594
-    y: 359
+    x: 388
+    y: 231
     width: 256
-    height: 120
-  responses: []
+    height: 160
+  responses:
+  - text: 
+    child: {fileID: 0}
+  - text: 
+    child: {fileID: 0}
+  - text: 
+    child: {fileID: 0}
   timeLimit: 0
 --- !u!114 &930310017903971043
 MonoBehaviour:
@@ -107,8 +114,31 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 22
-    y: 217
+    x: 26
+    y: 98
     width: 256
     height: 92
   child: {fileID: -3573339308397126257}
+--- !u!114 &1575747695823287547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
+  m_Name: S-3fbe6f1f
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 0}
+  text: 
+  emotion: 0
+  portraitSide: 0
+  rect:
+    serializedVersion: 2
+    x: 694
+    y: 231
+    width: 256
+    height: 120
+  child: {fileID: 0}

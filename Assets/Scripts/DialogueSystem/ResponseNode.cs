@@ -32,7 +32,14 @@ namespace CesarJZO.DialogueSystem
             responses.RemoveAll(response => response.child == node);
         }
 
+        public void UnlinkChild(int index)
+        {
+            responses[index].child = null;
+        }
+
         public IEnumerable<Response> Responses => responses;
+
+        public int ChildrenCount => responses.Count;
 
         public int AddResponse()
         {

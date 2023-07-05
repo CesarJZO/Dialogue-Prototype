@@ -132,6 +132,8 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
+            node.rect.height = GetHeightForNode(node);
+
             GUILayout.BeginArea(node.rect, node.Type switch
             {
                 _ when node == Selection.activeObject => _selectedNodeStyle,
@@ -200,9 +202,26 @@ namespace CesarJZO.DialogueSystem.Editor
             );
         }
 
+        private void AddResponseNodeMenuItems(ResponseNode responseNode, ref GenericMenu menu, int index)
+        {
+            menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
+                () => _selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.SimpleNode, index)
+            );
+
+            menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
+                () => _selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.ResponseNode, index)
+            );
+            menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
+                () => _selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.ConditionalNode, index)
+            );
+            menu.AddItem(new GUIContent("Link node"), false,
+                () => _linkingNode = new NodeContext(responseNode) { indexIfResponse = index }
+            );
+        }
+
         private void DrawConditionalNode(ItemConditionalNode conditionalNode)
         {
-            const float buttonWidth = 64;
+            const float buttonWidth = 64f;
             DrawGUIElements(true);
             DrawGUIElements(false);
 
@@ -232,7 +251,35 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void DrawResponseNode(ResponseNode responseNode)
         {
+            const float buttonWidth = 64f;
 
+            for (int i = 0; i < responseNode.ChildrenCount; i++)
+            {
+                DrawResponse(i);
+            }
+
+            void DrawResponse(int index)
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label($"Response {index + 1}");
+                    bool hasChild = responseNode.GetChild(index);
+                    if (GUILayout.Button(hasChild ? "Unlink" : "Add", GUILayout.Width(buttonWidth)))
+                    {
+                        if (!hasChild)
+                        {
+                            var menu = new GenericMenu();
+                            AddResponseNodeMenuItems(responseNode, ref menu, index);
+                            menu.ShowAsContext();
+                        }
+                        else
+                        {
+                            responseNode.UnlinkChild(index);
+                        }
+                    }
+                }
+                GUILayout.EndHorizontal();
+            }
         }
 
         /// <summary>
@@ -388,12 +435,12 @@ namespace CesarJZO.DialogueSystem.Editor
             GUILayout.EndArea();
         }
 
-        private float GetHeightForNode(NodeType nodeType)
+        private float GetHeightForNode(DialogueNode node)
         {
-            return nodeType switch
+            return node switch
             {
-                NodeType.ResponseNode => 100f,
-                NodeType.ConditionalNode => 138f,
+                ItemConditionalNode => 138f,
+                ResponseNode responseNode => 100f + responseNode.ChildrenCount * 20f,
                 _ => 92f
             };
         }
