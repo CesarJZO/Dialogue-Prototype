@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
-    [CreateAssetMenu(fileName = "New Response Node", menuName = "Dialogue/Response Node", order = 2)]
     public class ResponseNode : DialogueNode
     {
         [SerializeField] private List<Response> responses;
@@ -57,6 +56,11 @@ namespace CesarJZO.DialogueSystem
             responses[index].text = text;
         }
 
+        public string GetText(int index)
+        {
+            return responses[index].text;
+        }
+
         public void SetChild(DialogueNode node, int index)
         {
             responses[index].child = node;
@@ -65,6 +69,11 @@ namespace CesarJZO.DialogueSystem
         public DialogueNode GetChild(int index)
         {
             return responses[index].child;
+        }
+
+        private void Awake()
+        {
+            responses ??= new List<Response>();
         }
     }
 

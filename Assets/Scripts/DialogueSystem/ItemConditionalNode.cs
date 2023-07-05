@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
-    [CreateAssetMenu(fileName = "New Item Conditional Node", menuName = "Dialogue/Item Conditional Node", order = 3)]
     public class ItemConditionalNode : DialogueNode
     {
         [SerializeField] private Item hasItem;

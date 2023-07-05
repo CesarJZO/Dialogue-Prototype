@@ -132,7 +132,7 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
-            node.rect.height = GetHeightForNode(node);
+            node.rect.size = GetSizeForNode(node);
 
             GUILayout.BeginArea(node.rect, node.Type switch
             {
@@ -145,7 +145,7 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label("Speaker:", new GUIStyle(EditorStyles.label) { fixedWidth = 52f });
+                    GUILayout.Label("Speaker:", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
                     GUILayout.Label(node.Speaker ? node.Speaker.name : "Not Set", EditorStyles.boldLabel);
                 }
                 GUILayout.EndHorizontal();
@@ -222,6 +222,15 @@ namespace CesarJZO.DialogueSystem.Editor
         private void DrawConditionalNode(ItemConditionalNode conditionalNode)
         {
             const float buttonWidth = 64f;
+
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("Has Item:", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
+                GUILayout.Label(conditionalNode.Item ? conditionalNode.Item.DisplayName : "Not Set", EditorStyles.boldLabel);
+            }
+            GUILayout.EndHorizontal();
+
+
             DrawGUIElements(true);
             DrawGUIElements(false);
 
@@ -270,7 +279,11 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label($"Response {index + 1}");
+                    GUILayout.Label($"R {index + 1}: ", GUILayout.Width(32f));
+                    responseNode.SetText(
+                        GUILayout.TextField(responseNode.GetText(index)),
+                        index
+                    );
                     bool hasChild = responseNode.GetChild(index);
                     if (GUILayout.Button(hasChild ? "Unlink" : "Add", GUILayout.Width(buttonWidth)))
                     {
@@ -443,13 +456,13 @@ namespace CesarJZO.DialogueSystem.Editor
             GUILayout.EndArea();
         }
 
-        private float GetHeightForNode(DialogueNode node)
+        private Vector2 GetSizeForNode(DialogueNode node)
         {
             return node switch
             {
-                ItemConditionalNode => 138f,
-                ResponseNode responseNode => 124f + responseNode.ChildrenCount * 20f,
-                _ => 92f
+                ItemConditionalNode => new Vector2(192f, 152f),
+                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f),
+                _ => new Vector2(192f, 92f)
             };
         }
     }
