@@ -16,9 +16,10 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private Vector2 _scrollPosition;
 
-        private GUIStyle _nodeStyle;
+        private GUIStyle _simpleNodeStyle;
         private GUIStyle _responseNodeStyle;
         private GUIStyle _itemConditionalNodeStyle;
+        private GUIStyle _rootNodeStyle;
 
         /// <summary>
         ///     Opens the Dialogue Editor window.
@@ -50,24 +51,24 @@ namespace CesarJZO.DialogueSystem.Editor
             Event e = Event.current;
             if (e.type is EventType.MouseDown && !_draggingNode && e.button is 0)
             {
-                _draggingNode = _selectedDialogueAsset.Nodes.FirstOrDefault(node =>
+                _draggingNode = _selectedDialogueAsset.Nodes.LastOrDefault(node =>
                     node.rect.Contains(e.mousePosition)
                 );
                 if (_draggingNode)
                 {
                     _draggingNodeOffset = e.mousePosition - _draggingNode.rect.position;
-                    // Selection.activeObject = _draggingNode;
+                    Selection.activeObject = _draggingNode;
                 }
             }
             else if (e.type is EventType.MouseDown && e.button is 1)
             {
-                DialogueNode currentNode = _selectedDialogueAsset.Nodes.FirstOrDefault(node =>
+                DialogueNode currentNode = _selectedDialogueAsset.Nodes.LastOrDefault(node =>
                     node.rect.Contains(e.mousePosition)
                 );
                 if (currentNode)
                     HandleRightClickNode(currentNode);
                 else
-                    ShowAddNodesMenuAsContext(new GenericMenu());
+                    ShowAddNodesMenuAsContext(new GenericMenu(), e.mousePosition);
             }
             else if (e.type is EventType.MouseDrag && _draggingNode)
             {
@@ -101,7 +102,7 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
-            GUILayout.BeginArea(node.rect, _nodeStyle);
+            GUILayout.BeginArea(node.rect, _simpleNodeStyle);
             {
                 GUILayout.BeginHorizontal();
                 {
@@ -115,7 +116,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 EditorGUILayout.Space();
 
                 if (GUILayout.Button("Add"))
-                    ShowAddNodesMenuAsContext(new GenericMenu(), node);
+                    _creatingNode = node;
             }
             GUILayout.EndArea();
         }
@@ -187,6 +188,7 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             if (_creatingNode)
             {
+                _selectedDialogueAsset.CreateNodeAtPoint(NodeType.SimpleNode, _creatingNode.rect.position + Vector2.right * 300f);
                 _creatingNode = null;
             }
         }
@@ -195,44 +197,35 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             Selection.selectionChanged += OnSelectionChanged;
 
-            _nodeStyle = new GUIStyle
-            {
-                normal = { background = EditorGUIUtility.Load("node0") as Texture2D },
-                padding = new RectOffset(20, 20, 20, 20),
-                border = new RectOffset(12, 12, 12, 12)
-            };
+            _simpleNodeStyle = CreateStyle("node0");
+            _responseNodeStyle = CreateStyle("node1");
+            _itemConditionalNodeStyle = CreateStyle("node2");
+            _rootNodeStyle = CreateStyle("node3");
 
-            _responseNodeStyle = new GUIStyle
+            GUIStyle CreateStyle(string spriteName) => new()
             {
-                normal = { background = EditorGUIUtility.Load("node1") as Texture2D },
-                padding = new RectOffset(20, 20, 20, 20),
-                border = new RectOffset(12, 12, 12, 12)
-            };
-
-            _itemConditionalNodeStyle = new GUIStyle
-            {
-                normal = { background = EditorGUIUtility.Load("node2") as Texture2D },
+                normal = { background = EditorGUIUtility.Load(spriteName) as Texture2D },
                 padding = new RectOffset(20, 20, 20, 20),
                 border = new RectOffset(12, 12, 12, 12)
             };
         }
 
-        private void ShowAddNodesMenuAsContext(GenericMenu menu, DialogueNode parent = null)
+        private void ShowAddNodesMenuAsContext(GenericMenu menu, Vector2 position)
         {
             menu.AddItem(
                 content: new GUIContent("Add Simple Node"),
                 on: false,
-                func: () => _selectedDialogueAsset.AddNode(parent)
+                func: () => _selectedDialogueAsset.CreateNodeAtPoint(NodeType.SimpleNode, position)
             );
             menu.AddItem(
                 content: new GUIContent("Add Response Node"),
                 on: false,
-                func: () => _selectedDialogueAsset.AddNode(parent, NodeType.ResponseNode)
+                func: () => _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ResponseNode, position)
             );
             menu.AddItem(
                 content: new GUIContent("Add Item Conditional Node"),
                 on: false,
-                func: () => _selectedDialogueAsset.AddNode(parent, NodeType.ConditionalNode)
+                func: () => _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode, position)
             );
             menu.ShowAsContext();
         }

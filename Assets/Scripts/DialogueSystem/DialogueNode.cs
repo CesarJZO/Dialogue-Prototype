@@ -9,6 +9,14 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private Emotion emotion;
         [SerializeField] private PortraitSide portraitSide;
 
+        public NodeType Type => GetType().Name switch
+        {
+            "SimpleNode" => NodeType.SimpleNode,
+            "ItemConditionalNode" => NodeType.ConditionalNode,
+            "ResponseNode" => NodeType.ResponseNode,
+            _ => NodeType.SimpleNode
+        };
+
         // [HideInInspector]
         public Rect rect = new(0f, 0f, 256f, 120f);
 

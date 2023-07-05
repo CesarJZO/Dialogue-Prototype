@@ -32,36 +32,57 @@ namespace CesarJZO.DialogueSystem
             AssetDatabase.SaveAssets();
         }
 
-        public void AddNode(DialogueNode parent, NodeType type = NodeType.SimpleNode)
+        private DialogueNode CreateNode(DialogueNode parent, NodeType childType)
         {
-            DialogueNode simpleNode = type switch
+            DialogueNode childNode = childType switch
             {
-                NodeType.ResponseNode => CreateInstance<ResponseNode>(),
                 NodeType.ConditionalNode => CreateInstance<ItemConditionalNode>(),
+                NodeType.ResponseNode => CreateInstance<ResponseNode>(),
                 _ => CreateInstance<SimpleNode>()
             };
-            simpleNode.name = Guid.NewGuid().ToString();
-            nodes.Add(simpleNode);
+            childNode.name = GetGuidFormatted(childType);
+            childNode.rect.position = parent.rect.position + new Vector2(0f, parent.rect.width + 50f);
 
-            SaveInstance(simpleNode);
+            nodes.Add(childNode);
+            SaveInstance(childNode);
+
+            return childNode;
         }
 
-        private void SetSimpleNodeChild(SimpleNode parent, DialogueNode child)
+        public void CreateNodeAtPoint(NodeType type, Vector2 position)
         {
-            parent.SetChild(child);
+            DialogueNode node = type switch
+            {
+                NodeType.ConditionalNode => CreateInstance<ItemConditionalNode>(),
+                NodeType.ResponseNode => CreateInstance<ResponseNode>(),
+                _ => CreateInstance<SimpleNode>()
+            };
+            node.name = GetGuidFormatted(type);
+            node.rect.position = position;
+
+            nodes.Add(node);
+            SaveInstance(node);
         }
 
-        private void SetConditionalNodeChild(ItemConditionalNode parent, DialogueNode child, bool which)
+        public void AddChildToSimpleNode(SimpleNode parent, NodeType childType)
         {
-            if (which)
-                parent.SetTrueChild(child);
+            DialogueNode childNode = CreateNode(parent, childType);
+            parent.SetChild(childNode);
+        }
+
+        public void AddChildToConditionalNode(ItemConditionalNode parent, NodeType childType, bool condition)
+        {
+            DialogueNode childNode = CreateNode(parent, childType);
+            if (condition)
+                parent.SetTrueChild(childNode);
             else
-                parent.SetFalseChild(child);
+                parent.SetFalseChild(childNode);
         }
 
-        private void SetResponseNodeChild(ResponseNode parent, DialogueNode child, int index)
+        public void AddChildToResponseNode(ResponseNode parent, NodeType childType, int index)
         {
-            parent.SetChild(child, index);
+            DialogueNode childNode = CreateNode(parent, childType);
+            parent.SetChild(childNode, index);
         }
 
         public void RemoveNode(DialogueNode node)
@@ -82,5 +103,14 @@ namespace CesarJZO.DialogueSystem
             nodes.Remove(node);
             nodes.Insert(0, node);
         }
+
+        private static string GetGuidFormatted(NodeType type)
+        {
+            ReadOnlySpan<char> guidSpan = Guid.NewGuid().ToString();
+            ReadOnlySpan<char> typeSpan = type.ToString();
+            return $"{typeSpan[0]}-{guidSpan[..8].ToString()}";
+        }
+
+        public bool IsRoot(DialogueNode node) => node == RootNode;
     }
 }
