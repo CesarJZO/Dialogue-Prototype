@@ -308,46 +308,99 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawConnections(DialogueNode node)
         {
-            Vector3 startPosition = node.rect.center + Vector2.right * node.rect.width / 2f;
+            Vector2 start;
+            Vector2 end;
 
             if (_linkingNode is not null && _linkingNode.parentNode == node)
             {
-                Handles.DrawBezier(
-                    startPosition,
-                    Event.current.mousePosition,
-                    startPosition + Vector3.right * 50f,
-                    Event.current.mousePosition - Vector2.right * 50f,
-                    Color.white,
-                    null,
-                    4f
-                );
+                start = node switch
+                {
+                    ItemConditionalNode => GetStartPointForConditionalNode(_linkingNode.valueIfConditional),
+                    _ => GetStartPointDefault()
+                };
+                end = Event.current.mousePosition;
+                DrawCurve(start, end);
                 GUI.changed = true;
-                return;
             }
 
-            DialogueNode childNode = node.Child;
-
-            if (!childNode) return;
-
-            var endPosition = new Vector3
+            if (node is ItemConditionalNode conditionalNode)
             {
-                x = childNode.rect.xMin,
-                y = childNode.rect.center.y
-            };
+                DialogueNode trueChild = conditionalNode.GetChild(true);
+                if (trueChild)
+                {
+                    start = GetStartPointForConditionalNode(true);
+                    end = trueChild.rect.center + Vector2.left * trueChild.rect.width / 2f;
+                    DrawCurve(start, end);
+                }
 
-            Vector3 controlOffset = endPosition - startPosition;
-            controlOffset.y = 0f;
-            controlOffset.x *= 0.8f;
+                DialogueNode falseChild = conditionalNode.GetChild(false);
+                if (falseChild)
+                {
+                    start = GetStartPointForConditionalNode(false);
+                    end = falseChild.rect.center + Vector2.left * falseChild.rect.width / 2f;
+                    DrawCurve(start, end);
+                }
+            }
+            else if (node is ResponseNode responseNode)
+            {
+                for (int i = 0; i < responseNode.ChildrenCount; i++)
+                {
+                    start = GetStartPointForResponseNode(i);
+                    DialogueNode child = responseNode.GetChild(i);
+                    if (!child) continue;
+                    end = child.rect.center + Vector2.left * child.rect.width / 2f;
+                    DrawCurve(start, end);
+                }
+            }
+            else
+            {
+                DialogueNode child = node.Child;
+                if (!child) return;
 
-            Handles.DrawBezier(
-                startPosition,
-                endPosition,
-                startPosition + controlOffset,
-                endPosition - controlOffset,
-                Color.white,
-                null,
-                4f
-            );
+                start = node.rect.center + Vector2.right * node.rect.width / 2f;
+                end = child.rect.center + Vector2.left * child.rect.width / 2f;
+                DrawCurve(start, end);
+            }
+
+            void DrawCurve(Vector3 startPos, Vector3 endPos)
+            {
+                Vector3 controlOffset = endPos - startPos;
+                controlOffset.y = 0f;
+                controlOffset.x *= 0.8f;
+
+                Handles.DrawBezier(
+                    startPosition: startPos,
+                    endPosition: endPos,
+                    startTangent: startPos + controlOffset,
+                    endTangent: endPos - controlOffset,
+                    color: Color.white,
+                    texture: null,
+                    width: 4f
+                );
+            }
+
+            Vector2 GetStartPointDefault()
+            {
+                return node.rect.center + Vector2.right * node.rect.width / 2f;
+            }
+
+            Vector2 GetStartPointForConditionalNode(bool which)
+            {
+                return node.rect.position + new Vector2
+                {
+                    x = node.rect.width,
+                    y = which ? 100f : 120f
+                };
+            }
+
+            Vector2 GetStartPointForResponseNode(int index)
+            {
+                return node.rect.position + new Vector2
+                {
+                    x = node.rect.width,
+                    y = 84f + index * 20f
+                };
+            }
         }
 
         #endregion
