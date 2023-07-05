@@ -18,6 +18,7 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private GUIStyle _nodeStyle;
         private GUIStyle _responseNodeStyle;
+        private GUIStyle _itemConditionalNodeStyle;
 
         /// <summary>
         ///     Opens the Dialogue Editor window.
@@ -26,11 +27,11 @@ namespace CesarJZO.DialogueSystem.Editor
         private static void ShowWindow()
         {
             var window = GetWindow<DialogueEditor>(
-                "Dialogue Editor",
-                typeof(EditorWindow).Assembly.GetType("UnityEditor.ConsoleWindow")
+                title: "Dialogue Editor",
+                focus: true,
+                desiredDockNextTo: typeof(SceneView)
             );
             window.Show();
-            window.Focus();
         }
 
         [OnOpenAsset(1)]
@@ -46,26 +47,53 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void ProcessEvents()
         {
-            Event current = Event.current;
-            if (current.type is EventType.MouseDown && !_draggingNode && current.button is 0)
+            Event e = Event.current;
+            if (e.type is EventType.MouseDown && !_draggingNode && e.button is 0)
             {
                 _draggingNode = _selectedDialogueAsset.Nodes.FirstOrDefault(node =>
-                    node.rect.Contains(current.mousePosition));
+                    node.rect.Contains(e.mousePosition)
+                );
                 if (_draggingNode)
                 {
-                    _draggingNodeOffset = current.mousePosition - _draggingNode.rect.position;
+                    _draggingNodeOffset = e.mousePosition - _draggingNode.rect.position;
                     // Selection.activeObject = _draggingNode;
                 }
             }
-            else if (current.type is EventType.MouseDrag && _draggingNode)
+            else if (e.type is EventType.MouseDown && e.button is 1)
             {
-                _draggingNode.rect.position = current.mousePosition - _draggingNodeOffset;
+                DialogueNode currentNode = _selectedDialogueAsset.Nodes.FirstOrDefault(node =>
+                    node.rect.Contains(e.mousePosition)
+                );
+                if (currentNode)
+                    HandleRightClickNode(currentNode);
+                else
+                    ShowAddNodesMenuAsContext(new GenericMenu());
+            }
+            else if (e.type is EventType.MouseDrag && _draggingNode)
+            {
+                _draggingNode.rect.position = e.mousePosition - _draggingNodeOffset;
                 GUI.changed = true;
             }
-            else if (current.type is EventType.MouseUp && current.button is 0)
+            else if (e.type is EventType.MouseUp && e.button is 0)
             {
                 _draggingNode = null;
             }
+        }
+
+        private void HandleRightClickNode(DialogueNode node)
+        {
+            var menu = new GenericMenu();
+            menu.AddItem(
+                content: new GUIContent("Set as Root"),
+                on: false,
+                func: () => _selectedDialogueAsset.SetNodeAsRoot(node)
+            );
+            menu.AddItem(
+                content: new GUIContent("Delete"),
+                on: false,
+                func: () => _selectedDialogueAsset.RemoveNode(node)
+            );
+            menu.ShowAsContext();
         }
 
         /// <summary>
@@ -73,24 +101,23 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
-            // node.rect.height = rectHeight;
+            GUILayout.BeginArea(node.rect, _nodeStyle);
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Speaker:", new GUIStyle(EditorStyles.label) { fixedWidth = 52f });
+                    GUILayout.Label(node.Speaker ? node.Speaker.name : "Not Set", EditorStyles.boldLabel);
+                }
+                GUILayout.EndHorizontal();
+                EditorGUILayout.Space();
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Speaker");
+                node.Text = EditorGUILayout.TextField(node.Text);
+                EditorGUILayout.Space();
 
-            // node.Conversant = EditorGUILayout.TextField(node.Conversant, GUILayout.Width(150f));
-            GUILayout.EndHorizontal();
-
-            EditorGUILayout.Space();
-
-            node.Text = EditorGUILayout.TextArea(node.Text);
-            EditorGUILayout.Space();
-
-            if (GUILayout.Button("Add"))
-                _creatingNode = node;
-
+                if (GUILayout.Button("Add"))
+                    ShowAddNodesMenuAsContext(new GenericMenu(), node);
+            }
             GUILayout.EndArea();
-
         }
 
         /// <summary>
@@ -130,16 +157,25 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             if (!_selectedDialogueAsset)
             {
-                EditorGUILayout.LabelField("No dialogue selected.");
+                DrawLabelAtCenter("No Dialogue Selected");
                 return;
             }
 
             ProcessEvents();
 
+            // Draw a title at the center top of the screen with the name of the selected Dialogue.
+            var labelStyle = new GUIStyle(EditorStyles.centeredGreyMiniLabel)
+            {
+                alignment = TextAnchor.UpperCenter,
+                fontSize = 16
+            };
+
+            GUILayout.Label(_selectedDialogueAsset.name, labelStyle);
+
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
-            foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
-                DrawConnections(node);
+            // foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
+            //     DrawConnections(node);
             foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
                 DrawNode(node);
 
@@ -151,7 +187,6 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             if (_creatingNode)
             {
-                // _selectedDialogueAsset.CreateNode(_creatingNode);
                 _creatingNode = null;
             }
         }
@@ -173,6 +208,33 @@ namespace CesarJZO.DialogueSystem.Editor
                 padding = new RectOffset(20, 20, 20, 20),
                 border = new RectOffset(12, 12, 12, 12)
             };
+
+            _itemConditionalNodeStyle = new GUIStyle
+            {
+                normal = { background = EditorGUIUtility.Load("node2") as Texture2D },
+                padding = new RectOffset(20, 20, 20, 20),
+                border = new RectOffset(12, 12, 12, 12)
+            };
+        }
+
+        private void ShowAddNodesMenuAsContext(GenericMenu menu, DialogueNode parent = null)
+        {
+            menu.AddItem(
+                content: new GUIContent("Add Simple Node"),
+                on: false,
+                func: () => _selectedDialogueAsset.AddNode(parent)
+            );
+            menu.AddItem(
+                content: new GUIContent("Add Response Node"),
+                on: false,
+                func: () => _selectedDialogueAsset.AddNode(parent, NodeType.ResponseNode)
+            );
+            menu.AddItem(
+                content: new GUIContent("Add Item Conditional Node"),
+                on: false,
+                func: () => _selectedDialogueAsset.AddNode(parent, NodeType.ConditionalNode)
+            );
+            menu.ShowAsContext();
         }
 
         private void OnDisable()
@@ -186,6 +248,19 @@ namespace CesarJZO.DialogueSystem.Editor
             if (selected)
                 _selectedDialogueAsset = selected;
             Repaint();
+        }
+
+        private void DrawLabelAtCenter(string message)
+        {
+            GUILayout.BeginArea(new Rect(0f, 0f, position.width, position.height));
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.Label(message);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.EndArea();
         }
     }
 }

@@ -25,12 +25,22 @@ namespace CesarJZO.DialogueSystem
             AssetDatabase.SaveAssets();
         }
 
-        public void AddSimpleNode(DialogueNode parent)
+        private void RemoveInstanceFromAssetDatabase(DialogueNode node)
         {
-            var simpleNode = CreateInstance<SimpleNode>();
+            if (!AssetDatabase.Contains(node)) return;
+            AssetDatabase.RemoveObjectFromAsset(node);
+            AssetDatabase.SaveAssets();
+        }
 
+        public void AddNode(DialogueNode parent, NodeType type = NodeType.SimpleNode)
+        {
+            DialogueNode simpleNode = type switch
+            {
+                NodeType.ResponseNode => CreateInstance<ResponseNode>(),
+                NodeType.ConditionalNode => CreateInstance<ItemConditionalNode>(),
+                _ => CreateInstance<SimpleNode>()
+            };
             simpleNode.name = Guid.NewGuid().ToString();
-
             nodes.Add(simpleNode);
 
             SaveInstance(simpleNode);
@@ -54,16 +64,23 @@ namespace CesarJZO.DialogueSystem
             parent.SetChild(child, index);
         }
 
-        [MenuItem("Tools/Simple Node", priority = 0)]
-        public static void AddSimpleNode()
+        public void RemoveNode(DialogueNode node)
         {
-            var dialogue = Selection.activeObject as Dialogue;
+            nodes.Remove(node);
+            RemoveInstanceFromAssetDatabase(node);
+        }
 
-            if (!dialogue) return;
+        // ReSharper disable Unity.PerformanceAnalysis
+        public void SetNodeAsRoot(DialogueNode node)
+        {
+            if (!nodes.Contains(node))
+            {
+                Debug.LogWarning("Node is not in the dialogue.");
+                return;
+            }
 
-            Debug.Log($"Adding simple node to {dialogue.name}");
-
-            dialogue.AddSimpleNode(parent: null);
+            nodes.Remove(node);
+            nodes.Insert(0, node);
         }
     }
 }

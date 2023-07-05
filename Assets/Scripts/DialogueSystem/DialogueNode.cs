@@ -9,7 +9,8 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private Emotion emotion;
         [SerializeField] private PortraitSide portraitSide;
 
-        [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
+        // [HideInInspector]
+        public Rect rect = new(0f, 0f, 256f, 120f);
 
         public abstract DialogueNode Child { get; }
 
