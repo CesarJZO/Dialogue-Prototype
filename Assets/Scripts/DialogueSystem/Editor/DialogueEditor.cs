@@ -254,9 +254,17 @@ namespace CesarJZO.DialogueSystem.Editor
             const float buttonWidth = 64f;
 
             for (int i = 0; i < responseNode.ChildrenCount; i++)
-            {
                 DrawResponse(i);
+            EditorGUILayout.Space();
+
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("Add Response"))
+                    responseNode.AddResponse();
+                if (GUILayout.Button("Remove Response"))
+                    responseNode.RemoveResponse();
             }
+            GUILayout.EndHorizontal();
 
             void DrawResponse(int index)
             {
@@ -440,7 +448,7 @@ namespace CesarJZO.DialogueSystem.Editor
             return node switch
             {
                 ItemConditionalNode => 138f,
-                ResponseNode responseNode => 100f + responseNode.ChildrenCount * 20f,
+                ResponseNode responseNode => 124f + responseNode.ChildrenCount * 20f,
                 _ => 92f
             };
         }
