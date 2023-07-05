@@ -2,7 +2,6 @@
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEditor.UIElements;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem.Editor
@@ -12,10 +11,9 @@ namespace CesarJZO.DialogueSystem.Editor
         private static Dialogue _selectedDialogueAsset;
 
         [NonSerialized] private DialogueNode _draggingNode;
-        [NonSerialized] private Vector2 _draggingNodeOffset;
         [NonSerialized] private DialogueNode _creatingNode;
-
-        private Vector2 _scrollPosition;
+        [NonSerialized] private Vector2 _draggingNodeOffset;
+        [NonSerialized] private Vector2 _scrollPosition;
 
         private GUIStyle _selectedNodeStyle;
         private GUIStyle _simpleNodeStyle;
@@ -72,7 +70,14 @@ namespace CesarJZO.DialogueSystem.Editor
                     node.rect.Contains(e.mousePosition)
                 );
                 if (currentNode)
-                    HandleRightClickNode(currentNode);
+                {
+                    GenericMenu menu = RightClickNodeMenuBase(currentNode);
+                    if (currentNode is SimpleNode simpleNode)
+                    {
+                        AddSimpleNodeMenuItems(simpleNode, ref menu);
+                    }
+                    menu.ShowAsContext();
+                }
                 else
                     ShowAddNodesMenuAsContext(new GenericMenu(), e.mousePosition);
             }
@@ -87,7 +92,7 @@ namespace CesarJZO.DialogueSystem.Editor
             }
         }
 
-        private void HandleRightClickNode(DialogueNode node)
+        private GenericMenu RightClickNodeMenuBase(DialogueNode node)
         {
             var menu = new GenericMenu();
             menu.AddItem(
@@ -101,6 +106,8 @@ namespace CesarJZO.DialogueSystem.Editor
                 func: () => _selectedDialogueAsset.RemoveNode(node)
             );
             menu.ShowAsContext();
+
+            return menu;
         }
 
         /// <summary>
@@ -128,10 +135,53 @@ namespace CesarJZO.DialogueSystem.Editor
                 node.Text = EditorGUILayout.TextField(node.Text);
                 EditorGUILayout.Space();
 
-                if (GUILayout.Button("Add"))
-                    _creatingNode = node;
+                if (node is ItemConditionalNode conditionalNode)
+                    DrawConditionalNode(conditionalNode);
+                else if (node is ResponseNode responseNode)
+                    DrawResponseNode(responseNode);
             }
             GUILayout.EndArea();
+        }
+
+        private void AddSimpleNodeMenuItems(SimpleNode simpleNode, ref GenericMenu menu)
+        {
+            if (!simpleNode.HasChild)
+            {
+                menu.AddItem(
+                    content: new GUIContent("Add Node/Add Simple Node"),
+                    on: false,
+                    func: () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
+                );
+                menu.AddItem(
+                    content: new GUIContent("Add Node/Add Conditional Node"),
+                    on: false,
+                    func: () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
+                );
+                menu.AddItem(
+                    content: new GUIContent("Add Node/Add Response Node"),
+                    on: false,
+                    func: () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
+                );
+
+            }
+            else
+            {
+                menu.AddItem(
+                    content: new GUIContent("Remove Child"),
+                    on: false,
+                    func: simpleNode.RemoveChild
+                );
+            }
+        }
+
+        private void DrawConditionalNode(ItemConditionalNode conditionalNode)
+        {
+
+        }
+
+        private void DrawResponseNode(ResponseNode responseNode)
+        {
+
         }
 
         /// <summary>

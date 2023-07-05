@@ -9,9 +9,16 @@ namespace CesarJZO.DialogueSystem
 
         public override DialogueNode Child => child;
 
+        public bool HasChild => child;
+
         public void SetChild(DialogueNode node)
         {
             child = node;
+        }
+
+        public void RemoveChild()
+        {
+            child = null;
         }
     }
 }

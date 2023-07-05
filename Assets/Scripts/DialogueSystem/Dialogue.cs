@@ -41,7 +41,7 @@ namespace CesarJZO.DialogueSystem
                 _ => CreateInstance<SimpleNode>()
             };
             childNode.name = GetGuidFormatted(childType);
-            childNode.rect.position = parent.rect.position + new Vector2(0f, parent.rect.width + 50f);
+            childNode.rect.position = parent.rect.position + new Vector2(parent.rect.width + 50f, 0f);
 
             nodes.Add(childNode);
             SaveInstance(childNode);
