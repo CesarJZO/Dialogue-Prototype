@@ -31,6 +31,11 @@ namespace CesarJZO.DialogueSystem
             _comparableItem = item;
         }
 
+        public DialogueNode GetChild(bool value)
+        {
+            return value ? trueChild : falseChild;
+        }
+
         public bool Evaluate()
         {
             return hasItem == _comparableItem;

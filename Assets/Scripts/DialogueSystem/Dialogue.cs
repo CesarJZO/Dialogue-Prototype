@@ -9,13 +9,13 @@ namespace CesarJZO.DialogueSystem
     public class Dialogue : ScriptableObject
     {
         [SerializeField] private List<DialogueNode> nodes;
-        public DialogueNode RootNode => nodes[0];
+        public DialogueNode RootNode => nodes.Count == 0 ? null : nodes[0];
 
         public IEnumerable<DialogueNode> Nodes => nodes;
 
         private void Awake()
         {
-            nodes = new List<DialogueNode>();
+            nodes ??= new List<DialogueNode>();
         }
 
         private void SaveInstance(DialogueNode node)

@@ -19,7 +19,7 @@ namespace CesarJZO.DialogueSystem
             get => _currentResponse;
         }
 
-        public override DialogueNode Child => _currentResponse.child;
+        public override DialogueNode Child => _currentResponse?.child;
 
         public IEnumerable<Response> Responses => responses;
 
@@ -37,6 +37,11 @@ namespace CesarJZO.DialogueSystem
         public void SetChild(DialogueNode node, int index)
         {
             responses[index].child = node;
+        }
+
+        public DialogueNode GetChild(int index)
+        {
+            return responses[index].child;
         }
     }
 

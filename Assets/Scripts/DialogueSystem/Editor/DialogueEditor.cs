@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem.Editor
@@ -16,6 +17,7 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private Vector2 _scrollPosition;
 
+        private GUIStyle _selectedNodeStyle;
         private GUIStyle _simpleNodeStyle;
         private GUIStyle _responseNodeStyle;
         private GUIStyle _itemConditionalNodeStyle;
@@ -59,6 +61,10 @@ namespace CesarJZO.DialogueSystem.Editor
                     _draggingNodeOffset = e.mousePosition - _draggingNode.rect.position;
                     Selection.activeObject = _draggingNode;
                 }
+                else
+                {
+                    Selection.activeObject = _selectedDialogueAsset;
+                }
             }
             else if (e.type is EventType.MouseDown && e.button is 1)
             {
@@ -85,12 +91,12 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             var menu = new GenericMenu();
             menu.AddItem(
-                content: new GUIContent("Set as Root"),
+                content: new GUIContent("Set Node as Root"),
                 on: false,
                 func: () => _selectedDialogueAsset.SetNodeAsRoot(node)
             );
             menu.AddItem(
-                content: new GUIContent("Delete"),
+                content: new GUIContent("Delete Node"),
                 on: false,
                 func: () => _selectedDialogueAsset.RemoveNode(node)
             );
@@ -102,7 +108,14 @@ namespace CesarJZO.DialogueSystem.Editor
         /// </summary>
         private void DrawNode(DialogueNode node)
         {
-            GUILayout.BeginArea(node.rect, _simpleNodeStyle);
+            GUILayout.BeginArea(node.rect, node.Type switch
+            {
+                _ when node == Selection.activeObject => _selectedNodeStyle,
+                _ when _selectedDialogueAsset.IsRoot(node) => _rootNodeStyle,
+                NodeType.ResponseNode => _responseNodeStyle,
+                NodeType.ConditionalNode => _itemConditionalNodeStyle,
+                _ => _simpleNodeStyle
+            });
             {
                 GUILayout.BeginHorizontal();
                 {
@@ -128,28 +141,29 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             Vector3 startPosition = node.rect.center + Vector2.right * node.rect.width / 2f;
 
-            // foreach (DialogueNode childNode in node.Children)
-            // {
-            //     var endPosition = new Vector3
-            //     {
-            //         x = childNode.rect.xMin,
-            //         y = childNode.rect.center.y
-            //     };
-            //
-            //     Vector3 controlOffset = endPosition - startPosition;
-            //     controlOffset.y = 0f;
-            //     controlOffset.x *= 0.8f;
-            //
-            //     Handles.DrawBezier(
-            //         startPosition,
-            //         endPosition,
-            //         startPosition + controlOffset,
-            //         endPosition - controlOffset,
-            //         Color.white,
-            //         null,
-            //         4f
-            //     );
-            // }
+            DialogueNode childNode = node.Child;
+
+            if (!childNode) return;
+
+            var endPosition = new Vector3
+            {
+                x = childNode.rect.xMin,
+                y = childNode.rect.center.y
+            };
+
+            Vector3 controlOffset = endPosition - startPosition;
+            controlOffset.y = 0f;
+            controlOffset.x *= 0.8f;
+
+            Handles.DrawBezier(
+                startPosition,
+                endPosition,
+                startPosition + controlOffset,
+                endPosition - controlOffset,
+                Color.white,
+                null,
+                4f
+            );
         }
 
         #endregion
@@ -167,7 +181,7 @@ namespace CesarJZO.DialogueSystem.Editor
             // Draw a title at the center top of the screen with the name of the selected Dialogue.
             var labelStyle = new GUIStyle(EditorStyles.centeredGreyMiniLabel)
             {
-                alignment = TextAnchor.UpperCenter,
+                // alignment = TextAnchor.UpperCenter,
                 fontSize = 16
             };
 
@@ -175,8 +189,8 @@ namespace CesarJZO.DialogueSystem.Editor
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
-            // foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
-            //     DrawConnections(node);
+            foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
+                DrawConnections(node);
             foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
                 DrawNode(node);
 
@@ -188,7 +202,7 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             if (_creatingNode)
             {
-                _selectedDialogueAsset.CreateNodeAtPoint(NodeType.SimpleNode, _creatingNode.rect.position + Vector2.right * 300f);
+                _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode, _creatingNode.rect.position + Vector2.right * 300f);
                 _creatingNode = null;
             }
         }
@@ -197,14 +211,15 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             Selection.selectionChanged += OnSelectionChanged;
 
+            _selectedNodeStyle = CreateStyle("node1");
             _simpleNodeStyle = CreateStyle("node0");
-            _responseNodeStyle = CreateStyle("node1");
-            _itemConditionalNodeStyle = CreateStyle("node2");
-            _rootNodeStyle = CreateStyle("node3");
+            _responseNodeStyle = CreateStyle("node0");
+            _itemConditionalNodeStyle = CreateStyle("node0");
+            _rootNodeStyle = CreateStyle("node5");
 
-            GUIStyle CreateStyle(string spriteName) => new()
+            GUIStyle CreateStyle(string path) => new()
             {
-                normal = { background = EditorGUIUtility.Load(spriteName) as Texture2D },
+                normal = { background = EditorGUIUtility.Load(path) as Texture2D },
                 padding = new RectOffset(20, 20, 20, 20),
                 border = new RectOffset(12, 12, 12, 12)
             };
