@@ -148,11 +148,12 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private static Vector2 GetSizeForNode(DialogueNode node)
         {
+            const float testHeight = 92f;
             return node switch
             {
-                ItemConditionalNode => new Vector2(256f, 152f + 64f),
-                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f + 64f),
-                _ => new Vector2(256f, 116f + 64f)
+                ItemConditionalNode => new Vector2(256f, 152f + testHeight),
+                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f + testHeight),
+                _ => new Vector2(256f, 116f + testHeight)
             };
         }
 
@@ -274,22 +275,20 @@ namespace CesarJZO.DialogueSystem.Editor
                 _ => _simpleNodeStyle
             });
             {
-                GUILayout.BeginHorizontal();
-                {
-                    GUILayout.Label("Speaker:", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
-                    node.Speaker = EditorGUILayout.ObjectField(node.Speaker, typeof(Speaker), false) as Speaker;
-                }
-                GUILayout.EndHorizontal();
+                GUILayout.Label("Speaker");
+                node.Speaker = EditorGUILayout.ObjectField(node.Speaker, typeof(Speaker), false) as Speaker;
                 EditorGUILayout.Space();
 
+                GUILayout.Label("Emotion & Side");
                 GUILayout.BeginHorizontal();
                 {
-                    node.PortraitSide = (PortraitSide) EditorGUILayout.Popup((int)node.PortraitSide, Sides);
                     node.Emotion = (Emotion) EditorGUILayout.Popup((int)node.Emotion, Emotions);
+                    node.PortraitSide = (PortraitSide) EditorGUILayout.Popup((int)node.PortraitSide, Sides);
                 }
                 GUILayout.EndHorizontal();
                 EditorGUILayout.Space();
 
+                GUILayout.Label("Text");
                 node.Text = EditorGUILayout.TextField(node.Text);
                 EditorGUILayout.Space();
 
@@ -327,7 +326,7 @@ namespace CesarJZO.DialogueSystem.Editor
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("Has Item:", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
+                GUILayout.Label("Has Item", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
                 conditionalNode.Item = EditorGUILayout.ObjectField(conditionalNode.Item, typeof(Item), false) as Item;
             }
             GUILayout.EndHorizontal();
@@ -491,7 +490,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 return node.rect.position + new Vector2
                 {
                     x = node.rect.width,
-                    y = which ? 100f : 120f
+                    y = (which ? 100f : 120f) + 90f
                 };
             }
 
@@ -500,7 +499,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 return node.rect.position + new Vector2
                 {
                     x = node.rect.width,
-                    y = 84f + index * 20f
+                    y = 84f + 88f + index * 20f
                 };
             }
         }

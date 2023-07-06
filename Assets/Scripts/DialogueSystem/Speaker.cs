@@ -10,5 +10,14 @@ namespace CesarJZO.DialogueSystem
 
         [SerializeField] private Sprite neutralSprite;
         public Sprite NeutralSprite => neutralSprite;
+
+        [SerializeField] private Sprite happySprite;
+        public Sprite HappySprite => happySprite;
+
+        [SerializeField] private Sprite sadSprite;
+        public Sprite SadSprite => sadSprite;
+
+        [SerializeField] private Sprite angrySprite;
+        public Sprite AngrySprite => angrySprite;
     }
 }

@@ -4,6 +4,7 @@
     {
         Neutral,
         Happy,
-        Sad
+        Sad,
+        Angry
     }
 }
