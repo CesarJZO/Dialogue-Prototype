@@ -1,8 +1,8 @@
-﻿using StatePattern;
+﻿using CesarJZO.StatePattern;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Player
+namespace CesarJZO.Player
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour
@@ -10,34 +10,17 @@ namespace Player
         [Header("Settings")]
         public float walkSpeed;
         public float smoothTime;
-        [SerializeField] private Vector2 interactionSensorSize;
 
-        [Header("Gizmos")]
-        [SerializeField] private Vector2 textPos;
-        [SerializeField] private int fontSize;
-        
         [Header("Physics")]
-        public LayerMask interactionLayer;
-        [SerializeField] private Transform interactionSensor;
-
         [HideInInspector] public int horizontalDirection;
-        [HideInInspector] public bool interacting;
 
         #region Dependencies
 
         [HideInInspector] public new Rigidbody2D rigidbody;
         [SerializeField] private PlayerInput playerInput;
         [HideInInspector] public InputAction moveAction;
-        [HideInInspector] public InputAction interactAction;
 
         #endregion
-
-        public bool CanInteract => Physics2D.OverlapBox(
-            interactionSensor.position,
-            interactionSensorSize,
-            0f, 
-            interactionLayer 
-        );
 
         #region State Machine
 
@@ -45,15 +28,14 @@ namespace Player
         public IdleState idleState;
         public WalkState walkState;
         public void ChangeState(PlayerState state) => _stateMachine.ChangeState(state);
-        
+
         #endregion
 
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
-            
+
             moveAction = playerInput.actions["Move"];
-            interactAction = playerInput.actions["Interact"];
 
             idleState = new IdleState(this);
             walkState = new WalkState(this);
@@ -67,35 +49,27 @@ namespace Player
 
         private void Update()
         {
-            var currentState = (PlayerState)_stateMachine.CurrentState;
-
-            currentState.HandleInput();
+            var currentState = _stateMachine.CurrentState as PlayerState;
+            currentState!.HandleInput();
             currentState.Update();
         }
 
-        
         private void FixedUpdate() => _stateMachine.CurrentState.FixedUpdate();
-        
+
         private void LateUpdate() => _stateMachine.CurrentState.LateUpdate();
 
         private void OnGUI()
         {
             GUI.Label(
-                new Rect(textPos, Vector2.one),
+                new Rect(0f, 0f, Screen.width, Screen.height),
                 _stateMachine.CurrentState.ToString(),
                 new GUIStyle
                 {
-                    fontSize = fontSize, 
+                    fontSize = 16,
+                    alignment = TextAnchor.UpperLeft,
                     normal = { textColor = Color.white }
                 }
             );
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Application.isPlaying && CanInteract ? Color.green : Color.blue;
-
-            Gizmos.DrawWireCube(interactionSensor.position, interactionSensorSize);
         }
     }
 }

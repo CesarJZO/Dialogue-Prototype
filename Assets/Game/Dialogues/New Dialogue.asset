@@ -1,0 +1,172 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739003c34ecd4ab586ea7d1d61f6120c, type: 3}
+  m_Name: New Dialogue
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 3956905981988412788}
+  - {fileID: 877827524332917218}
+  - {fileID: 6327211549512815222}
+  - {fileID: 7968960389879730842}
+  - {fileID: 6124621927000309401}
+  - {fileID: 5932106659490700901}
+--- !u!114 &877827524332917218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31d992f4c98448a4b8a609d541be5500, type: 3}
+  m_Name: R-14c001f8
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
+  text: Noice, so what should we do?
+  emotion: 0
+  portraitSide: 0
+  rect:
+    serializedVersion: 2
+    x: 266
+    y: 64
+    width: 256
+    height: 204
+  responses:
+  - text: Yeh
+    child: {fileID: 7968960389879730842}
+  - text: Why not?
+    child: {fileID: 7968960389879730842}
+  - text: That's too bad
+    child: {fileID: 6124621927000309401}
+  - text: Maybe this other
+    child: {fileID: 5932106659490700901}
+  timeLimit: 0
+--- !u!114 &3956905981988412788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea08e6d866a547349bb48a51936eeb08, type: 3}
+  m_Name: C-2deaf06b
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
+  text: You have that
+  emotion: 0
+  portraitSide: 0
+  rect:
+    serializedVersion: 2
+    x: 12
+    y: 180
+    width: 192
+    height: 152
+  hasItem: {fileID: 11400000, guid: 43cd36b4fdbdeeb4a876ba0ce277bf57, type: 2}
+  trueChild: {fileID: 877827524332917218}
+  falseChild: {fileID: 6327211549512815222}
+--- !u!114 &5932106659490700901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea08e6d866a547349bb48a51936eeb08, type: 3}
+  m_Name: C-e02272da
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 0}
+  text: Oh, what now?
+  emotion: 0
+  portraitSide: 0
+  rect:
+    serializedVersion: 2
+    x: 640
+    y: 340
+    width: 192
+    height: 152
+  hasItem: {fileID: 0}
+  trueChild: {fileID: 0}
+  falseChild: {fileID: 0}
+--- !u!114 &6124621927000309401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
+  m_Name: S-0b122071
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 0}
+  text: u,m,u
+  emotion: 0
+  portraitSide: 0
+  rect:
+    serializedVersion: 2
+    x: 637
+    y: 221
+    width: 192
+    height: 92
+  child: {fileID: 0}
+--- !u!114 &6327211549512815222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
+  m_Name: S-dc12540a
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 11400000, guid: dd710aa66b19c4340b8060d01ac6e66b, type: 2}
+  text: Nah
+  emotion: 0
+  portraitSide: 0
+  rect:
+    serializedVersion: 2
+    x: 289
+    y: 362
+    width: 192
+    height: 92
+  child: {fileID: 0}
+--- !u!114 &7968960389879730842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
+  m_Name: S-4c15995a
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 0}
+  text: awebo
+  emotion: 0
+  portraitSide: 0
+  rect:
+    serializedVersion: 2
+    x: 634
+    y: 111
+    width: 192
+    height: 92
+  child: {fileID: 0}

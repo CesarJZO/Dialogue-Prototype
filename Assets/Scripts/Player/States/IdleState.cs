@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 
-namespace Player
+namespace CesarJZO.Player
 {
     public class IdleState : PlayerState
     {
         public IdleState(PlayerController player) : base(player) { }
-        
+
         public override void Start()
         {
-            player.interacting = false;
             player.rigidbody.velocity = Vector2.zero;
         }
 
