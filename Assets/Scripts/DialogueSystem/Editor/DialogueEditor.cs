@@ -8,7 +8,9 @@ namespace CesarJZO.DialogueSystem.Editor
 {
     public class DialogueEditor : EditorWindow
     {
-        private static Dialogue _selectedDialogueAsset;
+        private static DialogueEditor _editor;
+
+        [SerializeField] private Dialogue selectedDialogueAsset;
 
         [NonSerialized] private DialogueNode _draggingNode;
         [NonSerialized] private NodeContext _creatingNode;
@@ -39,9 +41,21 @@ namespace CesarJZO.DialogueSystem.Editor
         [OnOpenAsset(1)]
         private static bool OnOpenAsset(int instanceID, int line)
         {
-            _selectedDialogueAsset = EditorUtility.InstanceIDToObject(instanceID) as Dialogue;
-            if (!_selectedDialogueAsset) return false;
+            var selected = EditorUtility.InstanceIDToObject(instanceID);
+            if (!selected) return false;
             ShowWindow();
+
+            if (selected is Dialogue dialogue)
+            {
+                _editor.selectedDialogueAsset = dialogue;
+                return true;
+            }
+
+            if (selected is not DialogueNode node) return false;
+
+            string path = AssetDatabase.GetAssetPath(node);
+            _editor.selectedDialogueAsset = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
+
             return true;
         }
 
@@ -52,7 +66,7 @@ namespace CesarJZO.DialogueSystem.Editor
             Event e = Event.current;
             if (e.type is EventType.MouseDown && !_draggingNode && e.button is 0)
             {
-                _draggingNode = _selectedDialogueAsset.Nodes.LastOrDefault(node =>
+                _draggingNode = selectedDialogueAsset.Nodes.LastOrDefault(node =>
                     node.rect.Contains(e.mousePosition)
                 );
                 if (_draggingNode)
@@ -73,21 +87,17 @@ namespace CesarJZO.DialogueSystem.Editor
                 }
                 else
                 {
-                    Selection.activeObject = _selectedDialogueAsset;
+                    Selection.activeObject = selectedDialogueAsset;
                 }
             }
             else if (e.type is EventType.MouseDown && e.button is 1)
             {
-                DialogueNode currentNode = _selectedDialogueAsset.Nodes.LastOrDefault(node =>
+                DialogueNode currentNode = selectedDialogueAsset.Nodes.LastOrDefault(node =>
                     node.rect.Contains(e.mousePosition)
                 );
                 if (currentNode)
                 {
                     GenericMenu menu = RightClickNodeMenuBase(currentNode);
-                    if (currentNode is SimpleNode simpleNode)
-                    {
-                        AddSimpleNodeMenuItems(simpleNode, ref menu);
-                    }
                     menu.ShowAsContext();
                 }
                 else
@@ -115,12 +125,12 @@ namespace CesarJZO.DialogueSystem.Editor
             menu.AddItem(
                 content: new GUIContent("Set Node as Root"),
                 on: false,
-                func: () => _selectedDialogueAsset.SetNodeAsRoot(node)
+                func: () => selectedDialogueAsset.SetNodeAsRoot(node)
             );
             menu.AddItem(
                 content: new GUIContent("Delete Node"),
                 on: false,
-                func: () => _selectedDialogueAsset.RemoveNode(node)
+                func: () => selectedDialogueAsset.RemoveNode(node)
             );
             menu.ShowAsContext();
 
@@ -137,7 +147,7 @@ namespace CesarJZO.DialogueSystem.Editor
             GUILayout.BeginArea(node.rect, node.Type switch
             {
                 _ when node == Selection.activeObject => _selectedNodeStyle,
-                _ when _selectedDialogueAsset.IsRoot(node) => _rootNodeStyle,
+                _ when selectedDialogueAsset.IsRoot(node) => _rootNodeStyle,
                 NodeType.ResponseNode => _responseNodeStyle,
                 NodeType.ConditionalNode => _itemConditionalNodeStyle,
                 _ => _simpleNodeStyle
@@ -154,7 +164,9 @@ namespace CesarJZO.DialogueSystem.Editor
                 node.Text = EditorGUILayout.TextField(node.Text);
                 EditorGUILayout.Space();
 
-                if (node is ItemConditionalNode conditionalNode)
+                if (node is SimpleNode simpleNode)
+                    DrawSimpleNode(simpleNode);
+                else if (node is ItemConditionalNode conditionalNode)
                     DrawConditionalNode(conditionalNode);
                 else if (node is ResponseNode responseNode)
                     DrawResponseNode(responseNode);
@@ -167,13 +179,13 @@ namespace CesarJZO.DialogueSystem.Editor
             if (!simpleNode.Child)
             {
                 menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                    () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
+                    () => selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
                 );
                 menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                    () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
+                    () => selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
                 );
                 menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                    () => _selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
+                    () => selectedDialogueAsset.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
                 );
                 menu.AddItem(new GUIContent("Link Node"), false,
                     () => _linkingNode = new NodeContext(simpleNode)
@@ -188,14 +200,14 @@ namespace CesarJZO.DialogueSystem.Editor
         private void AddConditionalNodeMenuItems(ItemConditionalNode conditionalNode, ref GenericMenu menu, bool which)
         {
             menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.SimpleNode, which)
+                () => selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.SimpleNode, which)
             );
 
             menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ResponseNode, which)
+                () => selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ResponseNode, which)
             );
             menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                () => _selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ConditionalNode, which)
+                () => selectedDialogueAsset.AddChildToConditionalNode(conditionalNode, NodeType.ConditionalNode, which)
             );
             menu.AddItem(new GUIContent("Link node"), false,
                 () => _linkingNode = new NodeContext(conditionalNode) { valueIfConditional = which }
@@ -205,18 +217,36 @@ namespace CesarJZO.DialogueSystem.Editor
         private void AddResponseNodeMenuItems(ResponseNode responseNode, ref GenericMenu menu, int index)
         {
             menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                () => _selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.SimpleNode, index)
+                () => selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.SimpleNode, index)
             );
 
             menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                () => _selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.ResponseNode, index)
+                () => selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.ResponseNode, index)
             );
             menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                () => _selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.ConditionalNode, index)
+                () => selectedDialogueAsset.AddChildToResponseNode(responseNode, NodeType.ConditionalNode, index)
             );
             menu.AddItem(new GUIContent("Link node"), false,
                 () => _linkingNode = new NodeContext(responseNode) { indexIfResponse = index }
             );
+        }
+
+        private void DrawSimpleNode(SimpleNode simpleNode)
+        {
+            if (simpleNode.GetChild())
+            {
+                if (GUILayout.Button("Unlink"))
+                    simpleNode.UnlinkChild();
+            }
+            else
+            {
+                if (GUILayout.Button("Add"))
+                {
+                    var menu = new GenericMenu();
+                    AddSimpleNodeMenuItems(simpleNode, ref menu);
+                    menu.ShowAsContext();
+                }
+            }
         }
 
         private void DrawConditionalNode(ItemConditionalNode conditionalNode)
@@ -407,7 +437,7 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void OnGUI()
         {
-            if (!_selectedDialogueAsset)
+            if (!selectedDialogueAsset)
             {
                 DrawLabelAtCenter("No Dialogue Selected");
                 return;
@@ -422,13 +452,13 @@ namespace CesarJZO.DialogueSystem.Editor
                 fontSize = 16
             };
 
-            GUILayout.Label(_selectedDialogueAsset.name, labelStyle);
+            GUILayout.Label(selectedDialogueAsset.name, labelStyle);
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
-            foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
+            foreach (DialogueNode node in selectedDialogueAsset.Nodes)
                 DrawConnections(node);
-            foreach (DialogueNode node in _selectedDialogueAsset.Nodes)
+            foreach (DialogueNode node in selectedDialogueAsset.Nodes)
                 DrawNode(node);
 
             EditorGUILayout.EndScrollView();
@@ -439,10 +469,15 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             if (_creatingNode?.parentNode)
             {
-                _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode,
+                selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode,
                     _creatingNode.parentNode.rect.position + Vector2.right * 300f);
                 _creatingNode = null;
             }
+        }
+
+        private void Awake()
+        {
+            _editor = this;
         }
 
         private void OnEnable()
@@ -468,17 +503,17 @@ namespace CesarJZO.DialogueSystem.Editor
             menu.AddItem(
                 content: new GUIContent("Add Simple Node"),
                 on: false,
-                func: () => _selectedDialogueAsset.CreateNodeAtPoint(NodeType.SimpleNode, position)
+                func: () => selectedDialogueAsset.CreateNodeAtPoint(NodeType.SimpleNode, position)
             );
             menu.AddItem(
                 content: new GUIContent("Add Response Node"),
                 on: false,
-                func: () => _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ResponseNode, position)
+                func: () => selectedDialogueAsset.CreateNodeAtPoint(NodeType.ResponseNode, position)
             );
             menu.AddItem(
                 content: new GUIContent("Add Item Conditional Node"),
                 on: false,
-                func: () => _selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode, position)
+                func: () => selectedDialogueAsset.CreateNodeAtPoint(NodeType.ConditionalNode, position)
             );
             menu.ShowAsContext();
         }
@@ -490,9 +525,18 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void OnSelectionChanged()
         {
-            var selected = Selection.activeObject as Dialogue;
-            if (selected)
-                _selectedDialogueAsset = selected;
+            var selected = Selection.activeObject;
+
+            if (selected is Dialogue dialogue)
+            {
+                selectedDialogueAsset = dialogue;
+            }
+            else if (selected is DialogueNode node)
+            {
+                string path = AssetDatabase.GetAssetPath(node);
+                selectedDialogueAsset = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
+            }
+
             Repaint();
         }
 
@@ -515,7 +559,7 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 ItemConditionalNode => new Vector2(192f, 152f),
                 ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f),
-                _ => new Vector2(192f, 92f)
+                _ => new Vector2(192f, 116f)
             };
         }
     }
