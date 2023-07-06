@@ -97,7 +97,7 @@ namespace CesarJZO.UI
             if (_dialogueManager.CurrentNode is not ItemConditionalNode itemConditionalNode)
                 return;
 
-            itemConditionalNode.SetItem(item);
+            itemConditionalNode.SetItemToCompare(item);
 
             _dialogueManager.Next();
         }

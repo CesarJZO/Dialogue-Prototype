@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
 {
@@ -9,7 +10,7 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private Emotion emotion;
         [SerializeField] private PortraitSide portraitSide;
 
-        [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
+        [HideInInspector, SerializeField] public Rect rect = new(0f, 0f, 256f, 120f);
 
         public NodeType Type => GetType().Name switch
         {
@@ -30,7 +31,11 @@ namespace CesarJZO.DialogueSystem
         {
             get => text;
 #if UNITY_EDITOR
-            set => text = value;
+            set
+            {
+                text = value;
+                EditorUtility.SetDirty(this);
+            }
 #endif
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
@@ -9,7 +10,7 @@ namespace CesarJZO.DialogueSystem
     {
         [SerializeField] [Min(0f)] private float timeLimit;
 
-        private List<Response> _responses;
+        [SerializeField, HideInInspector] private List<Response> responses;
 
         public float TimeLimit => timeLimit;
 
@@ -17,62 +18,70 @@ namespace CesarJZO.DialogueSystem
 
         public override DialogueNode Child => CurrentResponse?.child;
 
-        public IEnumerable<Response> Responses => _responses;
+        public IEnumerable<Response> Responses => responses;
 
-        public int ChildrenCount => _responses.Count;
+        public int ChildrenCount => responses.Count;
 
+        public string GetText(int index)
+        {
+            return responses[index].text;
+        }
+
+        public DialogueNode GetChild(int index)
+        {
+            return responses[index].child;
+        }
+
+#if UNITY_EDITOR
         private void Awake()
         {
-            _responses ??= new List<Response>();
+            responses ??= new List<Response>();
         }
 
         public override bool TryRemoveChild(DialogueNode node)
         {
-            Response response = _responses.FirstOrDefault(r => r.child == node);
+            Response response = responses.FirstOrDefault(r => r.child == node);
 
             if (response is null) return false;
 
-            _responses.Remove(response);
+            responses.Remove(response);
+            EditorUtility.SetDirty(this);
             return true;
         }
 
         public void UnlinkChild(int index)
         {
-            _responses[index].child = null;
+            responses[index].child = null;
+            EditorUtility.SetDirty(this);
         }
 
         public int AddResponse()
         {
-            _responses.Add(new Response());
-            return _responses.Count - 1;
+            responses.Add(new Response());
+            EditorUtility.SetDirty(this);
+            return responses.Count - 1;
         }
 
         public int RemoveResponse()
         {
-            _responses.RemoveAt(_responses.Count - 1);
-            return _responses.Count;
+            responses.RemoveAt(responses.Count - 1);
+            EditorUtility.SetDirty(this);
+            return responses.Count;
         }
 
         public void SetText(string text, int index)
         {
-            _responses[index].text = text;
-        }
-
-        public string GetText(int index)
-        {
-            return _responses[index].text;
+            responses[index].text = text;
+            EditorUtility.SetDirty(this);
         }
 
         public void SetChild(DialogueNode node, int index)
         {
-            _responses[index].child = node;
-        }
-
-        public DialogueNode GetChild(int index)
-        {
-            return _responses[index].child;
+            responses[index].child = node;
+            EditorUtility.SetDirty(this);
         }
     }
+#endif
 
     [Serializable]
     public class Response

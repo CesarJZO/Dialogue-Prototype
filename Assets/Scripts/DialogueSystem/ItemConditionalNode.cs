@@ -1,4 +1,5 @@
 ﻿using CesarJZO.InventorySystem;
+using UnityEditor;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
@@ -7,54 +8,21 @@ namespace CesarJZO.DialogueSystem
     {
         [SerializeField] private Item hasItem;
 
-        private DialogueNode _trueChild;
-        private DialogueNode _falseChild;
+        [SerializeField, HideInInspector] private DialogueNode trueChild;
+        [SerializeField, HideInInspector] private DialogueNode falseChild;
 
         private Item _comparableItem;
 
         public Item Item => hasItem;
 
-        public override DialogueNode Child => Evaluate() ? _trueChild : _falseChild;
-
-        public override bool TryRemoveChild(DialogueNode node)
-        {
-            if (_trueChild == node)
-            {
-                _trueChild = null;
-                return true;
-            }
-
-            if (_falseChild == node)
-            {
-                _falseChild = null;
-                return true;
-            }
-
-            return false;
-        }
-
-        public void SetChild(DialogueNode node, bool which)
-        {
-            if (which)
-                _trueChild = node;
-            else
-                _falseChild = node;
-        }
+        public override DialogueNode Child => Evaluate() ? trueChild : falseChild;
 
         public DialogueNode GetChild(bool which)
         {
-            return which ? _trueChild : _falseChild;
+            return which ? trueChild : falseChild;
         }
 
-        public void UnlinkChild(bool which)
-        {
-            if (which)
-                _trueChild = null;
-            else
-                _falseChild = null;
-        }
-
-        public void SetItem(Item item)
+        public void SetItemToCompare(Item item)
         {
             _comparableItem = item;
         }
@@ -63,5 +31,44 @@ namespace CesarJZO.DialogueSystem
         {
             return hasItem == _comparableItem;
         }
+
+#if UNITY_EDITOR
+        public void SetChild(DialogueNode node, bool which)
+        {
+            if (which)
+                trueChild = node;
+            else
+                falseChild = node;
+            EditorUtility.SetDirty(this);
+        }
+
+        public void UnlinkChild(bool which)
+        {
+            if (which)
+                trueChild = null;
+            else
+                falseChild = null;
+            EditorUtility.SetDirty(this);
+        }
+
+        public override bool TryRemoveChild(DialogueNode node)
+        {
+            if (trueChild == node)
+            {
+                trueChild = null;
+                EditorUtility.SetDirty(this);
+                return true;
+            }
+
+            if (falseChild == node)
+            {
+                falseChild = null;
+                EditorUtility.SetDirty(this);
+                return true;
+            }
+
+            return false;
+        }
+#endif
     }
 }
