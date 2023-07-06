@@ -14,6 +14,8 @@ namespace CesarJZO.DialogueSystem.Editor
         private const float BackgroundLength = CanvasSize / BackgroundSize;
 
         private static readonly Rect BackgroundCoords = new(0f, 0f, BackgroundLength, BackgroundLength);
+        private static readonly string[] Sides = { "Left", "Right" };
+        private static readonly string[] Emotions = { "Neutral", "Happy", "Sad", "Angry" };
 
         private static DialogueEditor _editor;
 
@@ -148,9 +150,9 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             return node switch
             {
-                ItemConditionalNode => new Vector2(256f, 152f),
-                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f),
-                _ => new Vector2(256f, 116f)
+                ItemConditionalNode => new Vector2(256f, 152f + 64f),
+                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f + 64f),
+                _ => new Vector2(256f, 116f + 64f)
             };
         }
 
@@ -276,6 +278,14 @@ namespace CesarJZO.DialogueSystem.Editor
                 {
                     GUILayout.Label("Speaker:", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
                     node.Speaker = EditorGUILayout.ObjectField(node.Speaker, typeof(Speaker), false) as Speaker;
+                }
+                GUILayout.EndHorizontal();
+                EditorGUILayout.Space();
+
+                GUILayout.BeginHorizontal();
+                {
+                    node.PortraitSide = (PortraitSide) EditorGUILayout.Popup((int)node.PortraitSide, Sides);
+                    node.Emotion = (Emotion) EditorGUILayout.Popup((int)node.Emotion, Emotions);
                 }
                 GUILayout.EndHorizontal();
                 EditorGUILayout.Space();

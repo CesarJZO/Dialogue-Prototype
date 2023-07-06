@@ -14,9 +14,29 @@ namespace CesarJZO.DialogueSystem
 
         public abstract DialogueNode Child { get; }
 
-        public Emotion Emotion => emotion;
+        public Emotion Emotion
+        {
+            get => emotion;
+#if UNITY_EDITOR
+            set
+            {
+                emotion = value;
+                EditorUtility.SetDirty(this);
+            }
+#endif
+        }
 
-        public PortraitSide PortraitSide => portraitSide;
+        public PortraitSide PortraitSide
+        {
+            get => portraitSide;
+#if UNITY_EDITOR
+            set
+            {
+                portraitSide = value;
+                EditorUtility.SetDirty(this);
+            }
+#endif
+        }
 
         public Speaker Speaker
         {
