@@ -13,34 +13,29 @@ namespace CesarJZO.DialogueSystem.Editor
         private const float BackgroundLength = CanvasSize / BackgroundSize;
 
         private static readonly Rect BackgroundCoords = new(0f, 0f, BackgroundLength, BackgroundLength);
-        private Texture2D _backgroundTexture;
 
         private static DialogueEditor _editor;
 
+        [SerializeField] private Vector2 scrollPosition;
         [SerializeField] private Dialogue selectedDialogue;
-        public Dialogue SelectedDialogue => selectedDialogue;
 
-        [NonSerialized] private DialogueNode _draggingNode;
-        [NonSerialized] private NodeContext _creatingNode;
-        [NonSerialized] private NodeContext _linkingNode;
-        [NonSerialized] private Vector2 _draggingNodeOffset;
-
-        public NodeContext CreatingNode => _creatingNode;
-        public NodeContext LinkingNode
-        {
-            get => _linkingNode;
-            set => _linkingNode = value;
-        }
-
-        [NonSerialized] private GUIStyle _selectedNodeStyle;
-        [NonSerialized] private GUIStyle _simpleNodeStyle;
-        [NonSerialized] private GUIStyle _responseNodeStyle;
-        [NonSerialized] private GUIStyle _itemConditionalNodeStyle;
-        [NonSerialized] private GUIStyle _rootNodeStyle;
+        [NonSerialized] private Texture2D _backgroundTexture;
 
         [NonSerialized] private bool _draggingCanvas;
         [NonSerialized] private Vector2 _draggingCanvasOffset;
-        [SerializeField] private Vector2 scrollPosition;
+
+        [NonSerialized] private DialogueNode _draggingNode;
+        [NonSerialized] private Vector2 _draggingNodeOffset;
+
+        [NonSerialized] private GUIStyle _selectedNodeStyle;
+        [NonSerialized] private GUIStyle _rootNodeStyle;
+        [NonSerialized] private GUIStyle _simpleNodeStyle;
+        [NonSerialized] private GUIStyle _responseNodeStyle;
+        [NonSerialized] private GUIStyle _itemConditionalNodeStyle;
+
+        public Dialogue SelectedDialogue => selectedDialogue;
+
+        [field: NonSerialized] public NodeContext LinkingNode { get; set; }
 
         /// <summary>
         ///     Opens the Dialogue Editor window.
@@ -53,6 +48,66 @@ namespace CesarJZO.DialogueSystem.Editor
                 focus: true,
                 desiredDockNextTo: typeof(SceneView)
             );
+        }
+
+        private void Awake()
+        {
+            _editor = this;
+        }
+
+        private void OnEnable()
+        {
+            Selection.selectionChanged += OnSelectionChanged;
+
+            _selectedNodeStyle = CreateStyle("node1");
+            _simpleNodeStyle = CreateStyle("node0");
+            _responseNodeStyle = CreateStyle("node0");
+            _itemConditionalNodeStyle = CreateStyle("node0");
+            _rootNodeStyle = CreateStyle("node5");
+
+            _backgroundTexture = Resources.Load<Texture2D>("background");
+
+            if (selectedDialogue && selectedDialogue.RootNode)
+                ScrollToNode(selectedDialogue.RootNode);
+            else
+                scrollPosition = new Rect(0f, 0f, CanvasSize, CanvasSize).center;
+
+            GUIStyle CreateStyle(string path) => new()
+            {
+                normal = { background = EditorGUIUtility.Load(path) as Texture2D },
+                padding = new RectOffset(20, 20, 20, 20),
+                border = new RectOffset(12, 12, 12, 12)
+            };
+        }
+
+        private void OnDisable()
+        {
+            Selection.selectionChanged -= OnSelectionChanged;
+        }
+
+        private void OnGUI()
+        {
+            if (selectedDialogue)
+                ProcessEventsOnAsset();
+
+            ProcessScrollView();
+
+            string assetName = selectedDialogue ? selectedDialogue.name : "None";
+            GUILayout.Label($"Editing: {assetName}", EditorStyles.boldLabel);
+
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUIStyle.none, GUIStyle.none);
+            {
+                Rect canvasRect = GUILayoutUtility.GetRect(CanvasSize, CanvasSize);
+                GUI.DrawTextureWithTexCoords(canvasRect, _backgroundTexture, BackgroundCoords);
+                if (selectedDialogue)
+                {
+                    foreach (DialogueNode node in selectedDialogue.Nodes)
+                        DrawConnections(node);
+                    foreach (DialogueNode node in selectedDialogue.Nodes)
+                        DrawNode(node);
+                }
+            }
+            EditorGUILayout.EndScrollView();
         }
 
         [OnOpenAsset(1)]
@@ -73,7 +128,39 @@ namespace CesarJZO.DialogueSystem.Editor
             return true;
         }
 
-        #region Dialogue GUI
+        private void OnSelectionChanged()
+        {
+            var selected = Selection.activeObject;
+
+            if (selected is not (Dialogue or DialogueNode)) return;
+
+            string path = AssetDatabase.GetAssetPath(selected);
+            selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
+
+            if (_editor)
+                _editor.Focus();
+
+            Repaint();
+        }
+
+        private static Vector2 GetSizeForNode(DialogueNode node)
+        {
+            return node switch
+            {
+                ItemConditionalNode => new Vector2(192f, 152f),
+                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f),
+                _ => new Vector2(192f, 116f)
+            };
+        }
+
+        public void ScrollToNode(DialogueNode node)
+        {
+            float horizontalOffset = selectedDialogue.IsRoot(node) ? 64f : position.width / 2f - node.rect.width / 2f;
+
+            scrollPosition = node.rect.position - new Vector2(
+                horizontalOffset, position.height / 2f - node.rect.height / 2f
+            );
+        }
 
         private void ProcessEventsOnAsset()
         {
@@ -87,25 +174,38 @@ namespace CesarJZO.DialogueSystem.Editor
                 {
                     _draggingNodeOffset = e.mousePosition - _draggingNode.rect.position;
 
-                    if (_linkingNode is not null)
+                    if (LinkingNode is not null)
                     {
-                        if (_linkingNode.parentNode is SimpleNode simpleNode)
+                        if (LinkingNode.parentNode is SimpleNode simpleNode)
                             simpleNode.SetChild(_draggingNode);
-                        else if (_linkingNode.parentNode is ResponseNode responseNode)
-                            responseNode.SetChild(_draggingNode, _linkingNode.indexIfResponse);
-                        else if (_linkingNode.parentNode is ItemConditionalNode itemConditionalNode)
-                            itemConditionalNode.SetChild(_draggingNode, _linkingNode.valueIfConditional);
-                        _linkingNode = null;
+                        else if (LinkingNode.parentNode is ResponseNode responseNode)
+                            responseNode.SetChild(_draggingNode, LinkingNode.indexIfResponse);
+                        else if (LinkingNode.parentNode is ItemConditionalNode itemConditionalNode)
+                            itemConditionalNode.SetChild(_draggingNode, LinkingNode.valueIfConditional);
+                        LinkingNode = null;
                     }
+
                     Selection.activeObject = _draggingNode;
                 }
                 else
                 {
+                    if (LinkingNode is not null)
+                    {
+                        LinkingNode = null;
+                        return;
+                    }
+
                     Selection.activeObject = selectedDialogue;
                 }
             }
             else if (e.type is EventType.MouseDown && e.button is 1)
             {
+                if (LinkingNode is not null)
+                {
+                    LinkingNode = null;
+                    return;
+                }
+
                 DialogueNode currentNode = selectedDialogue.Nodes.LastOrDefault(node =>
                     node.rect.Contains(e.mousePosition + scrollPosition)
                 );
@@ -132,10 +232,8 @@ namespace CesarJZO.DialogueSystem.Editor
                 _draggingNode = null;
             }
 
-            if (e.type is EventType.KeyUp && e.keyCode is KeyCode.Escape && _linkingNode is not null)
-            {
-                _linkingNode = null;
-            }
+            if (e.type is EventType.KeyUp && e.keyCode is KeyCode.Escape && LinkingNode is not null)
+                LinkingNode = null;
         }
 
         private void ProcessScrollView()
@@ -146,14 +244,14 @@ namespace CesarJZO.DialogueSystem.Editor
                 _draggingCanvas = true;
                 _draggingCanvasOffset = e.mousePosition + scrollPosition;
             }
-            else if (e.type is EventType.MouseDrag && e.button is 2 && _draggingCanvas)
-            {
-                scrollPosition = _draggingCanvasOffset - e.mousePosition;
-                GUI.changed = true;
-            }
             else if (e.type is EventType.MouseUp && e.button is 2)
             {
                 _draggingCanvas = false;
+            }
+            else if (/* e.type is EventType.MouseDrag && e.button is 2 && */ _draggingCanvas)
+            {
+                scrollPosition = _draggingCanvasOffset - e.mousePosition;
+                GUI.changed = true;
             }
         }
 
@@ -195,7 +293,6 @@ namespace CesarJZO.DialogueSystem.Editor
         }
 
 
-
         private void DrawSimpleNode(SimpleNode simpleNode)
         {
             if (simpleNode.GetChild())
@@ -224,7 +321,6 @@ namespace CesarJZO.DialogueSystem.Editor
                 GUILayout.Label(conditionalNode.Item ? conditionalNode.Item.DisplayName : "Not Set", EditorStyles.boldLabel);
             }
             GUILayout.EndHorizontal();
-
 
             DrawGUIElements(true);
             DrawGUIElements(false);
@@ -257,7 +353,7 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             const float buttonWidth = 64f;
 
-            for (int i = 0; i < responseNode.ChildrenCount; i++)
+            for (var i = 0; i < responseNode.ChildrenCount; i++)
                 DrawResponse(i);
             EditorGUILayout.Space();
 
@@ -274,11 +370,13 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label($"R {index + 1}: ", GUILayout.Width(32f));
+                    GUILayout.Label($"R {index + 1}:", GUILayout.Width(32f));
+
                     responseNode.SetText(
-                        GUILayout.TextField(responseNode.GetText(index)),
+                        GUILayout.TextField(responseNode.GetText(index), GUILayout.Width(112f)),
                         index
                     );
+
                     bool hasChild = responseNode.GetChild(index);
                     if (GUILayout.Button(hasChild ? "Unlink" : "Add", GUILayout.Width(buttonWidth)))
                     {
@@ -306,11 +404,12 @@ namespace CesarJZO.DialogueSystem.Editor
             Vector2 start;
             Vector2 end;
 
-            if (_linkingNode is not null && _linkingNode.parentNode == node)
+            if (LinkingNode is not null && LinkingNode.parentNode == node)
             {
                 start = node switch
                 {
-                    ItemConditionalNode => GetStartPointForConditionalNode(_linkingNode.valueIfConditional),
+                    ItemConditionalNode => GetStartPointForConditionalNode(LinkingNode.valueIfConditional),
+                    ResponseNode => GetStartPointForResponseNode(LinkingNode.indexIfResponse),
                     _ => GetStartPointDefault()
                 };
                 end = Event.current.mousePosition;
@@ -338,7 +437,7 @@ namespace CesarJZO.DialogueSystem.Editor
             }
             else if (node is ResponseNode responseNode)
             {
-                for (int i = 0; i < responseNode.ChildrenCount; i++)
+                for (var i = 0; i < responseNode.ChildrenCount; i++)
                 {
                     start = GetStartPointForResponseNode(i);
                     DialogueNode child = responseNode.GetChild(i);
@@ -396,114 +495,6 @@ namespace CesarJZO.DialogueSystem.Editor
                     y = 84f + index * 20f
                 };
             }
-        }
-
-        #endregion
-
-        private void OnGUI()
-        {
-            if (selectedDialogue)
-                ProcessEventsOnAsset();
-
-            ProcessScrollView();
-
-            string assetName = selectedDialogue ? selectedDialogue.name : "None";
-            GUILayout.Label($"Editing: {assetName}", EditorStyles.boldLabel);
-
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUIStyle.none, GUIStyle.none);
-            {
-                Rect canvasRect = GUILayoutUtility.GetRect(CanvasSize, CanvasSize);
-                GUI.DrawTextureWithTexCoords(canvasRect, _backgroundTexture, BackgroundCoords);
-                if (selectedDialogue)
-                {
-                    foreach (DialogueNode node in selectedDialogue.Nodes)
-                        DrawConnections(node);
-                    foreach (DialogueNode node in selectedDialogue.Nodes)
-                        DrawNode(node);
-                }
-            }
-            EditorGUILayout.EndScrollView();
-            if (selectedDialogue)
-                HandleNodeModifiers();
-        }
-
-        private void HandleNodeModifiers()
-        {
-            if (_creatingNode?.parentNode)
-            {
-                selectedDialogue.CreateNodeAtPoint(NodeType.ConditionalNode,
-                    _creatingNode.parentNode.rect.position + Vector2.right * 300f);
-                _creatingNode = null;
-            }
-        }
-
-        private void Awake()
-        {
-            _editor = this;
-        }
-
-        private void OnEnable()
-        {
-            Selection.selectionChanged += OnSelectionChanged;
-
-            _selectedNodeStyle = CreateStyle("node1");
-            _simpleNodeStyle = CreateStyle("node0");
-            _responseNodeStyle = CreateStyle("node0");
-            _itemConditionalNodeStyle = CreateStyle("node0");
-            _rootNodeStyle = CreateStyle("node5");
-
-            _backgroundTexture = Resources.Load<Texture2D>("background");
-
-            if (selectedDialogue && selectedDialogue.RootNode)
-                scrollPosition = selectedDialogue.RootNode.rect.position - new Vector2(64f, 256f);
-            else
-                scrollPosition = new Rect(0f, 0f, CanvasSize, CanvasSize).center;
-
-            GUIStyle CreateStyle(string path) => new()
-            {
-                normal = { background = EditorGUIUtility.Load(path) as Texture2D },
-                padding = new RectOffset(20, 20, 20, 20),
-                border = new RectOffset(12, 12, 12, 12)
-            };
-        }
-
-        private void OnDisable()
-        {
-            Selection.selectionChanged -= OnSelectionChanged;
-        }
-
-        private void OnSelectionChanged()
-        {
-            var selected = Selection.activeObject;
-
-            if (selected is not (Dialogue or DialogueNode)) return;
-
-            string path = AssetDatabase.GetAssetPath(selected);
-            selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
-
-            if (_editor)
-                _editor.Focus();
-
-            Repaint();
-        }
-
-        private static Vector2 GetSizeForNode(DialogueNode node)
-        {
-            return node switch
-            {
-                ItemConditionalNode => new Vector2(192f, 152f),
-                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f),
-                _ => new Vector2(192f, 116f)
-            };
-        }
-
-        public void ScrollToNode(DialogueNode node)
-        {
-            float horizontalOffset = selectedDialogue.IsRoot(node) ? 64f : position.width / 2f - node.rect.width / 2f;
-
-            scrollPosition = node.rect.position - new Vector2(
-                horizontalOffset, position.height / 2f - node.rect.height / 2f
-            );
         }
     }
 }

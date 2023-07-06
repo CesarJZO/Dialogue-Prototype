@@ -10,7 +10,7 @@ namespace CesarJZO.DialogueSystem
     {
         [SerializeField] [Min(0f)] private float timeLimit;
 
-        [SerializeField, HideInInspector] private List<Response> responses;
+        [SerializeField] private List<Response> responses;
 
         public float TimeLimit => timeLimit;
 
@@ -44,7 +44,7 @@ namespace CesarJZO.DialogueSystem
 
             if (response is null) return false;
 
-            responses.Remove(response);
+            response.child = null;
             EditorUtility.SetDirty(this);
             return true;
         }
@@ -87,6 +87,6 @@ namespace CesarJZO.DialogueSystem
     public class Response
     {
         public string text;
-        public DialogueNode child;
+        [HideInInspector, SerializeField] public DialogueNode child;
     }
 }
