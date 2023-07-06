@@ -26,35 +26,25 @@ namespace CesarJZO.DialogueSystem.Editor
             menu.AddItem(new GUIContent("Add Item Conditional Node"), false,
                 () => editor.SelectedDialogue.CreateNodeAtPoint(NodeType.ConditionalNode, position)
             );
-            menu.AddItem(new GUIContent("Go To Root Node"), false, () =>
-            {
-                DialogueNode rootNode = editor.SelectedDialogue.RootNode;
-                if (rootNode)
-                    editor.ScrollToNode(rootNode);
-            });
+            DialogueNode rootNode = editor.SelectedDialogue.RootNode;
+            if (rootNode)
+                menu.AddItem(new GUIContent("Go To Root Node"), false, () => editor.ScrollToNode(rootNode));
         }
 
         public static void AddSimpleNodeMenuItems(this GenericMenu menu, SimpleNode simpleNode, DialogueEditor editor)
         {
-            if (!simpleNode.Child)
-            {
-                menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                    () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
-                );
-                menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                    () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
-                );
-                menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                    () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
-                );
-                menu.AddItem(new GUIContent("Link Node"), false,
-                    () => editor.LinkingNode = new NodeContext(simpleNode)
-                );
-            }
-            else
-            {
-                menu.AddItem(new GUIContent("Unlink Child"), false, simpleNode.UnlinkChild);
-            }
+            menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
+                () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
+            );
+            menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
+                () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
+            );
+            menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
+                () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
+            );
+            menu.AddItem(new GUIContent("Link Node"), false,
+                () => editor.LinkingNode = new NodeContext(simpleNode)
+            );
         }
 
         public static void AddConditionalNodeMenuItems(this GenericMenu menu, ItemConditionalNode conditionalNode, bool which, DialogueEditor editor)
