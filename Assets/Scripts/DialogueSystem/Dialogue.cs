@@ -8,14 +8,15 @@ namespace CesarJZO.DialogueSystem
     [CreateAssetMenu(fileName = "New Dialogue", menuName = "Dialogue/Dialogue", order = 0)]
     public class Dialogue : ScriptableObject
     {
-        [SerializeField] private List<DialogueNode> nodes;
-        public DialogueNode RootNode => nodes.Count == 0 ? null : nodes[0];
+        private List<DialogueNode> _nodes;
 
-        public IEnumerable<DialogueNode> Nodes => nodes;
+        public DialogueNode RootNode => _nodes.Count == 0 ? null : _nodes[0];
+
+        public IEnumerable<DialogueNode> Nodes => _nodes;
 
         private void Awake()
         {
-            nodes ??= new List<DialogueNode>();
+            _nodes ??= new List<DialogueNode>();
         }
 
         private void SaveInstance(DialogueNode node)
@@ -44,7 +45,7 @@ namespace CesarJZO.DialogueSystem
             if (parent)
                 childNode.rect.position = parent.rect.position + new Vector2(parent.rect.width + 50f, 0f);
 
-            nodes.Add(childNode);
+            _nodes.Add(childNode);
             SaveInstance(childNode);
 
             return childNode;
@@ -76,8 +77,8 @@ namespace CesarJZO.DialogueSystem
 
         public void RemoveNode(DialogueNode node)
         {
-            nodes.Remove(node);
-            foreach (DialogueNode n in nodes)
+            _nodes.Remove(node);
+            foreach (DialogueNode n in _nodes)
                 n.TryRemoveChild(node);
 
             RemoveInstanceFromAssetDatabase(node);
@@ -85,11 +86,11 @@ namespace CesarJZO.DialogueSystem
 
         public void SetNodeAsRoot(DialogueNode node)
         {
-            if (!nodes.Contains(node))
+            if (!_nodes.Contains(node))
                 return;
 
-            nodes.Remove(node);
-            nodes.Insert(0, node);
+            _nodes.Remove(node);
+            _nodes.Insert(0, node);
         }
 
         private static string GetGuidFormatted(NodeType type)
@@ -99,12 +100,15 @@ namespace CesarJZO.DialogueSystem
             return typeSpan[0].ToString() + '-' + guidSpan[..8].ToString();
         }
 
-        public bool IsRoot(DialogueNode node) => node == RootNode;
+        public bool IsRoot(DialogueNode node)
+        {
+            return node == RootNode;
+        }
 
         public void Save()
         {
             EditorUtility.SetDirty(this);
-            foreach (DialogueNode node in nodes)
+            foreach (DialogueNode node in _nodes)
                 EditorUtility.SetDirty(node);
             AssetDatabase.SaveAssets();
         }

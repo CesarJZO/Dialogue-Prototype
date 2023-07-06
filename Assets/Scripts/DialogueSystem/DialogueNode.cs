@@ -5,9 +5,11 @@ namespace CesarJZO.DialogueSystem
     public abstract class DialogueNode : ScriptableObject
     {
         [SerializeField] private Speaker speaker;
-        [SerializeField, TextArea] private string text;
+        [SerializeField] [TextArea] private string text;
         [SerializeField] private Emotion emotion;
         [SerializeField] private PortraitSide portraitSide;
+
+        [HideInInspector] public Rect rect = new(0f, 0f, 256f, 120f);
 
         public NodeType Type => GetType().Name switch
         {
@@ -15,9 +17,6 @@ namespace CesarJZO.DialogueSystem
             "ResponseNode" => NodeType.ResponseNode,
             _ => NodeType.SimpleNode
         };
-
-        // [HideInInspector]
-        public Rect rect = new(0f, 0f, 256f, 120f);
 
         public abstract DialogueNode Child { get; }
 

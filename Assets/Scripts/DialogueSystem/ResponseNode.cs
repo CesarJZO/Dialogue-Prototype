@@ -7,73 +7,70 @@ namespace CesarJZO.DialogueSystem
 {
     public class ResponseNode : DialogueNode
     {
-        [SerializeField] private List<Response> responses;
-        [SerializeField, Min(0f)] private float timeLimit;
+        [SerializeField] [Min(0f)] private float timeLimit;
+
+        private List<Response> _responses;
+
         public float TimeLimit => timeLimit;
 
-        private Response _currentResponse;
+        public Response CurrentResponse { set; get; }
 
-        public Response CurrentResponse
+        public override DialogueNode Child => CurrentResponse?.child;
+
+        public IEnumerable<Response> Responses => _responses;
+
+        public int ChildrenCount => _responses.Count;
+
+        private void Awake()
         {
-            set => _currentResponse = value;
-            get => _currentResponse;
+            _responses ??= new List<Response>();
         }
 
-        public override DialogueNode Child => _currentResponse?.child;
         public override bool TryRemoveChild(DialogueNode node)
         {
-            Response response = responses.FirstOrDefault(r => r.child == node);
+            Response response = _responses.FirstOrDefault(r => r.child == node);
 
             if (response is null) return false;
 
-            responses.Remove(response);
+            _responses.Remove(response);
             return true;
         }
 
         public void UnlinkChild(int index)
         {
-            responses[index].child = null;
+            _responses[index].child = null;
         }
-
-        public IEnumerable<Response> Responses => responses;
-
-        public int ChildrenCount => responses.Count;
 
         public int AddResponse()
         {
-            responses.Add(new Response());
-            return responses.Count - 1;
+            _responses.Add(new Response());
+            return _responses.Count - 1;
         }
 
         public int RemoveResponse()
         {
-            responses.RemoveAt(responses.Count - 1);
-            return responses.Count;
+            _responses.RemoveAt(_responses.Count - 1);
+            return _responses.Count;
         }
 
         public void SetText(string text, int index)
         {
-            responses[index].text = text;
+            _responses[index].text = text;
         }
 
         public string GetText(int index)
         {
-            return responses[index].text;
+            return _responses[index].text;
         }
 
         public void SetChild(DialogueNode node, int index)
         {
-            responses[index].child = node;
+            _responses[index].child = node;
         }
 
         public DialogueNode GetChild(int index)
         {
-            return responses[index].child;
-        }
-
-        private void Awake()
-        {
-            responses ??= new List<Response>();
+            return _responses[index].child;
         }
     }
 

@@ -6,48 +6,52 @@ namespace CesarJZO.DialogueSystem
     public class ItemConditionalNode : DialogueNode
     {
         [SerializeField] private Item hasItem;
-        [SerializeField] private DialogueNode trueChild;
-        [SerializeField] private DialogueNode falseChild;
+
+        private DialogueNode _trueChild;
+        private DialogueNode _falseChild;
 
         private Item _comparableItem;
 
         public Item Item => hasItem;
 
-        public override DialogueNode Child => Evaluate() ? trueChild : falseChild;
+        public override DialogueNode Child => Evaluate() ? _trueChild : _falseChild;
+
         public override bool TryRemoveChild(DialogueNode node)
         {
-            if (trueChild == node)
+            if (_trueChild == node)
             {
-                trueChild = null;
+                _trueChild = null;
                 return true;
             }
-            if (falseChild == node)
+
+            if (_falseChild == node)
             {
-                falseChild = null;
+                _falseChild = null;
                 return true;
             }
+
             return false;
         }
 
         public void SetChild(DialogueNode node, bool which)
         {
             if (which)
-                trueChild = node;
+                _trueChild = node;
             else
-                falseChild = node;
+                _falseChild = node;
         }
 
         public DialogueNode GetChild(bool which)
         {
-            return which ? trueChild : falseChild;
+            return which ? _trueChild : _falseChild;
         }
 
         public void UnlinkChild(bool which)
         {
             if (which)
-                trueChild = null;
+                _trueChild = null;
             else
-                falseChild = null;
+                _falseChild = null;
         }
 
         public void SetItem(Item item)

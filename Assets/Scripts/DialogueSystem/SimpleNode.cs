@@ -1,33 +1,32 @@
-﻿using UnityEngine;
-
-namespace CesarJZO.DialogueSystem
+﻿namespace CesarJZO.DialogueSystem
 {
     public class SimpleNode : DialogueNode
     {
-        [SerializeField] private DialogueNode child;
+        private DialogueNode _child;
 
-        public override DialogueNode Child => child;
+        public override DialogueNode Child => _child;
+
         public override bool TryRemoveChild(DialogueNode node)
         {
-            if (child != node) return false;
+            if (_child != node) return false;
 
-            child = null;
+            _child = null;
             return true;
         }
 
         public DialogueNode GetChild()
         {
-            return child;
+            return _child;
         }
 
         public void SetChild(DialogueNode node)
         {
-            child = node;
+            _child = node;
         }
 
         public void UnlinkChild()
         {
-            child = null;
+            _child = null;
         }
     }
 }
