@@ -30,30 +30,23 @@ namespace CesarJZO.DialogueSystem.Editor
         [MenuItem("Window/Dialogue Editor")]
         private static void ShowWindow()
         {
-            var window = GetWindow<DialogueEditor>(
+            _editor = GetWindow<DialogueEditor>(
                 title: "Dialogue Editor",
                 focus: true,
                 desiredDockNextTo: typeof(SceneView)
             );
-            window.Show();
         }
 
         [OnOpenAsset(1)]
         private static bool OnOpenAsset(int instanceID, int line)
         {
             var selected = EditorUtility.InstanceIDToObject(instanceID);
-            if (!selected) return false;
+
+            if (selected is not (Dialogue or DialogueNode)) return false;
+
             ShowWindow();
 
-            if (selected is Dialogue dialogue)
-            {
-                _editor.selectedDialogueAsset = dialogue;
-                return true;
-            }
-
-            if (selected is not DialogueNode node) return false;
-
-            string path = AssetDatabase.GetAssetPath(node);
+            string path = AssetDatabase.GetAssetPath(instanceID);
             _editor.selectedDialogueAsset = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
 
             return true;
@@ -97,11 +90,12 @@ namespace CesarJZO.DialogueSystem.Editor
                 );
                 if (currentNode)
                 {
-                    GenericMenu menu = RightClickNodeMenuBase(currentNode);
-                    menu.ShowAsContext();
+                    ShowRightClickNodeMenu(currentNode);
                 }
                 else
+                {
                     ShowAddNodesMenuAsContext(new GenericMenu(), e.mousePosition);
+                }
             }
             else if (e.type is EventType.MouseDrag && _draggingNode)
             {
@@ -119,7 +113,7 @@ namespace CesarJZO.DialogueSystem.Editor
             }
         }
 
-        private GenericMenu RightClickNodeMenuBase(DialogueNode node)
+        private void ShowRightClickNodeMenu(DialogueNode node)
         {
             var menu = new GenericMenu();
             menu.AddItem(
@@ -133,8 +127,6 @@ namespace CesarJZO.DialogueSystem.Editor
                 func: () => selectedDialogueAsset.RemoveNode(node)
             );
             menu.ShowAsContext();
-
-            return menu;
         }
 
         /// <summary>
@@ -437,22 +429,25 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void OnGUI()
         {
-            if (!selectedDialogueAsset)
-            {
-                DrawLabelAtCenter("No Dialogue Selected");
-                return;
-            }
+            if (!selectedDialogueAsset) return;
 
             ProcessEvents();
 
-            // Draw a title at the center top of the screen with the name of the selected Dialogue.
             var labelStyle = new GUIStyle(EditorStyles.centeredGreyMiniLabel)
             {
                 // alignment = TextAnchor.UpperCenter,
                 fontSize = 16
             };
 
-            GUILayout.Label(selectedDialogueAsset.name, labelStyle);
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label(selectedDialogueAsset.name, labelStyle);
+                if (GUILayout.Button("Save"))
+                {
+                    selectedDialogueAsset.Save();
+                }
+            }
+            GUILayout.EndHorizontal();
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
@@ -527,30 +522,15 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             var selected = Selection.activeObject;
 
-            if (selected is Dialogue dialogue)
-            {
-                selectedDialogueAsset = dialogue;
-            }
-            else if (selected is DialogueNode node)
-            {
-                string path = AssetDatabase.GetAssetPath(node);
-                selectedDialogueAsset = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
-            }
+            if (selected is not (Dialogue or DialogueNode)) return;
+
+            string path = AssetDatabase.GetAssetPath(selected);
+            selectedDialogueAsset = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
+
+            if (_editor)
+                _editor.Focus();
 
             Repaint();
-        }
-
-        private void DrawLabelAtCenter(string message)
-        {
-            GUILayout.BeginArea(new Rect(0f, 0f, position.width, position.height));
-            GUILayout.FlexibleSpace();
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.Label(message);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.EndArea();
         }
 
         private Vector2 GetSizeForNode(DialogueNode node)
@@ -561,18 +541,6 @@ namespace CesarJZO.DialogueSystem.Editor
                 ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f),
                 _ => new Vector2(192f, 116f)
             };
-        }
-    }
-
-    public class NodeContext
-    {
-        public readonly DialogueNode parentNode;
-        public bool valueIfConditional;
-        public int indexIfResponse;
-
-        public NodeContext(DialogueNode parentNode)
-        {
-            this.parentNode = parentNode;
         }
     }
 }

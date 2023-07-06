@@ -41,7 +41,8 @@ namespace CesarJZO.DialogueSystem
                 _ => CreateInstance<SimpleNode>()
             };
             childNode.name = GetGuidFormatted(childType);
-            childNode.rect.position = parent.rect.position + new Vector2(parent.rect.width + 50f, 0f);
+            if (parent)
+                childNode.rect.position = parent.rect.position + new Vector2(parent.rect.width + 50f, 0f);
 
             nodes.Add(childNode);
             SaveInstance(childNode);
@@ -51,17 +52,8 @@ namespace CesarJZO.DialogueSystem
 
         public void CreateNodeAtPoint(NodeType type, Vector2 position)
         {
-            DialogueNode node = type switch
-            {
-                NodeType.ConditionalNode => CreateInstance<ItemConditionalNode>(),
-                NodeType.ResponseNode => CreateInstance<ResponseNode>(),
-                _ => CreateInstance<SimpleNode>()
-            };
-            node.name = GetGuidFormatted(type);
+            DialogueNode node = CreateNode(null, type);
             node.rect.position = position;
-
-            nodes.Add(node);
-            SaveInstance(node);
         }
 
         public void AddChildToSimpleNode(SimpleNode parent, NodeType childType)
@@ -91,14 +83,10 @@ namespace CesarJZO.DialogueSystem
             RemoveInstanceFromAssetDatabase(node);
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
         public void SetNodeAsRoot(DialogueNode node)
         {
             if (!nodes.Contains(node))
-            {
-                Debug.LogWarning("Node is not in the dialogue.");
                 return;
-            }
 
             nodes.Remove(node);
             nodes.Insert(0, node);
@@ -108,9 +96,17 @@ namespace CesarJZO.DialogueSystem
         {
             ReadOnlySpan<char> guidSpan = Guid.NewGuid().ToString();
             ReadOnlySpan<char> typeSpan = type.ToString();
-            return $"{typeSpan[0]}-{guidSpan[..8].ToString()}";
+            return typeSpan[0].ToString() + '-' + guidSpan[..8].ToString();
         }
 
         public bool IsRoot(DialogueNode node) => node == RootNode;
+
+        public void Save()
+        {
+            EditorUtility.SetDirty(this);
+            foreach (DialogueNode node in nodes)
+                EditorUtility.SetDirty(node);
+            AssetDatabase.SaveAssets();
+        }
     }
 }
