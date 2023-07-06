@@ -12,13 +12,6 @@ namespace CesarJZO.DialogueSystem
 
         [HideInInspector, SerializeField] public Rect rect = new(0f, 0f, 256f, 120f);
 
-        public NodeType Type => GetType().Name switch
-        {
-            "ItemConditionalNode" => NodeType.ConditionalNode,
-            "ResponseNode" => NodeType.ResponseNode,
-            _ => NodeType.SimpleNode
-        };
-
         public abstract DialogueNode Child { get; }
 
         public Speaker Speaker => speaker;

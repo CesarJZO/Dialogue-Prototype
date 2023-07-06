@@ -262,12 +262,12 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             node.rect.size = GetSizeForNode(node);
 
-            GUILayout.BeginArea(node.rect, node.Type switch
+            GUILayout.BeginArea(node.rect, node switch
             {
                 _ when node == Selection.activeObject => _selectedNodeStyle,
                 _ when selectedDialogue.IsRoot(node) => _rootNodeStyle,
-                NodeType.ResponseNode => _responseNodeStyle,
-                NodeType.ConditionalNode => _itemConditionalNodeStyle,
+                ResponseNode => _responseNodeStyle,
+                ItemConditionalNode => _itemConditionalNodeStyle,
                 _ => _simpleNodeStyle
             });
             {
