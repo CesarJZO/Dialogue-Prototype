@@ -40,7 +40,7 @@ namespace CesarJZO.DialogueSystem.Editor
 
         [NonSerialized] private bool _draggingCanvas;
         [NonSerialized] private Vector2 _draggingCanvasOffset;
-        [SerializeField] private Vector2 scrollPosition = new Rect(0f, 0f, CanvasSize, CanvasSize).center;
+        [SerializeField] private Vector2 scrollPosition;
 
         /// <summary>
         ///     Opens the Dialogue Editor window.
@@ -66,6 +66,9 @@ namespace CesarJZO.DialogueSystem.Editor
 
             string path = AssetDatabase.GetAssetPath(instanceID);
             _editor.selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
+
+            if (selected is DialogueNode node)
+                _editor.ScrollToNode(node);
 
             return true;
         }
@@ -451,6 +454,11 @@ namespace CesarJZO.DialogueSystem.Editor
 
             _backgroundTexture = Resources.Load<Texture2D>("background");
 
+            if (selectedDialogue && selectedDialogue.RootNode)
+                scrollPosition = selectedDialogue.RootNode.rect.position - new Vector2(64f, 256f);
+            else
+                scrollPosition = new Rect(0f, 0f, CanvasSize, CanvasSize).center;
+
             GUIStyle CreateStyle(string path) => new()
             {
                 normal = { background = EditorGUIUtility.Load(path) as Texture2D },
@@ -491,7 +499,11 @@ namespace CesarJZO.DialogueSystem.Editor
 
         public void ScrollToNode(DialogueNode node)
         {
-            scrollPosition = node.rect.position - new Vector2(64f, 256f);
+            float horizontalOffset = selectedDialogue.IsRoot(node) ? 64f : position.width / 2f - node.rect.width / 2f;
+
+            scrollPosition = node.rect.position - new Vector2(
+                horizontalOffset, position.height / 2f - node.rect.height / 2f
+            );
         }
     }
 }
