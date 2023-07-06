@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CesarJZO.InventorySystem;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -147,9 +148,9 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             return node switch
             {
-                ItemConditionalNode => new Vector2(192f, 152f),
+                ItemConditionalNode => new Vector2(256f, 152f),
                 ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f),
-                _ => new Vector2(192f, 116f)
+                _ => new Vector2(256f, 116f)
             };
         }
 
@@ -274,7 +275,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 GUILayout.BeginHorizontal();
                 {
                     GUILayout.Label("Speaker:", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
-                    GUILayout.Label(node.Speaker ? node.Speaker.name : "Not Set", EditorStyles.boldLabel);
+                    node.Speaker = EditorGUILayout.ObjectField(node.Speaker, typeof(Speaker), false) as Speaker;
                 }
                 GUILayout.EndHorizontal();
                 EditorGUILayout.Space();
@@ -291,7 +292,6 @@ namespace CesarJZO.DialogueSystem.Editor
             }
             GUILayout.EndArea();
         }
-
 
         private void DrawSimpleNode(SimpleNode simpleNode)
         {
@@ -318,7 +318,7 @@ namespace CesarJZO.DialogueSystem.Editor
             GUILayout.BeginHorizontal();
             {
                 GUILayout.Label("Has Item:", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
-                GUILayout.Label(conditionalNode.Item ? conditionalNode.Item.DisplayName : "Not Set", EditorStyles.boldLabel);
+                conditionalNode.Item = EditorGUILayout.ObjectField(conditionalNode.Item, typeof(Item), false) as Item;
             }
             GUILayout.EndHorizontal();
 
@@ -370,10 +370,8 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label($"R {index + 1}:", GUILayout.Width(32f));
-
                     responseNode.SetText(
-                        GUILayout.TextField(responseNode.GetText(index), GUILayout.Width(112f)),
+                        GUILayout.TextField(responseNode.GetText(index)),
                         index
                     );
 

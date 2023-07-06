@@ -13,7 +13,17 @@ namespace CesarJZO.DialogueSystem
 
         private Item _comparableItem;
 
-        public Item Item => hasItem;
+        public Item Item
+        {
+            get => hasItem;
+#if UNITY_EDITOR
+            set
+            {
+                hasItem = value;
+                EditorUtility.SetDirty(this);
+            }
+#endif
+        }
 
         public override DialogueNode Child => Evaluate() ? trueChild : falseChild;
 
