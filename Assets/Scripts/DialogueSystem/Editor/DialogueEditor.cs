@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using CesarJZO.InventorySystem;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using CesarJZO.InventorySystem;
 
 namespace CesarJZO.DialogueSystem.Editor
 {
@@ -51,6 +51,24 @@ namespace CesarJZO.DialogueSystem.Editor
                 focus: true,
                 desiredDockNextTo: typeof(SceneView)
             );
+        }
+
+        [OnOpenAsset(1)]
+        private static bool OnOpenAsset(int instanceID, int line)
+        {
+            var selected = EditorUtility.InstanceIDToObject(instanceID);
+
+            if (selected is not (Dialogue or DialogueNode)) return false;
+
+            ShowWindow();
+
+            string path = AssetDatabase.GetAssetPath(instanceID);
+            _editor.selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
+
+            if (selected is DialogueNode node)
+                _editor.ScrollToNode(node);
+
+            return true;
         }
 
         private void Awake()
@@ -113,24 +131,6 @@ namespace CesarJZO.DialogueSystem.Editor
             EditorGUILayout.EndScrollView();
         }
 
-        [OnOpenAsset(1)]
-        private static bool OnOpenAsset(int instanceID, int line)
-        {
-            var selected = EditorUtility.InstanceIDToObject(instanceID);
-
-            if (selected is not (Dialogue or DialogueNode)) return false;
-
-            ShowWindow();
-
-            string path = AssetDatabase.GetAssetPath(instanceID);
-            _editor.selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
-
-            if (selected is DialogueNode node)
-                _editor.ScrollToNode(node);
-
-            return true;
-        }
-
         private void OnSelectionChanged()
         {
             var selected = Selection.activeObject;
@@ -152,7 +152,7 @@ namespace CesarJZO.DialogueSystem.Editor
             return node switch
             {
                 ItemConditionalNode => new Vector2(256f, 152f + testHeight),
-                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f + testHeight),
+                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f + testHeight + 24f),
                 _ => new Vector2(256f, 116f + testHeight)
             };
         }
@@ -252,16 +252,13 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 _draggingCanvas = false;
             }
-            else if (/* e.type is EventType.MouseDrag && e.button is 2 && */ _draggingCanvas)
+            else if (_draggingCanvas)
             {
                 scrollPosition = _draggingCanvasOffset - e.mousePosition;
                 GUI.changed = true;
             }
         }
 
-        /// <summary>
-        ///     Draws a node in the Dialogue Editor window.
-        /// </summary>
         private void DrawNode(DialogueNode node)
         {
             node.rect.size = GetSizeForNode(node);
@@ -362,6 +359,14 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             const float buttonWidth = 64f;
 
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("Limit (s)", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
+                responseNode.TimeLimit = EditorGUILayout.FloatField(Mathf.Clamp(responseNode.TimeLimit, 0f, float.MaxValue));
+            }
+            GUILayout.EndHorizontal();
+            EditorGUILayout.Space();
+
             for (var i = 0; i < responseNode.ChildrenCount; i++)
                 DrawResponse(i);
             EditorGUILayout.Space();
@@ -403,9 +408,6 @@ namespace CesarJZO.DialogueSystem.Editor
             }
         }
 
-        /// <summary>
-        ///     Draws the connections between nodes in the Dialogue Editor window.
-        /// </summary>
         private void DrawConnections(DialogueNode node)
         {
             Vector2 start;
@@ -499,7 +501,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 return node.rect.position + new Vector2
                 {
                     x = node.rect.width,
-                    y = 84f + 88f + index * 20f
+                    y = 84f + 88f + index * 20f + 24f
                 };
             }
         }

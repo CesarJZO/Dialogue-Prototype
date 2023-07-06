@@ -12,7 +12,17 @@ namespace CesarJZO.DialogueSystem
 
         [SerializeField] private List<Response> responses;
 
-        public float TimeLimit => timeLimit;
+        public float TimeLimit
+        {
+            get => timeLimit;
+#if UNITY_EDITOR
+            set
+            {
+                timeLimit = value;
+                EditorUtility.SetDirty(this);
+            }
+#endif
+        }
 
         public Response CurrentResponse { set; get; }
 
