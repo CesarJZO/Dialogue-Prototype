@@ -1,4 +1,5 @@
-﻿namespace CesarJZO.DialogueSystem.Editor
+﻿#if UNITY_EDITOR
+namespace CesarJZO.DialogueSystem.Editor
 {
     public class NodeContext
     {
@@ -12,3 +13,4 @@
         }
     }
 }
+#endif

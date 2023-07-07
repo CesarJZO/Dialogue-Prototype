@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -66,9 +67,14 @@ namespace CesarJZO.DialogueSystem.Editor
             _editor.selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
 
             if (selected is DialogueNode node)
+            {
                 _editor.ScrollToNode(node);
+            }
             else
-                _editor.ScrollToNode(_editor.selectedDialogue.RootNode);
+            {
+                if (_editor.selectedDialogue.RootNode)
+                    _editor.ScrollToNode(_editor.selectedDialogue.RootNode);
+            }
 
             return true;
         }
@@ -93,7 +99,7 @@ namespace CesarJZO.DialogueSystem.Editor
             if (selectedDialogue && selectedDialogue.RootNode)
                 ScrollToNode(selectedDialogue.RootNode);
             else
-                scrollPosition = new Vector2(64f, CanvasSize / 2f);
+                scrollPosition = new Vector2(0f, CanvasSize / 2f);
 
             GUIStyle CreateStyle(string path) => new()
             {
@@ -514,3 +520,4 @@ namespace CesarJZO.DialogueSystem.Editor
         }
     }
 }
+#endif

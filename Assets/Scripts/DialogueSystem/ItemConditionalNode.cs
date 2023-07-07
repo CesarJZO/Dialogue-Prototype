@@ -60,9 +60,11 @@ namespace CesarJZO.DialogueSystem
                 falseChild = null;
             EditorUtility.SetDirty(this);
         }
+#endif
 
         public override bool TryRemoveChild(DialogueNode node)
         {
+#if UNITY_EDITOR
             if (trueChild == node)
             {
                 trueChild = null;
@@ -76,9 +78,9 @@ namespace CesarJZO.DialogueSystem
                 EditorUtility.SetDirty(this);
                 return true;
             }
+#endif
 
             return false;
         }
-#endif
     }
 }

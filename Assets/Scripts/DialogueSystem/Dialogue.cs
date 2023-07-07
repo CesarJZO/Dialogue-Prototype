@@ -14,6 +14,7 @@ namespace CesarJZO.DialogueSystem
 
         public IEnumerable<DialogueNode> Nodes => nodes;
 
+#if UNITY_EDITOR
         private void Awake()
         {
             nodes ??= new List<DialogueNode>();
@@ -92,6 +93,7 @@ namespace CesarJZO.DialogueSystem
             nodes.Remove(node);
             nodes.Insert(0, node);
         }
+#endif
 
         private static string GetGuidFormatted(NodeType type)
         {
@@ -103,14 +105,6 @@ namespace CesarJZO.DialogueSystem
         public bool IsRoot(DialogueNode node)
         {
             return node == RootNode;
-        }
-
-        public void Save()
-        {
-            EditorUtility.SetDirty(this);
-            foreach (DialogueNode node in nodes)
-                EditorUtility.SetDirty(node);
-            AssetDatabase.SaveAssets();
         }
     }
 }

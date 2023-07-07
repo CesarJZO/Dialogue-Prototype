@@ -48,17 +48,6 @@ namespace CesarJZO.DialogueSystem
             responses ??= new List<Response>();
         }
 
-        public override bool TryRemoveChild(DialogueNode node)
-        {
-            Response response = responses.FirstOrDefault(r => r.child == node);
-
-            if (response is null) return false;
-
-            response.child = null;
-            EditorUtility.SetDirty(this);
-            return true;
-        }
-
         public void UnlinkChild(int index)
         {
             responses[index].child = null;
@@ -90,8 +79,20 @@ namespace CesarJZO.DialogueSystem
             responses[index].child = node;
             EditorUtility.SetDirty(this);
         }
-    }
+
 #endif
+        public override bool TryRemoveChild(DialogueNode node)
+        {
+            Response response = responses.FirstOrDefault(r => r.child == node);
+
+            if (response is null) return false;
+#if UNITY_EDITOR
+            response.child = null;
+            EditorUtility.SetDirty(this);
+#endif
+            return true;
+        }
+    }
 
     [Serializable]
     public class Response
