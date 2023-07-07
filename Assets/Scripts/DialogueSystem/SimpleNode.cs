@@ -26,16 +26,14 @@ namespace CesarJZO.DialogueSystem
             child = null;
             EditorUtility.SetDirty(this);
         }
-#endif
 
         public override bool TryRemoveChild(DialogueNode node)
         {
             if (child != node) return false;
-#if UNITY_EDITOR
             child = null;
             EditorUtility.SetDirty(this);
-#endif
             return true;
         }
+#endif
     }
 }

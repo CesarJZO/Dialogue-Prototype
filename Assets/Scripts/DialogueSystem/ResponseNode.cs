@@ -80,18 +80,18 @@ namespace CesarJZO.DialogueSystem
             EditorUtility.SetDirty(this);
         }
 
-#endif
         public override bool TryRemoveChild(DialogueNode node)
         {
             Response response = responses.FirstOrDefault(r => r.child == node);
 
             if (response is null) return false;
-#if UNITY_EDITOR
+
             response.child = null;
             EditorUtility.SetDirty(this);
-#endif
+
             return true;
         }
+#endif
     }
 
     [Serializable]

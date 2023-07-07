@@ -62,6 +62,8 @@ namespace CesarJZO.DialogueSystem
 #endif
         }
 
+#if UNITY_EDITOR
         public abstract bool TryRemoveChild(DialogueNode node);
+#endif
     }
 }
