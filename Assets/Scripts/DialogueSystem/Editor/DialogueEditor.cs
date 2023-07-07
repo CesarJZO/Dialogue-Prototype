@@ -131,6 +131,11 @@ namespace CesarJZO.DialogueSystem.Editor
             EditorGUILayout.EndScrollView();
         }
 
+        private void OnInspectorUpdate()
+        {
+            Repaint();
+        }
+
         private void OnSelectionChanged()
         {
             var selected = Selection.activeObject;
