@@ -46,6 +46,29 @@ MonoBehaviour:
     width: 256
     height: 208
   child: {fileID: 0}
+--- !u!114 &-666766576789832037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
+  m_Name: S-ae35a88c
+  m_EditorClassIdentifier: 
+  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
+  text: Ok
+  emotion: 0
+  portraitSide: 1
+  rect:
+    serializedVersion: 2
+    x: 1119
+    y: 5440
+    width: 256
+    height: 208
+  child: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,6 +88,7 @@ MonoBehaviour:
   - {fileID: 16955679748497342}
   - {fileID: -8057394602777584120}
   - {fileID: -3888510124126575670}
+  - {fileID: -666766576789832037}
 --- !u!114 &16955679748497342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,8 +107,8 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 1026
-    y: 5416
+    x: 1282
+    y: 5231
     width: 256
     height: 208
   child: {fileID: 0}
@@ -106,8 +130,8 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 1023
-    y: 5192
+    x: 1028
+    y: 5083
     width: 256
     height: 208
   child: {fileID: 0}
@@ -132,13 +156,18 @@ MonoBehaviour:
     x: 705
     y: 5205
     width: 256
-    height: 280
+    height: 300
   timeLimit: 0
   responses:
   - text: Because I wanted to
+    trigger: 
     child: {fileID: 1075738119598712650}
   - text: It's none of your business!
+    trigger: 
     child: {fileID: 16955679748497342}
+  - text: Just open the door
+    trigger: OpenDoor
+    child: {fileID: -666766576789832037}
 --- !u!114 &4764293893871113787
 MonoBehaviour:
   m_ObjectHideFlags: 0
