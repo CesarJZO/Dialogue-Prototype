@@ -9,7 +9,7 @@ namespace CesarJZO.DialogueSystem.Editor
 {
     public class DialogueEditor : EditorWindow
     {
-        private const float CanvasSize = 4000f;
+        private const float CanvasSize = 10_000f;
         private const float BackgroundSize = 64f;
         private const float BackgroundLength = CanvasSize / BackgroundSize;
 
@@ -67,6 +67,8 @@ namespace CesarJZO.DialogueSystem.Editor
 
             if (selected is DialogueNode node)
                 _editor.ScrollToNode(node);
+            else
+                _editor.ScrollToNode(_editor.selectedDialogue.RootNode);
 
             return true;
         }
@@ -91,7 +93,7 @@ namespace CesarJZO.DialogueSystem.Editor
             if (selectedDialogue && selectedDialogue.RootNode)
                 ScrollToNode(selectedDialogue.RootNode);
             else
-                scrollPosition = new Rect(0f, 0f, CanvasSize, CanvasSize).center;
+                scrollPosition = new Vector2(64f, CanvasSize / 2f);
 
             GUIStyle CreateStyle(string path) => new()
             {
@@ -257,7 +259,7 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 _draggingCanvas = false;
             }
-            else if (_draggingCanvas)
+            else if (e.type is EventType.MouseDrag && e.button is 2 && _draggingCanvas)
             {
                 scrollPosition = _draggingCanvasOffset - e.mousePosition;
                 GUI.changed = true;
@@ -390,7 +392,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 GUILayout.BeginHorizontal();
                 {
                     responseNode.SetText(
-                        GUILayout.TextField(responseNode.GetText(index)),
+                        GUILayout.TextField(responseNode.GetText(index), GUILayout.Width(150f)),
                         index
                     );
 
