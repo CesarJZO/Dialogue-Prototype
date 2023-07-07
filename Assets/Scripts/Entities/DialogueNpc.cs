@@ -23,6 +23,7 @@ namespace CesarJZO.DialogueSystem
             _dialogueManager = DialogueManager.Instance;
 
             _dialogueManager.ConditionalNodeEvaluated += OnConditionalNodeEvaluated;
+            _dialogueManager.ResponseSelected += OnResponseSelected;
 
             try
             {
@@ -40,6 +41,14 @@ namespace CesarJZO.DialogueSystem
 
             if (onItemMatch)
                 onItemMatch.OnItemMatch(hadItem);
+        }
+
+        private void OnResponseSelected(string response)
+        {
+            var onResponseSelected = GetComponent<DialogueOnResponseTrigger>();
+
+            if (onResponseSelected)
+                onResponseSelected.OnResponseSelected(response);
         }
 
         public void Interact()

@@ -180,7 +180,7 @@ namespace CesarJZO.UI
                     Debug.LogWarning("No text component found on the response button.", this);
                     return;
                 }
-                buttonText.text = response.text;
+                buttonText.text = response.Text;
                 responseButton.onClick.AddListener(() =>
                 {
                     responseNode.CurrentResponse = response;

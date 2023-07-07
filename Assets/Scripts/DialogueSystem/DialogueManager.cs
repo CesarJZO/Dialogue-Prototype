@@ -10,6 +10,12 @@ namespace CesarJZO.DialogueSystem
         /// </summary>
         public event Action<bool> ConditionalNodeEvaluated;
 
+        /// <summary>
+        ///     Called when a <see cref="ResponseNode"/> is selected on <see cref="Next"/>.
+        ///     Sends the trigger text of the selected response.
+        /// </summary>
+        public event Action<string> ResponseSelected;
+
         public event Action ConversationStarted;
         public event Action ConversationEnded;
         public event Action ConversationUpdated;
@@ -109,6 +115,8 @@ namespace CesarJZO.DialogueSystem
 
             if (_currentNode is ItemConditionalNode itemConditionalNode)
                 ConditionalNodeEvaluated?.Invoke(itemConditionalNode.Evaluate());
+            else if (_currentNode is ResponseNode responseNode)
+                ResponseSelected?.Invoke(responseNode.CurrentResponse.Trigger);
 
             _currentNode = _currentNode.Child;
 

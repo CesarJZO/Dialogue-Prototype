@@ -26,7 +26,7 @@ namespace CesarJZO.DialogueSystem
 
         public Response CurrentResponse { set; get; }
 
-        public override DialogueNode Child => CurrentResponse?.child;
+        public override DialogueNode Child => CurrentResponse?.Child;
 
         public IEnumerable<Response> Responses => responses;
 
@@ -34,12 +34,12 @@ namespace CesarJZO.DialogueSystem
 
         public string GetText(int index)
         {
-            return responses[index].text;
+            return responses[index].Text;
         }
 
         public DialogueNode GetChild(int index)
         {
-            return responses[index].child;
+            return responses[index].Child;
         }
 
 #if UNITY_EDITOR
@@ -50,7 +50,7 @@ namespace CesarJZO.DialogueSystem
 
         public void UnlinkChild(int index)
         {
-            responses[index].child = null;
+            responses[index].Child = null;
             EditorUtility.SetDirty(this);
         }
 
@@ -70,25 +70,23 @@ namespace CesarJZO.DialogueSystem
 
         public void SetText(string text, int index)
         {
-            responses[index].text = text;
+            responses[index].Text = text;
             EditorUtility.SetDirty(this);
         }
 
         public void SetChild(DialogueNode node, int index)
         {
-            responses[index].child = node;
+            responses[index].Child = node;
             EditorUtility.SetDirty(this);
         }
 
         public override bool TryRemoveChild(DialogueNode node)
         {
-            Response response = responses.FirstOrDefault(r => r.child == node);
+            Response response = responses.FirstOrDefault(r => r.Child == node);
 
             if (response is null) return false;
-
-            response.child = null;
+            response.Child = null;
             EditorUtility.SetDirty(this);
-
             return true;
         }
 #endif
@@ -97,7 +95,38 @@ namespace CesarJZO.DialogueSystem
     [Serializable]
     public class Response
     {
-        public string text;
-        [HideInInspector, SerializeField] public DialogueNode child;
+        [SerializeField] private string text;
+        [SerializeField] private string trigger;
+        [SerializeField, HideInInspector] private DialogueNode child;
+
+        public string Text
+        {
+            get => text;
+#if UNITY_EDITOR
+            set
+            {
+                text = value;
+            }
+#endif
+        }
+
+        public string Trigger
+        {
+            get => trigger;
+#if UNITY_EDITOR
+            set
+            {
+                trigger = value;
+            }
+#endif
+        }
+
+        public DialogueNode Child
+        {
+            get => child;
+#if UNITY_EDITOR
+            set => child = value;
+#endif
+        }
     }
 }
