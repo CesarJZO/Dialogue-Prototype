@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67929232bed445de85eeba04711435c2, type: 3}
-  m_Name: Item
+  m_Name: Important Item
   m_EditorClassIdentifier: 
-  displayName: Weed
+  displayName: Something Important

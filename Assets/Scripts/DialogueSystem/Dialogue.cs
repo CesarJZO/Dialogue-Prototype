@@ -8,11 +8,13 @@ namespace CesarJZO.DialogueSystem
     [CreateAssetMenu(fileName = "New Dialogue", menuName = "Dialogue/Dialogue", order = 0)]
     public class Dialogue : ScriptableObject
     {
-        [SerializeField] private List<DialogueNode> nodes;
+        [SerializeField, HideInInspector] private List<DialogueNode> nodes;
+
         public DialogueNode RootNode => nodes.Count == 0 ? null : nodes[0];
 
         public IEnumerable<DialogueNode> Nodes => nodes;
 
+#if UNITY_EDITOR
         private void Awake()
         {
             nodes ??= new List<DialogueNode>();
@@ -91,6 +93,7 @@ namespace CesarJZO.DialogueSystem
             nodes.Remove(node);
             nodes.Insert(0, node);
         }
+#endif
 
         private static string GetGuidFormatted(NodeType type)
         {
@@ -99,14 +102,9 @@ namespace CesarJZO.DialogueSystem
             return typeSpan[0].ToString() + '-' + guidSpan[..8].ToString();
         }
 
-        public bool IsRoot(DialogueNode node) => node == RootNode;
-
-        public void Save()
+        public bool IsRoot(DialogueNode node)
         {
-            EditorUtility.SetDirty(this);
-            foreach (DialogueNode node in nodes)
-                EditorUtility.SetDirty(node);
-            AssetDatabase.SaveAssets();
+            return node == RootNode;
         }
     }
 }

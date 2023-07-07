@@ -1,8 +1,7 @@
-﻿### Unity template
-# This .gitignore file should be placed at the root of your Unity project directory
-#
-# Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
-#
+﻿# Game test files
+**/Test/**
+**/Test.meta
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/

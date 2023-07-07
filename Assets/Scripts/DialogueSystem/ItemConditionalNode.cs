@@ -1,4 +1,5 @@
 ﻿using CesarJZO.InventorySystem;
+using UnityEditor;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
@@ -6,51 +7,32 @@ namespace CesarJZO.DialogueSystem
     public class ItemConditionalNode : DialogueNode
     {
         [SerializeField] private Item hasItem;
-        [SerializeField] private DialogueNode trueChild;
-        [SerializeField] private DialogueNode falseChild;
+
+        [SerializeField, HideInInspector] private DialogueNode trueChild;
+        [SerializeField, HideInInspector] private DialogueNode falseChild;
 
         private Item _comparableItem;
 
-        public Item Item => hasItem;
+        public Item Item
+        {
+            get => hasItem;
+#if UNITY_EDITOR
+            set
+            {
+                hasItem = value;
+                EditorUtility.SetDirty(this);
+            }
+#endif
+        }
 
         public override DialogueNode Child => Evaluate() ? trueChild : falseChild;
-        public override bool TryRemoveChild(DialogueNode node)
-        {
-            if (trueChild == node)
-            {
-                trueChild = null;
-                return true;
-            }
-            if (falseChild == node)
-            {
-                falseChild = null;
-                return true;
-            }
-            return false;
-        }
-
-        public void SetChild(DialogueNode node, bool which)
-        {
-            if (which)
-                trueChild = node;
-            else
-                falseChild = node;
-        }
 
         public DialogueNode GetChild(bool which)
         {
             return which ? trueChild : falseChild;
         }
 
-        public void UnlinkChild(bool which)
-        {
-            if (which)
-                trueChild = null;
-            else
-                falseChild = null;
-        }
-
-        public void SetItem(Item item)
+        public void SetItemToCompare(Item item)
         {
             _comparableItem = item;
         }
@@ -59,5 +41,44 @@ namespace CesarJZO.DialogueSystem
         {
             return hasItem == _comparableItem;
         }
+
+#if UNITY_EDITOR
+        public void SetChild(DialogueNode node, bool which)
+        {
+            if (which)
+                trueChild = node;
+            else
+                falseChild = node;
+            EditorUtility.SetDirty(this);
+        }
+
+        public void UnlinkChild(bool which)
+        {
+            if (which)
+                trueChild = null;
+            else
+                falseChild = null;
+            EditorUtility.SetDirty(this);
+        }
+
+        public override bool TryRemoveChild(DialogueNode node)
+        {
+            if (trueChild == node)
+            {
+                trueChild = null;
+                EditorUtility.SetDirty(this);
+                return true;
+            }
+
+            if (falseChild == node)
+            {
+                falseChild = null;
+                EditorUtility.SetDirty(this);
+                return true;
+            }
+
+            return false;
+        }
+#endif
     }
 }

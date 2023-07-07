@@ -70,9 +70,9 @@ namespace CesarJZO.UI
 
         private void UpdateUI()
         {
-            gameObject.SetActive(_dialogueManager.HasDialogue);
+            gameObject.SetActive(_dialogueManager.HasDialogue && _dialogueManager.HasCurrentNode);
 
-            if (!_dialogueManager.HasDialogue)
+            if (!_dialogueManager.HasDialogue || !_dialogueManager.HasCurrentNode)
                 return;
 
             UpdateSpeakerText();
@@ -97,7 +97,7 @@ namespace CesarJZO.UI
             if (_dialogueManager.CurrentNode is not ItemConditionalNode itemConditionalNode)
                 return;
 
-            itemConditionalNode.SetItem(item);
+            itemConditionalNode.SetItemToCompare(item);
 
             _dialogueManager.Next();
         }

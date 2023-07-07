@@ -49,9 +49,14 @@ namespace CesarJZO.DialogueSystem
         public DialogueNode CurrentNode => _currentNode;
 
         /// <summary>
-        ///     The child node of the current node.
+        ///     Whether the current node has a next node.
         /// </summary>
-        public bool HasNextNode => _currentNode.Child;
+        public bool HasNextNode => _currentNode ? _currentNode.Child : null;
+
+        /// <summary>
+        ///     Whether there is a current node
+        /// </summary>
+        public bool HasCurrentNode => _currentNode;
 
         private Dialogue _currentDialogue;
         private DialogueNode _currentNode;
@@ -67,8 +72,14 @@ namespace CesarJZO.DialogueSystem
         /// <param name="dialogue">The dialogue to start.</param>
         public void StartDialogue(Dialogue dialogue)
         {
+            if (!dialogue) return;
+
             _currentDialogue = dialogue;
             _currentNode = _currentDialogue.RootNode;
+
+            if (!_currentNode)
+                Debug.LogWarning("Dialogue has not nodes.");
+
             ConversationStarted?.Invoke();
             ConversationUpdated?.Invoke();
         }

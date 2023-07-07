@@ -22,7 +22,7 @@ namespace CesarJZO.DialogueSystem
         {
             _dialogueManager = DialogueManager.Instance;
 
-            _dialogueManager.ConditionalNodeEvaluated += ConditionalNode;
+            _dialogueManager.ConditionalNodeEvaluated += OnConditionalNodeEvaluated;
 
             try
             {
@@ -34,12 +34,12 @@ namespace CesarJZO.DialogueSystem
             }
         }
 
-        private void ConditionalNode(bool value)
+        private void OnConditionalNodeEvaluated(bool hadItem)
         {
-            if (!value) return;
+            var onItemMatch = GetComponent<DialogueOnItemMatch>();
 
-            if (_dialogueQueue.TryDequeue(out Dialogue dialogue))
-                currentDialogue = dialogue;
+            if (onItemMatch)
+                onItemMatch.OnItemMatch(hadItem);
         }
 
         public void Interact()
@@ -49,6 +49,12 @@ namespace CesarJZO.DialogueSystem
             if (!_dialogueManager) return;
 
             _dialogueManager.StartDialogue(currentDialogue);
+        }
+
+        public void DequeueDialogue()
+        {
+            if (_dialogueQueue.TryDequeue(out Dialogue dialogue))
+                currentDialogue = dialogue;
         }
     }
 }
