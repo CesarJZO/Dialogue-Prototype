@@ -418,6 +418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogues:
+  - {fileID: 11400000, guid: cd30cc74503858040929b9e2997190a7, type: 2}
   - {fileID: 11400000, guid: 8b2f90d9dfbd60e409b56bd912ed4c2b, type: 2}
   - {fileID: 11400000, guid: 1b507ca24aaf82b41aed42a1ae15e38a, type: 2}
   currentDialogue: {fileID: 0}
