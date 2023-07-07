@@ -70,9 +70,9 @@ namespace CesarJZO.UI
 
         private void UpdateUI()
         {
-            gameObject.SetActive(_dialogueManager.HasDialogue);
+            gameObject.SetActive(_dialogueManager.HasDialogue && _dialogueManager.HasCurrentNode);
 
-            if (!_dialogueManager.HasDialogue)
+            if (!_dialogueManager.HasDialogue || !_dialogueManager.HasCurrentNode)
                 return;
 
             UpdateSpeakerText();
