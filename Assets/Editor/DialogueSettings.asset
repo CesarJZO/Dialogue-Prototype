@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 448b842721624496978edf612390e670, type: 3}
   m_Name: DialogueSettings
   m_EditorClassIdentifier: 
-  letterDelay: 0
-  dialogueDelay: 0
+  letterDelay: 0.1
+  dialogueDelay: 2

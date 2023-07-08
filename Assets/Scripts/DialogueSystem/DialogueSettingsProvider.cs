@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 namespace CesarJZO.DialogueSystem
@@ -25,3 +26,4 @@ namespace CesarJZO.DialogueSystem
         }
     }
 }
+#endif
