@@ -11,11 +11,12 @@ namespace CesarJZO.DialogueSystem
             var provider = new SettingsProvider("Project/Dialogue System", SettingsScope.Project)
             {
                 label = "Dialogue System",
-                guiHandler = _ =>
+                activateHandler = (searchElement, rootElement) =>
                 {
                     SerializedObject settings = DialogueSettings.SerializedSettings;
-                    EditorGUILayout.PropertyField(settings.FindProperty("letterDelay"), new GUIContent("Letter Delay"));
-                    EditorGUILayout.PropertyField(settings.FindProperty("dialogueDelay"), new GUIContent("Dialogue Delay"));
+
+
+
                     settings.ApplyModifiedProperties();
                 },
                 keywords = new[] { "Dialogue" }
