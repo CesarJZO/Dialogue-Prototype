@@ -22,11 +22,6 @@ namespace CesarJZO.DialogueSystem
 
         public abstract DialogueNode Child { get; }
 
-
-#if UNITY_EDITOR
-        public abstract bool TryRemoveChild(DialogueNode node);
-#endif
-
         public static string SpeakerProperty => nameof(speaker);
         public static string TextProperty => nameof(text);
         public static string EmotionProperty => nameof(emotion);
