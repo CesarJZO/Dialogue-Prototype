@@ -40,7 +40,7 @@ namespace CesarJZO.DialogueSystem
             var onItemMatch = GetComponent<DialogueOnItemMatch>();
 
             if (onItemMatch)
-                onItemMatch.OnItemMatch(hadItem);
+                onItemMatch.OnConditionalNodeEvaluated(hadItem);
         }
 
         private void OnResponseSelected(string response)

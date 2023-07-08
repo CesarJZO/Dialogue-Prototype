@@ -8,7 +8,8 @@ namespace CesarJZO.DialogueSystem
     {
         [SerializeField] private bool dequeueIfItemMatches;
 
-        public UnityEvent<bool> onItemMatch;
+        [SerializeField] private UnityEvent onItemMatch;
+        [SerializeField] private UnityEvent onItemMismatch;
 
         private DialogueNpc _dialogueNpc;
 
@@ -17,12 +18,25 @@ namespace CesarJZO.DialogueSystem
             _dialogueNpc = GetComponent<DialogueNpc>();
         }
 
-        public void OnItemMatch(bool hadItem)
+        private void OnItemMatch()
         {
-            if (dequeueIfItemMatches && hadItem)
+            if (dequeueIfItemMatches)
                 _dialogueNpc.DequeueDialogue();
 
-            onItemMatch?.Invoke(hadItem);
+            onItemMatch?.Invoke();
+        }
+
+        private void OnItemMismatch()
+        {
+            onItemMismatch?.Invoke();
+        }
+
+        public void OnConditionalNodeEvaluated(bool hadItem)
+        {
+            if (hadItem)
+                OnItemMatch();
+            else
+                OnItemMismatch();
         }
     }
 }
