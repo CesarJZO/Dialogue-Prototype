@@ -5,32 +5,36 @@ namespace CesarJZO.DialogueSystem
 {
     public class DialogueSettings : ScriptableObject
     {
-        public const string DialogueSettingsPath = "Assets/Editor/DialogueSettings.asset";
+        private const string DialogueSettingsPath = "Assets/Editor/DialogueSettings.asset";
+
+        private static DialogueSettings _instance;
 
         [SerializeField] private float letterDelay;
 
-        public float LetterDelay => letterDelay;
-
         [SerializeField] private float dialogueDelay;
 
+        internal static SerializedObject SerializedSettings => new(Instance);
+
+        public static DialogueSettings Instance
+        {
+            get
+            {
+                if (_instance) return _instance;
+
+                _instance = AssetDatabase.LoadAssetAtPath<DialogueSettings>(DialogueSettingsPath);
+
+                if (_instance) return _instance;
+
+                _instance = CreateInstance<DialogueSettings>();
+                AssetDatabase.CreateAsset(_instance, DialogueSettingsPath);
+                AssetDatabase.SaveAssets();
+
+                return _instance;
+            }
+        }
+
+        public float LetterDelay => letterDelay;
+
         public float DialogueDelay => dialogueDelay;
-
-        private static DialogueSettings GetOrCreateSettings()
-        {
-            var settings = AssetDatabase.LoadAssetAtPath<DialogueSettings>(DialogueSettingsPath);
-
-            if (settings) return settings;
-
-            settings = CreateInstance<DialogueSettings>();
-            AssetDatabase.CreateAsset(settings, DialogueSettingsPath);
-            AssetDatabase.SaveAssets();
-
-            return settings;
-        }
-
-        internal static SerializedObject GetSerializedSettings()
-        {
-            return new SerializedObject(GetOrCreateSettings());
-        }
     }
 }

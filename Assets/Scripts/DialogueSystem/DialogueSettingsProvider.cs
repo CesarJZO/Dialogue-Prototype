@@ -13,7 +13,7 @@ namespace CesarJZO.DialogueSystem
                 label = "Dialogue System",
                 guiHandler = _ =>
                 {
-                    SerializedObject settings = DialogueSettings.GetSerializedSettings();
+                    SerializedObject settings = DialogueSettings.SerializedSettings;
                     EditorGUILayout.PropertyField(settings.FindProperty("letterDelay"), new GUIContent("Letter Delay"));
                     EditorGUILayout.PropertyField(settings.FindProperty("dialogueDelay"), new GUIContent("Dialogue Delay"));
                     settings.ApplyModifiedProperties();
