@@ -65,7 +65,7 @@ MonoBehaviour:
   rect:
     serializedVersion: 2
     x: 1119
-    y: 5440
+    y: 5439
     width: 256
     height: 208
   child: {fileID: 0}
@@ -154,7 +154,7 @@ MonoBehaviour:
   rect:
     serializedVersion: 2
     x: 705
-    y: 5205
+    y: 5203
     width: 256
     height: 300
   timeLimit: 0
@@ -163,7 +163,7 @@ MonoBehaviour:
     trigger: 
     child: {fileID: 1075738119598712650}
   - text: It's none of your business!
-    trigger: 
+    trigger: DiscardDialogue
     child: {fileID: 16955679748497342}
   - text: Just open the door
     trigger: OpenDoor
