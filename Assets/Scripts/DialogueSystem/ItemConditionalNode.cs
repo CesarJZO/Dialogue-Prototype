@@ -19,8 +19,10 @@ namespace CesarJZO.DialogueSystem
 #if UNITY_EDITOR
             set
             {
-                hasItem = value;
-                EditorUtility.SetDirty(this);
+                var serializedNode = new SerializedObject(this);
+                SerializedProperty itemProperty = serializedNode.FindProperty("hasItem");
+                itemProperty.objectReferenceValue = value;
+                serializedNode.ApplyModifiedProperties();
             }
 #endif
         }
@@ -45,35 +47,37 @@ namespace CesarJZO.DialogueSystem
 #if UNITY_EDITOR
         public void SetChild(DialogueNode node, bool which)
         {
-            if (which)
-                trueChild = node;
-            else
-                falseChild = node;
-            EditorUtility.SetDirty(this);
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty childProperty = serializedNode.FindProperty(which ? "trueChild" : "falseChild");
+            childProperty.objectReferenceValue = node;
+            serializedNode.ApplyModifiedProperties();
         }
 
         public void UnlinkChild(bool which)
         {
-            if (which)
-                trueChild = null;
-            else
-                falseChild = null;
-            EditorUtility.SetDirty(this);
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty childProperty = serializedNode.FindProperty(which ? "trueChild" : "falseChild");
+            childProperty.objectReferenceValue = null;
+            serializedNode.ApplyModifiedProperties();
         }
 
         public override bool TryRemoveChild(DialogueNode node)
         {
+            var serializedNode = new SerializedObject(this);
+
             if (trueChild == node)
             {
-                trueChild = null;
-                EditorUtility.SetDirty(this);
+                SerializedProperty property = serializedNode.FindProperty("trueChild");
+                property.objectReferenceValue = null;
+                serializedNode.ApplyModifiedProperties();
                 return true;
             }
 
             if (falseChild == node)
             {
-                falseChild = null;
-                EditorUtility.SetDirty(this);
+                SerializedProperty property = serializedNode.FindProperty("falseChild");
+                property.objectReferenceValue = null;
+                serializedNode.ApplyModifiedProperties();
                 return true;
             }
 

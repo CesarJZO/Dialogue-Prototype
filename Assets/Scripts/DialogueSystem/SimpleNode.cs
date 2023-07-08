@@ -17,21 +17,26 @@ namespace CesarJZO.DialogueSystem
 #if UNITY_EDITOR
         public void SetChild(DialogueNode node)
         {
-            child = node;
-            EditorUtility.SetDirty(this);
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty childProperty = serializedNode.FindProperty("child");
+            childProperty.objectReferenceValue = node;
+            serializedNode.ApplyModifiedProperties();
         }
 
         public void UnlinkChild()
         {
-            child = null;
-            EditorUtility.SetDirty(this);
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty childProperty = serializedNode.FindProperty("child");
+            childProperty.objectReferenceValue = null;
+            serializedNode.ApplyModifiedProperties();
         }
 
         public override bool TryRemoveChild(DialogueNode node)
         {
             if (child != node) return false;
-            child = null;
-            EditorUtility.SetDirty(this);
+
+            UnlinkChild();
+
             return true;
         }
 #endif

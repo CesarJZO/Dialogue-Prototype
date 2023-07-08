@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,8 +17,10 @@ namespace CesarJZO.DialogueSystem
 #if UNITY_EDITOR
             set
             {
-                timeLimit = value;
-                EditorUtility.SetDirty(this);
+                var serializedNode = new SerializedObject(this);
+                SerializedProperty timeLimitProperty = serializedNode.FindProperty("timeLimit");
+                timeLimitProperty.floatValue = value;
+                serializedNode.ApplyModifiedProperties();
             }
 #endif
         }
@@ -50,43 +51,52 @@ namespace CesarJZO.DialogueSystem
 
         public void UnlinkChild(int index)
         {
-            responses[index].Child = null;
-            EditorUtility.SetDirty(this);
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty childProperty = serializedNode.FindProperty($"responses.Array.data[{index}].child");
+            childProperty.objectReferenceValue = null;
+            serializedNode.ApplyModifiedProperties();
         }
 
-        public int AddResponse()
+        public void AddResponse()
         {
-            responses.Add(new Response());
-            EditorUtility.SetDirty(this);
-            return responses.Count - 1;
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty responsesProperty = serializedNode.FindProperty("responses");
+            responsesProperty.InsertArrayElementAtIndex(responses.Count);
+            serializedNode.ApplyModifiedProperties();
         }
 
-        public int RemoveResponse()
+        public void RemoveResponse()
         {
-            responses.RemoveAt(responses.Count - 1);
-            EditorUtility.SetDirty(this);
-            return responses.Count;
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty responsesProperty = serializedNode.FindProperty("responses");
+            responsesProperty.DeleteArrayElementAtIndex(responses.Count - 1);
+            serializedNode.ApplyModifiedProperties();
         }
 
         public void SetText(string text, int index)
         {
-            responses[index].Text = text;
-            EditorUtility.SetDirty(this);
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty textProperty = serializedNode.FindProperty($"responses.Array.data[{index}].text");
+            textProperty.stringValue = text;
+            serializedNode.ApplyModifiedProperties();
         }
 
         public void SetChild(DialogueNode node, int index)
         {
-            responses[index].Child = node;
-            EditorUtility.SetDirty(this);
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty childProperty = serializedNode.FindProperty($"responses.Array.data[{index}].child");
+            childProperty.objectReferenceValue = node;
+            serializedNode.ApplyModifiedProperties();
         }
 
         public override bool TryRemoveChild(DialogueNode node)
         {
-            Response response = responses.FirstOrDefault(r => r.Child == node);
+            int index = responses.FindIndex(response => response.Child == node);
 
-            if (response is null) return false;
-            response.Child = null;
-            EditorUtility.SetDirty(this);
+            if (index == -1) return false;
+
+            UnlinkChild(index);
+
             return true;
         }
 #endif
@@ -99,34 +109,10 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private string trigger;
         [SerializeField, HideInInspector] private DialogueNode child;
 
-        public string Text
-        {
-            get => text;
-#if UNITY_EDITOR
-            set
-            {
-                text = value;
-            }
-#endif
-        }
+        public string Text => text;
 
-        public string Trigger
-        {
-            get => trigger;
-#if UNITY_EDITOR
-            set
-            {
-                trigger = value;
-            }
-#endif
-        }
+        public string Trigger => trigger;
 
-        public DialogueNode Child
-        {
-            get => child;
-#if UNITY_EDITOR
-            set => child = value;
-#endif
-        }
+        public DialogueNode Child => child;
     }
 }
