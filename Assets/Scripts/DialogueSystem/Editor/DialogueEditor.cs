@@ -276,6 +276,7 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             node.rect.size = GetSizeForNode(node);
 
+
             GUILayout.BeginArea(node.rect, node switch
             {
                 _ when node == Selection.activeObject => _selectedNodeStyle,
@@ -285,21 +286,18 @@ namespace CesarJZO.DialogueSystem.Editor
                 _ => _simpleNodeStyle
             });
             {
-                GUILayout.Label("Speaker");
-                node.Speaker = EditorGUILayout.ObjectField(node.Speaker, typeof(Speaker), false) as Speaker;
+                var serializedNode = new SerializedObject(node);
+
+                EditorGUI.BeginChangeCheck();
+
+                EditorGUILayout.PropertyField(serializedNode.FindSpeaker());
                 EditorGUILayout.Space();
 
-                GUILayout.Label("Emotion & Side");
-                GUILayout.BeginHorizontal();
-                {
-                    node.Emotion = (Emotion) EditorGUILayout.Popup((int)node.Emotion, Emotions);
-                    node.PortraitSide = (PortraitSide) EditorGUILayout.Popup((int)node.PortraitSide, Sides);
-                }
-                GUILayout.EndHorizontal();
+                EditorGUILayout.PropertyField(serializedNode.FindEmotion());
+                EditorGUILayout.PropertyField(serializedNode.FindPortraitSide());
                 EditorGUILayout.Space();
 
-                GUILayout.Label("Text");
-                node.Text = EditorGUILayout.TextField(node.Text);
+                EditorGUILayout.PropertyField(serializedNode.FindText());
                 EditorGUILayout.Space();
 
                 if (node is SimpleNode simpleNode)
@@ -308,8 +306,13 @@ namespace CesarJZO.DialogueSystem.Editor
                     DrawConditionalNode(conditionalNode);
                 else if (node is ResponseNode responseNode)
                     DrawResponseNode(responseNode);
+
+                if (EditorGUI.EndChangeCheck())
+                    serializedNode.ApplyModifiedProperties();
             }
             GUILayout.EndArea();
+
+
         }
 
         private void DrawSimpleNode(SimpleNode simpleNode)

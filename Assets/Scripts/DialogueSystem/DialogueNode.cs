@@ -12,58 +12,24 @@ namespace CesarJZO.DialogueSystem
 
         [HideInInspector, SerializeField] public Rect rect = new(0f, 0f, 256f, 120f);
 
+        public Speaker Speaker => speaker;
+
+        public string Text => text;
+
+        public Emotion Emotion => emotion;
+
+        public PortraitSide PortraitSide => portraitSide;
+
         public abstract DialogueNode Child { get; }
 
-        public Emotion Emotion
-        {
-            get => emotion;
-#if UNITY_EDITOR
-            set
-            {
-                emotion = value;
-                EditorUtility.SetDirty(this);
-            }
-#endif
-        }
-
-        public PortraitSide PortraitSide
-        {
-            get => portraitSide;
-#if UNITY_EDITOR
-            set
-            {
-                portraitSide = value;
-                EditorUtility.SetDirty(this);
-            }
-#endif
-        }
-
-        public Speaker Speaker
-        {
-            get => speaker;
-#if UNITY_EDITOR
-            set
-            {
-                speaker = value;
-                EditorUtility.SetDirty(this);
-            }
-#endif
-        }
-
-        public string Text
-        {
-            get => text;
-#if UNITY_EDITOR
-            set
-            {
-                text = value;
-                EditorUtility.SetDirty(this);
-            }
-#endif
-        }
 
 #if UNITY_EDITOR
         public abstract bool TryRemoveChild(DialogueNode node);
 #endif
+
+        public static string SpeakerProperty => nameof(speaker);
+        public static string TextProperty => nameof(text);
+        public static string EmotionProperty => nameof(emotion);
+        public static string PortraitSideProperty => nameof(portraitSide);
     }
 }
