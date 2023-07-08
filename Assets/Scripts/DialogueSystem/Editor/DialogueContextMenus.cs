@@ -6,80 +6,80 @@ namespace CesarJZO.DialogueSystem.Editor
 {
     public static class DialogueContextMenus
     {
-        public static void AddRightClickNodeItems(this GenericMenu menu, DialogueNode node, DialogueEditor editor)
+        public static void AddRightClickNodeItems(this GenericMenu menu, DialogueNode node, DialogueEditorWindow editorWindow)
         {
             menu.AddItem(new GUIContent("Set Node as Root"), false,
-                () => editor.SelectedDialogue.SetNodeAsRoot(node)
+                () => editorWindow.SelectedDialogue.SetNodeAsRoot(node)
             );
             menu.AddItem(new GUIContent("Delete Node"), false,
-                () => editor.SelectedDialogue.RemoveNode(node)
+                () => editorWindow.SelectedDialogue.RemoveNode(node)
             );
         }
 
-        public static void AddNodeMenuItems(this GenericMenu menu, Vector2 position, DialogueEditor editor)
+        public static void AddNodeMenuItems(this GenericMenu menu, Vector2 position, DialogueEditorWindow editorWindow)
         {
             menu.AddItem(new GUIContent("Add Simple Node"), false,
-                () => editor.SelectedDialogue.CreateNodeAtPoint(NodeType.SimpleNode, position)
+                () => editorWindow.SelectedDialogue.CreateNodeAtPoint(NodeType.SimpleNode, position)
             );
             menu.AddItem(new GUIContent("Add Response Node"), false,
-                () => editor.SelectedDialogue.CreateNodeAtPoint(NodeType.ResponseNode, position)
+                () => editorWindow.SelectedDialogue.CreateNodeAtPoint(NodeType.ResponseNode, position)
             );
             menu.AddItem(new GUIContent("Add Item Conditional Node"), false,
-                () => editor.SelectedDialogue.CreateNodeAtPoint(NodeType.ConditionalNode, position)
+                () => editorWindow.SelectedDialogue.CreateNodeAtPoint(NodeType.ConditionalNode, position)
             );
-            DialogueNode rootNode = editor.SelectedDialogue.RootNode;
+            DialogueNode rootNode = editorWindow.SelectedDialogue.RootNode;
             if (rootNode)
-                menu.AddItem(new GUIContent("Go To Root Node"), false, () => editor.ScrollToNode(rootNode));
+                menu.AddItem(new GUIContent("Go To Root Node"), false, () => editorWindow.ScrollToNode(rootNode));
         }
 
-        public static void AddSimpleNodeMenuItems(this GenericMenu menu, SimpleNode simpleNode, DialogueEditor editor)
+        public static void AddSimpleNodeMenuItems(this GenericMenu menu, SimpleNode simpleNode, DialogueEditorWindow editorWindow)
         {
             menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
+                () => editorWindow.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.SimpleNode)
             );
             menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
+                () => editorWindow.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ConditionalNode)
             );
             menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                () => editor.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
+                () => editorWindow.SelectedDialogue.AddChildToSimpleNode(simpleNode, NodeType.ResponseNode)
             );
             menu.AddItem(new GUIContent("Link Node"), false,
-                () => editor.LinkingNode = new NodeContext(simpleNode)
+                () => editorWindow.LinkingNode = new NodeContext(simpleNode)
             );
         }
 
-        public static void AddConditionalNodeMenuItems(this GenericMenu menu, ItemConditionalNode conditionalNode, bool which, DialogueEditor editor)
+        public static void AddConditionalNodeMenuItems(this GenericMenu menu, ItemConditionalNode conditionalNode, bool which, DialogueEditorWindow editorWindow)
         {
             menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                () => editor.SelectedDialogue.AddChildToConditionalNode(conditionalNode, NodeType.SimpleNode, which)
+                () => editorWindow.SelectedDialogue.AddChildToConditionalNode(conditionalNode, NodeType.SimpleNode, which)
             );
 
             menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                () => editor.SelectedDialogue.AddChildToConditionalNode(conditionalNode, NodeType.ResponseNode, which)
+                () => editorWindow.SelectedDialogue.AddChildToConditionalNode(conditionalNode, NodeType.ResponseNode, which)
             );
             menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                () => editor.SelectedDialogue.AddChildToConditionalNode(conditionalNode, NodeType.ConditionalNode,
+                () => editorWindow.SelectedDialogue.AddChildToConditionalNode(conditionalNode, NodeType.ConditionalNode,
                     which)
             );
             menu.AddItem(new GUIContent("Link node"), false,
-                () => editor.LinkingNode = new NodeContext(conditionalNode) { valueIfConditional = which }
+                () => editorWindow.LinkingNode = new NodeContext(conditionalNode) { valueIfConditional = which }
             );
         }
 
-        public static void AddResponseNodeMenuItems(this GenericMenu menu, ResponseNode responseNode, int index, DialogueEditor editor)
+        public static void AddResponseNodeMenuItems(this GenericMenu menu, ResponseNode responseNode, int index, DialogueEditorWindow editorWindow)
         {
             menu.AddItem(new GUIContent("Add Node/Add Simple Node"), false,
-                () => editor.SelectedDialogue.AddChildToResponseNode(responseNode, NodeType.SimpleNode, index)
+                () => editorWindow.SelectedDialogue.AddChildToResponseNode(responseNode, NodeType.SimpleNode, index)
             );
 
             menu.AddItem(new GUIContent("Add Node/Add Response Node"), false,
-                () => editor.SelectedDialogue.AddChildToResponseNode(responseNode, NodeType.ResponseNode, index)
+                () => editorWindow.SelectedDialogue.AddChildToResponseNode(responseNode, NodeType.ResponseNode, index)
             );
             menu.AddItem(new GUIContent("Add Node/Add Conditional Node"), false,
-                () => editor.SelectedDialogue.AddChildToResponseNode(responseNode, NodeType.ConditionalNode, index)
+                () => editorWindow.SelectedDialogue.AddChildToResponseNode(responseNode, NodeType.ConditionalNode, index)
             );
             menu.AddItem(new GUIContent("Link node"), false,
-                () => editor.LinkingNode = new NodeContext(responseNode) { indexIfResponse = index }
+                () => editorWindow.LinkingNode = new NodeContext(responseNode) { indexIfResponse = index }
             );
         }
     }

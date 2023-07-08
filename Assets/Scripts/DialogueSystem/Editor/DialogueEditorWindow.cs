@@ -8,17 +8,15 @@ using CesarJZO.InventorySystem;
 
 namespace CesarJZO.DialogueSystem.Editor
 {
-    public class DialogueEditor : EditorWindow
+    public class DialogueEditorWindow : EditorWindow
     {
         private const float CanvasSize = 10_000f;
         private const float BackgroundSize = 64f;
         private const float BackgroundLength = CanvasSize / BackgroundSize;
 
         private static readonly Rect BackgroundCoords = new(0f, 0f, BackgroundLength, BackgroundLength);
-        private static readonly string[] Sides = { "Left", "Right" };
-        private static readonly string[] Emotions = { "Neutral", "Happy", "Sad", "Angry" };
 
-        private static DialogueEditor _editor;
+        private static DialogueEditorWindow _editorWindow;
 
         [SerializeField] private Vector2 scrollPosition;
         [SerializeField] private Dialogue selectedDialogue;
@@ -47,7 +45,7 @@ namespace CesarJZO.DialogueSystem.Editor
         [MenuItem("Window/Dialogue Editor")]
         private static void ShowWindow()
         {
-            _editor = GetWindow<DialogueEditor>(
+            _editorWindow = GetWindow<DialogueEditorWindow>(
                 title: "Dialogue Editor",
                 focus: true,
                 desiredDockNextTo: typeof(SceneView)
@@ -64,16 +62,16 @@ namespace CesarJZO.DialogueSystem.Editor
             ShowWindow();
 
             string path = AssetDatabase.GetAssetPath(instanceID);
-            _editor.selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
+            _editorWindow.selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
 
             if (selected is DialogueNode node)
             {
-                _editor.ScrollToNode(node);
+                _editorWindow.ScrollToNode(node);
             }
             else
             {
-                if (_editor.selectedDialogue.RootNode)
-                    _editor.ScrollToNode(_editor.selectedDialogue.RootNode);
+                if (_editorWindow.selectedDialogue.RootNode)
+                    _editorWindow.ScrollToNode(_editorWindow.selectedDialogue.RootNode);
             }
 
             return true;
@@ -81,7 +79,7 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private void Awake()
         {
-            _editor = this;
+            _editorWindow = this;
         }
 
         private void OnEnable()
@@ -153,8 +151,8 @@ namespace CesarJZO.DialogueSystem.Editor
             string path = AssetDatabase.GetAssetPath(selected);
             selectedDialogue = AssetDatabase.LoadAssetAtPath<Dialogue>(path);
 
-            if (_editor)
-                _editor.Focus();
+            if (_editorWindow)
+                _editorWindow.Focus();
 
             Repaint();
         }
