@@ -44,7 +44,7 @@ namespace CesarJZO.DialogueSystem
             };
             childNode.name = GetGuidFormatted(childType);
             if (parent)
-                childNode.rect.position = parent.rect.position + new Vector2(parent.rect.width + 50f, 0f);
+                childNode.rect.position = parent.rect.position + new Vector2(parent.rect.width + 64f, 0f);
 
             nodes.Add(childNode);
             SaveInstance(childNode);

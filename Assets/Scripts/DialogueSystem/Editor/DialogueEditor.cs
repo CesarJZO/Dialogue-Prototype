@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
-using CesarJZO.InventorySystem;
 
 namespace CesarJZO.DialogueSystem.Editor
 {
@@ -301,7 +300,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 if (node is SimpleNode simpleNode)
                     DrawSimpleNode(simpleNode, serializedNode);
                 else if (node is ItemConditionalNode conditionalNode)
-                    DrawConditionalNode(conditionalNode);
+                    DrawConditionalNode(conditionalNode, serializedNode);
                 else if (node is ResponseNode responseNode)
                     DrawResponseNode(responseNode);
 
@@ -330,16 +329,11 @@ namespace CesarJZO.DialogueSystem.Editor
             }
         }
 
-        private void DrawConditionalNode(ItemConditionalNode conditionalNode)
+        private void DrawConditionalNode(ItemConditionalNode conditionalNode, SerializedObject serializedObject)
         {
             const float buttonWidth = 64f;
 
-            GUILayout.BeginHorizontal();
-            {
-                GUILayout.Label("Has Item", new GUIStyle(EditorStyles.label) { fixedWidth = 54f });
-                conditionalNode.Item = EditorGUILayout.ObjectField(conditionalNode.Item, typeof(Item), false) as Item;
-            }
-            GUILayout.EndHorizontal();
+            EditorGUILayout.PropertyField(serializedObject.FindHasItem());
 
             DrawGUIElements(true);
             DrawGUIElements(false);
@@ -348,7 +342,7 @@ namespace CesarJZO.DialogueSystem.Editor
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label($"Child If {which}:");
+                    GUILayout.Label($"Child If {which}");
                     bool hasChild = conditionalNode.GetChild(which);
                     if (GUILayout.Button(hasChild ? "Unlink" : "Add", GUILayout.Width(buttonWidth)))
                     {

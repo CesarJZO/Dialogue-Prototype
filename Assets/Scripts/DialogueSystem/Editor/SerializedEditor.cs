@@ -23,5 +23,10 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             return serializedObject.FindProperty(DialogueNode.PortraitSideProperty);
         }
+
+        public static SerializedProperty FindHasItem(this SerializedObject serializedObject)
+        {
+            return serializedObject.FindProperty(ItemConditionalNode.HasItemProperty);
+        }
     }
 }

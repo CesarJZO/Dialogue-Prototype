@@ -6,6 +6,8 @@ namespace CesarJZO.DialogueSystem
 {
     public class ItemConditionalNode : DialogueNode
     {
+        public const string HasItemProperty = nameof(hasItem);
+
         [SerializeField] private Item hasItem;
 
         [SerializeField, HideInInspector] private DialogueNode trueChild;
