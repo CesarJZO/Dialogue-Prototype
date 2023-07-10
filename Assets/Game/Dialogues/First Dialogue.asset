@@ -18,34 +18,11 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 705
+    x: 704
     y: 5674
     width: 256
-    height: 208
-  child: {fileID: -3888510124126575670}
---- !u!114 &-3888510124126575670
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c82b3a485f804adbb81cc4fe5a8aedb0, type: 3}
-  m_Name: S-f07c812e
-  m_EditorClassIdentifier: 
-  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
-  text: You are wasting my time, come back later.
-  emotion: 0
-  portraitSide: 1
-  rect:
-    serializedVersion: 2
-    x: 1023
-    y: 5673
-    width: 256
-    height: 208
-  child: {fileID: 0}
+    height: 216
+  child: {fileID: -666766576789832037}
 --- !u!114 &-666766576789832037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,10 +41,10 @@ MonoBehaviour:
   portraitSide: 1
   rect:
     serializedVersion: 2
-    x: 1119
-    y: 5439
+    x: 1086
+    y: 5497
     width: 256
-    height: 208
+    height: 216
   child: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
@@ -87,7 +64,6 @@ MonoBehaviour:
   - {fileID: 1075738119598712650}
   - {fileID: 16955679748497342}
   - {fileID: -8057394602777584120}
-  - {fileID: -3888510124126575670}
   - {fileID: -666766576789832037}
 --- !u!114 &16955679748497342
 MonoBehaviour:
@@ -107,10 +83,10 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 1282
-    y: 5231
+    x: 1287
+    y: 5271
     width: 256
-    height: 208
+    height: 216
   child: {fileID: 0}
 --- !u!114 &1075738119598712650
 MonoBehaviour:
@@ -130,10 +106,10 @@ MonoBehaviour:
   portraitSide: 0
   rect:
     serializedVersion: 2
-    x: 1028
-    y: 5083
+    x: 1025
+    y: 5094
     width: 256
-    height: 208
+    height: 216
   child: {fileID: 0}
 --- !u!114 &3596777489817031521
 MonoBehaviour:
@@ -147,16 +123,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d992f4c98448a4b8a609d541be5500, type: 3}
   m_Name: R-442707c6
   m_EditorClassIdentifier: 
-  speaker: {fileID: 11400000, guid: 5e3dfebf683f6af46ab1147b052fa7b1, type: 2}
+  speaker: {fileID: 0}
   text: Why?
   emotion: 0
   portraitSide: 1
   rect:
     serializedVersion: 2
     x: 705
-    y: 5203
+    y: 5202
     width: 256
-    height: 300
+    height: 308
   timeLimit: 0
   responses:
   - text: Because I wanted to
@@ -189,7 +165,7 @@ MonoBehaviour:
     x: 384
     y: 5307
     width: 256
-    height: 244
+    height: 252
   hasItem: {fileID: 11400000, guid: 43cd36b4fdbdeeb4a876ba0ce277bf57, type: 2}
   trueChild: {fileID: 3596777489817031521}
   falseChild: {fileID: -8057394602777584120}

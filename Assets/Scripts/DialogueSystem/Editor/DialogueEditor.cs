@@ -15,8 +15,6 @@ namespace CesarJZO.DialogueSystem.Editor
         private const float BackgroundLength = CanvasSize / BackgroundSize;
 
         private static readonly Rect BackgroundCoords = new(0f, 0f, BackgroundLength, BackgroundLength);
-        private static readonly string[] Sides = { "Left", "Right" };
-        private static readonly string[] Emotions = { "Neutral", "Happy", "Sad", "Angry" };
 
         private static DialogueEditor _editor;
 
@@ -161,12 +159,12 @@ namespace CesarJZO.DialogueSystem.Editor
 
         private static Vector2 GetSizeForNode(DialogueNode node)
         {
-            const float testHeight = 92f;
+            const float baseHeight = 100f;
             return node switch
             {
-                ItemConditionalNode => new Vector2(256f, 152f + testHeight),
-                ResponseNode responseNode => new Vector2(256f, 124f + responseNode.ChildrenCount * 20f + testHeight + 24f),
-                _ => new Vector2(256f, 116f + testHeight)
+                ItemConditionalNode => new Vector2(256f, 152f + baseHeight),
+                ResponseNode responseNode => new Vector2(256f, 148f + baseHeight + responseNode.ChildrenCount * 20f),
+                _ => new Vector2(256f, 116f + baseHeight)
             };
         }
 
@@ -193,13 +191,15 @@ namespace CesarJZO.DialogueSystem.Editor
 
                     if (LinkingNode is not null)
                     {
-                        if (LinkingNode.parentNode is SimpleNode simpleNode)
-                            simpleNode.SetChild(_draggingNode);
+                        var serializedNode = new SerializedObject(LinkingNode.parentNode);
+                        if (LinkingNode.parentNode is SimpleNode)
+                            serializedNode.FindChildProperty().objectReferenceValue = _draggingNode;
                         else if (LinkingNode.parentNode is ResponseNode responseNode)
                             responseNode.SetChild(_draggingNode, LinkingNode.indexIfResponse);
                         else if (LinkingNode.parentNode is ItemConditionalNode itemConditionalNode)
                             itemConditionalNode.SetChild(_draggingNode, LinkingNode.valueIfConditional);
                         LinkingNode = null;
+                        serializedNode.ApplyModifiedProperties();
                     }
 
                     Selection.activeObject = _draggingNode;
@@ -276,7 +276,6 @@ namespace CesarJZO.DialogueSystem.Editor
         {
             node.rect.size = GetSizeForNode(node);
 
-
             GUILayout.BeginArea(node.rect, node switch
             {
                 _ when node == Selection.activeObject => _selectedNodeStyle,
@@ -290,18 +289,17 @@ namespace CesarJZO.DialogueSystem.Editor
 
                 EditorGUI.BeginChangeCheck();
 
-                EditorGUILayout.PropertyField(serializedNode.FindSpeaker());
-                EditorGUILayout.Space();
+                GUILayout.Label("Speaker");
+                EditorGUILayout.PropertyField(serializedNode.FindSpeaker(), GUIContent.none);
+                EditorGUILayout.PropertyField(serializedNode.FindText());
 
                 EditorGUILayout.PropertyField(serializedNode.FindEmotion());
                 EditorGUILayout.PropertyField(serializedNode.FindPortraitSide());
-                EditorGUILayout.Space();
 
-                EditorGUILayout.PropertyField(serializedNode.FindText());
                 EditorGUILayout.Space();
 
                 if (node is SimpleNode simpleNode)
-                    DrawSimpleNode(simpleNode);
+                    DrawSimpleNode(simpleNode, serializedNode);
                 else if (node is ItemConditionalNode conditionalNode)
                     DrawConditionalNode(conditionalNode);
                 else if (node is ResponseNode responseNode)
@@ -311,16 +309,15 @@ namespace CesarJZO.DialogueSystem.Editor
                     serializedNode.ApplyModifiedProperties();
             }
             GUILayout.EndArea();
-
-
         }
 
-        private void DrawSimpleNode(SimpleNode simpleNode)
+        private void DrawSimpleNode(SimpleNode simpleNode, SerializedObject serializedObject)
         {
             if (simpleNode.GetChild())
             {
-                if (GUILayout.Button("Unlink"))
-                    simpleNode.UnlinkChild();
+                if (!GUILayout.Button("Unlink")) return;
+
+                simpleNode.UnlinkNext(serializedObject);
             }
             else
             {
@@ -508,7 +505,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 return node.rect.position + new Vector2
                 {
                     x = node.rect.width,
-                    y = (which ? 100f : 120f) + 90f
+                    y = which ? 200f : 220f
                 };
             }
 
@@ -517,7 +514,7 @@ namespace CesarJZO.DialogueSystem.Editor
                 return node.rect.position + new Vector2
                 {
                     x = node.rect.width,
-                    y = 84f + 88f + index * 20f + 24f
+                    y = 210f + index * 20f
                 };
             }
         }

@@ -61,7 +61,10 @@ namespace CesarJZO.DialogueSystem
         public void AddChildToSimpleNode(SimpleNode parent, NodeType childType)
         {
             DialogueNode childNode = CreateNode(parent, childType);
-            parent.SetChild(childNode);
+            var serializedObject = new SerializedObject(parent);
+            SerializedProperty childProperty = serializedObject.FindProperty(SimpleNode.ChildProperty);
+            childProperty.objectReferenceValue = childNode;
+            serializedObject.ApplyModifiedProperties();
         }
 
         public void AddChildToConditionalNode(ItemConditionalNode parent, NodeType childType, bool condition)
@@ -74,15 +77,6 @@ namespace CesarJZO.DialogueSystem
         {
             DialogueNode childNode = CreateNode(parent, childType);
             parent.SetChild(childNode, index);
-        }
-
-        public void RemoveNode(DialogueNode node)
-        {
-            nodes.Remove(node);
-            foreach (DialogueNode n in nodes)
-                n.TryRemoveChild(node);
-
-            RemoveInstanceFromAssetDatabase(node);
         }
 
         public void SetNodeAsRoot(DialogueNode node)
@@ -105,6 +99,11 @@ namespace CesarJZO.DialogueSystem
         public bool IsRoot(DialogueNode node)
         {
             return node == RootNode;
+        }
+
+        public int IndexOf(DialogueNode node)
+        {
+            return nodes.IndexOf(node);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace CesarJZO.DialogueSystem
 {
     public class SimpleNode : DialogueNode
     {
+        public const string ChildProperty = nameof(child);
+
         [SerializeField, HideInInspector] private DialogueNode child;
 
         public override DialogueNode Child => child;
@@ -15,27 +17,14 @@ namespace CesarJZO.DialogueSystem
         }
 
 #if UNITY_EDITOR
-        public void SetChild(DialogueNode node)
-        {
-            var serializedNode = new SerializedObject(this);
-            SerializedProperty childProperty = serializedNode.FindProperty("child");
-            childProperty.objectReferenceValue = node;
-            serializedNode.ApplyModifiedProperties();
-        }
-
-        public void UnlinkChild()
-        {
-            var serializedNode = new SerializedObject(this);
-            SerializedProperty childProperty = serializedNode.FindProperty("child");
-            childProperty.objectReferenceValue = null;
-            serializedNode.ApplyModifiedProperties();
-        }
-
         public override bool TryRemoveChild(DialogueNode node)
         {
             if (child != node) return false;
 
-            UnlinkChild();
+            var serializedNode = new SerializedObject(this);
+            SerializedProperty childProperty = serializedNode.FindProperty(ChildProperty);
+            childProperty.objectReferenceValue = null;
+            serializedNode.ApplyModifiedProperties();
 
             return true;
         }

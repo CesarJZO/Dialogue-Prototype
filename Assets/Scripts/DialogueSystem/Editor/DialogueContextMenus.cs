@@ -12,7 +12,21 @@ namespace CesarJZO.DialogueSystem.Editor
                 () => editor.SelectedDialogue.SetNodeAsRoot(node)
             );
             menu.AddItem(new GUIContent("Delete Node"), false,
-                () => editor.SelectedDialogue.RemoveNode(node)
+                () =>
+                {
+                    int index = editor.SelectedDialogue.IndexOf(node);
+
+                    var serializedDialogue = new SerializedObject(editor.SelectedDialogue);
+                    SerializedProperty nodesProperty = serializedDialogue.FindProperty("nodes");
+                    nodesProperty.DeleteArrayElementAtIndex(index);
+                    serializedDialogue.ApplyModifiedPropertiesWithoutUndo();
+
+                    foreach (DialogueNode n in editor.SelectedDialogue.Nodes)
+                        n.TryRemoveChild(node);
+
+                    AssetDatabase.RemoveObjectFromAsset(node);
+                    AssetDatabase.SaveAssets();
+                }
             );
         }
 

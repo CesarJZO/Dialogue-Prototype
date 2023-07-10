@@ -27,9 +27,9 @@ namespace CesarJZO.DialogueSystem
         public abstract bool TryRemoveChild(DialogueNode node);
 #endif
 
-        public static string SpeakerProperty => nameof(speaker);
-        public static string TextProperty => nameof(text);
-        public static string EmotionProperty => nameof(emotion);
-        public static string PortraitSideProperty => nameof(portraitSide);
+        public const string SpeakerProperty = nameof(speaker);
+        public const string TextProperty = nameof(text);
+        public const string EmotionProperty = nameof(emotion);
+        public const string PortraitSideProperty = nameof(portraitSide);
     }
 }

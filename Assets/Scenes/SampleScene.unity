@@ -434,7 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb464bb6904b42098f7909527886657d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dequeueIfResponseMatchesTrigger: 0
+  dequeueIfTrigger: 0
   dequeueTrigger: 
   onResponseSelected:
     m_PersistentCalls:
