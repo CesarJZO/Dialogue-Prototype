@@ -14,24 +14,25 @@ namespace CesarJZO.DialogueSystem
         [SerializeField] private float dialogueDelay;
 
 #if UNITY_EDITOR
-        internal static SerializedObject SerializedSettings => new(Instance);
+        public static SerializedObject SerializedSettings => new(Instance);
 #endif
 
         public static DialogueSettings Instance
         {
             get
             {
-#if UNITY_EDITOR
                 if (_instance) return _instance;
 
                 _instance = AssetDatabase.LoadAssetAtPath<DialogueSettings>(DialogueSettingsPath);
 
+#if UNITY_EDITOR
                 if (_instance) return _instance;
 
                 _instance = CreateInstance<DialogueSettings>();
                 AssetDatabase.CreateAsset(_instance, DialogueSettingsPath);
                 AssetDatabase.SaveAssets();
 #endif
+
                 return _instance;
             }
         }

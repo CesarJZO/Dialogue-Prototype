@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 
 namespace CesarJZO.DialogueSystem.Editor
 {
@@ -30,3 +31,4 @@ namespace CesarJZO.DialogueSystem.Editor
         }
     }
 }
+#endif

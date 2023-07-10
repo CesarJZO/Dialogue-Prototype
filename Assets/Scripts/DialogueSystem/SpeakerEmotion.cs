@@ -1,6 +1,6 @@
 ﻿namespace CesarJZO.DialogueSystem
 {
-    public enum Emotion
+    public enum SpeakerEmotion
     {
         Neutral,
         Happy,

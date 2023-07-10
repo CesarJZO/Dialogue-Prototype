@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace CesarJZO.DialogueSystem
+namespace CesarJZO.DialogueSystem.Editor
 {
     public static class DialogueSettingsProvider
     {

@@ -37,7 +37,7 @@ namespace CesarJZO.DialogueSystem
         /// </summary>
         public PortraitSide CurrentSide => _currentNode.PortraitSide;
 
-        public Emotion CurrentEmotion => _currentNode.Emotion;
+        public SpeakerEmotion CurrentEmotion => _currentNode.Emotion;
 
         /// <summary>
         ///     The text of the current node.

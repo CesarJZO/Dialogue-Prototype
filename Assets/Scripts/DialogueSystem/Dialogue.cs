@@ -34,12 +34,12 @@ namespace CesarJZO.DialogueSystem
             AssetDatabase.SaveAssets();
         }
 
-        private DialogueNode CreateNode(DialogueNode parent, NodeType childType)
+        private DialogueNode CreateNode(DialogueNode parent, DialogueNodeType childType)
         {
             DialogueNode childNode = childType switch
             {
-                NodeType.ConditionalNode => CreateInstance<ItemConditionalNode>(),
-                NodeType.ResponseNode => CreateInstance<ResponseNode>(),
+                DialogueNodeType.ConditionalNode => CreateInstance<ItemConditionalNode>(),
+                DialogueNodeType.ResponseNode => CreateInstance<ResponseNode>(),
                 _ => CreateInstance<SimpleNode>()
             };
             childNode.name = GetGuidFormatted(childType);
@@ -52,13 +52,13 @@ namespace CesarJZO.DialogueSystem
             return childNode;
         }
 
-        public void CreateNodeAtPoint(NodeType type, Vector2 position)
+        public void CreateNodeAtPoint(DialogueNodeType type, Vector2 position)
         {
             DialogueNode node = CreateNode(null, type);
             node.rect.position = position;
         }
 
-        public void AddChildToSimpleNode(SimpleNode parent, NodeType childType)
+        public void AddChildToSimpleNode(SimpleNode parent, DialogueNodeType childType)
         {
             DialogueNode childNode = CreateNode(parent, childType);
             var serializedObject = new SerializedObject(parent);
@@ -67,13 +67,13 @@ namespace CesarJZO.DialogueSystem
             serializedObject.ApplyModifiedProperties();
         }
 
-        public void AddChildToConditionalNode(ItemConditionalNode parent, NodeType childType, bool condition)
+        public void AddChildToConditionalNode(ItemConditionalNode parent, DialogueNodeType childType, bool condition)
         {
             DialogueNode childNode = CreateNode(parent, childType);
             parent.SetChild(childNode, condition);
         }
 
-        public void AddChildToResponseNode(ResponseNode parent, NodeType childType, int index)
+        public void AddChildToResponseNode(ResponseNode parent, DialogueNodeType childType, int index)
         {
             DialogueNode childNode = CreateNode(parent, childType);
             parent.SetChild(childNode, index);
@@ -89,7 +89,7 @@ namespace CesarJZO.DialogueSystem
         }
 #endif
 
-        private static string GetGuidFormatted(NodeType type)
+        private static string GetGuidFormatted(DialogueNodeType type)
         {
             ReadOnlySpan<char> guidSpan = Guid.NewGuid().ToString();
             ReadOnlySpan<char> typeSpan = type.ToString();

@@ -1,6 +1,6 @@
 ﻿namespace CesarJZO.DialogueSystem
 {
-    public enum NodeType
+    public enum DialogueNodeType
     {
         SimpleNode,
         ConditionalNode,

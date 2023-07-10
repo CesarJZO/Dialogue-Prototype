@@ -7,7 +7,7 @@ namespace CesarJZO.DialogueSystem
     {
         [SerializeField] private Speaker speaker;
         [SerializeField] [TextArea] private string text;
-        [SerializeField] private Emotion emotion;
+        [SerializeField] private SpeakerEmotion emotion;
         [SerializeField] private PortraitSide portraitSide;
 
         [HideInInspector, SerializeField] public Rect rect = new(0f, 0f, 256f, 120f);
@@ -16,7 +16,7 @@ namespace CesarJZO.DialogueSystem
 
         public string Text => text;
 
-        public Emotion Emotion => emotion;
+        public SpeakerEmotion Emotion => emotion;
 
         public PortraitSide PortraitSide => portraitSide;
 
